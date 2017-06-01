@@ -3,7 +3,7 @@
 RobotCar AI Playground.
 
 ## Lab
-* [Lab1 3 Lidar sensors](https://github.com/FaBoPlatform/RobotCarAI/Lab1/)
+* [(Lab1) 3 Lidar sensors](https://github.com/FaBoPlatform/RobotCarAI/Lab1/)
 
 ## Component
 
