@@ -8,7 +8,8 @@ RobotCar AI Playground.
 ## Component
 
 * [FaBo Open Source Robot Car](https://github.com/FaBoPlatform/RobotCar)
-* [FaBo Motor Field](https://github.com/FaBoPlatform/MotorShield)
+* [FaBo Motor Shield](https://github.com/FaBoPlatform/MotorShield)
+* [FaBo Motor Shield Example](https://github.com/FaBoPlatform/MotorShieldExamples)
 
 ## Robot Component Tutorial
 
