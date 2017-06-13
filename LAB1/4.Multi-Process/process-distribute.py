@@ -6,13 +6,18 @@ import time
 from concurrent import futures
 import os
 from multiprocessing import Manager
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='[%(levelname)s] time:%(created).8f pid:%(process)d pn:%(processName)-10s tid:%(thread)d tn:%(threadName)-10s fn:%(funcName)-10s %(message)s',
+)
+
 '''
 ここはプロセスで実行される
 SHARED_VARIABLE['SOMETHING1_READY']=True であるうちは実行を続ける
 '''
 def do_something1():
-    tag='SOMETHING1'
-    print("enter "+tag)
+    logging.debug("enter")
     SHARED_VARIABLE['SOMETHING1_READY']=True
 
     ####################
@@ -27,9 +32,9 @@ def do_something1():
         execute_time += time.time() - start_time
         execute_clock_time += time.clock() - clock_time
         count+=1
-        print("Process-%s:%d Parent id:%d value:%s" % (tag,os.getpid(),os.getppid(),str(SHARED_VARIABLE['SOMETHING1_VALUE'])))
+        logging.debug("value:%s" % (str(SHARED_VARIABLE['SOMETHING1_VALUE'])))
         time.sleep(0.1)
-    print("Process-%s:%d Parent id:%d ave time:%.8f ave clock:%.8f" % (tag,os.getpid(),os.getppid(),execute_time/count,execute_clock_time/count))
+    logging.debug("ave time:%.8f ave clock:%.8f" % (execute_time/count,execute_clock_time/count))
     return
 
 '''
@@ -37,8 +42,7 @@ def do_something1():
 SHARED_VARIABLE['SOMETHING2_READY']=True であるうちは実行を続ける
 '''
 def do_something2():
-    tag='SOMETHING2'
-    print("enter "+tag)
+    logging.debug("enter")
     SHARED_VARIABLE['SOMETHING2_READY']=True
 
     ####################
@@ -49,27 +53,27 @@ def do_something2():
     count = 0
     while SHARED_VARIABLE['SOMETHING2_READY']:
         start_time,clock_time=time.time(),time.clock()
-        SHARED_VARIABLE['SOMETHING2_VALUE'] = SHARED_VARIABLE['SOMETHING1_VALUE'] << 2
+        SHARED_VARIABLE['SOMETHING2_VALUE'] = SHARED_VARIABLE['SOMETHING1_VALUE'] << 1 # SHARED_VARIABLE['SOMETHING1_VALUE'] * 2
         execute_time += time.time() - start_time
         execute_clock_time += time.clock() - clock_time
         count+=1
-        print("Process-%s:%d Parent id:%d value:%s" % (tag,os.getpid(),os.getppid(),str(SHARED_VARIABLE['SOMETHING2_VALUE'])))
+        logging.debug("value:%s" % (str(SHARED_VARIABLE['SOMETHING2_VALUE'])))
         time.sleep(0.1)
-    print("Process-%s:%d Parent id:%d ave time:%.8f ave clock:%.8f" % (tag,os.getpid(),os.getppid(),execute_time/count,execute_clock_time/count))
+    logging.debug("ave time:%.8f ave clock:%.8f" % (execute_time/count,execute_clock_time/count))
     return
 
 '''
 ここはプロセスで実行される
-SHARED_VARIABLE['SOMETHING2_READY']=True であるうちは実行を続ける
+RUNNING_SEC後に各プロセスが停止するようにBOOL型変数を書き換える
 '''
 def do_stop():
-    tag='STOP'
+    logging.debug("enter")
 
     ####################
     # ループ実行
     ####################
     start_time = time.time()
-    RUNNING_SEC = 30
+    RUNNING_SEC = 10
     time.sleep(RUNNING_SEC)
     SHARED_VARIABLE['SOMETHING1_READY']=False
     SHARED_VARIABLE['SOMETHING2_READY']=False
@@ -118,12 +122,11 @@ def do_main():
                 print(result)
 
     except Exception as e:
-        print 'error! executer failed.'
-        print str(e)
+        print('error! executer failed.')
+        print(str(e))
     finally:
         print("executer end")
 
     return
 
 do_main()
-
