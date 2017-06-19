@@ -6,7 +6,7 @@ import tensorflow as tf
 from tensorflow.python.framework import graph_util
 
 MODEL_DIR="../model_car_lidar_queue"
-FROZEN_MODEL_NAME="car_lidar_queue_20000.pb"
+FROZEN_MODEL_NAME="car_lidar_queue_100000.pb"
 OUTPUT_NODE_NAMES="queue/dequeue_op,neural_network_model/output_y,accuracy/accuracy"
 
 CLEAR_DEVICES=True

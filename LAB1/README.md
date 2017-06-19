@@ -11,5 +11,5 @@
 * 3.Car_Control(Control servo and motor)
 * 4.Multi-Process(Multi-Process code)
 * 5.RobotCarAI(Automated driving)
-* model_car_lidar(Trained graph)
+* model_car_lidar_queue(Trained graph)
 * TrainData(TrainData, TestData)
