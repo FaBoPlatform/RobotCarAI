@@ -38,7 +38,7 @@ def do_control():
 
     HANDLE_NEUTRAL = 310 # ステアリングニュートラル位置
     
-    car = MotorShield.RobotCar()
+    car = MotorShield.RobotCar
     # タイヤのニュートラル位置を記憶し、設定する
     car.handle_forward(HANDLE_NEUTRAL)
 
@@ -48,7 +48,6 @@ def do_control():
     # ループ実行
     ####################
     while SHARED_VARIABLE['CONTROL_READY']:
-        #print("control: " +str(SHARED_VARIABLE['PREDICTION_VALUE']))
         if SHARED_VARIABLE['PREDICTION_VALUE'] == STOP:
             car.motor_stop()
             car.handle_forward()
@@ -111,7 +110,7 @@ def do_prediction():
         lidar3 = LidarLiteV3.Connect(0x56)
         
         # AIモデルファイル名とディレクトリ
-        FROZEN_MODEL_NAME="car_lidar_queue_20000.pb"
+        FROZEN_MODEL_NAME="car_lidar_queue_100000.pb"
         MODEL_DIR = "../model_car_lidar_queue"
 
         # AIモデル読み込み
