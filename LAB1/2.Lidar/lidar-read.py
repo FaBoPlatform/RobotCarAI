@@ -10,13 +10,13 @@ Lidarはアドレス0x62で起動します。
 import sys
 import time
 import LidarLiteV3
-lidar = LidarLiteV3.Connect(0x62)
+lidar1 = LidarLiteV3.Connect(0x62)
 
-lidar.changeAddress(0x52)
+lidar1.changeAddress(0x52)
 
 for i in range(300):
-    distance = lidar.getDistance()
-    sys.stdout.write("Distance to target = "+str(distance)+"   \r")
+    distance1 = lidar1.getDistance()
+    sys.stdout.write("Distance to target = "+str(distance1)+"   \r")
     sys.stdout.flush()
     time.sleep(0.022)
 print("")
@@ -78,10 +78,10 @@ raw_input('OK, Let\'s get all Lidar value. Enter key')
 3個のLidar Lite v3がそれぞれ値取得出来ていることを確認します。
 '''
 for i in range(300):
-    distance = lidar.getDistance()
+    distance1 = lidar1.getDistance()
     distance2 = lidar2.getDistance()
     distance3 = lidar3.getDistance()
-    sys.stdout.write("Distance to target = "+str(distance)+", "+str(distance2)+", "+str(distance3)+"         \r")
+    sys.stdout.write("Distance to target = "+str(distance1)+", "+str(distance2)+", "+str(distance3)+"         \r")
     sys.stdout.flush()
     time.sleep(0.022)
 print("")
