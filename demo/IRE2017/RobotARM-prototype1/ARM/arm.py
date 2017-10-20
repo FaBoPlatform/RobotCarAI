@@ -15,7 +15,7 @@ class ARM():
     arm1.SERVO_SINGLESHOT_ANGLE_VALUE = 10
     ARM1_CLOSE=285 # 金属アーム:380 試作アーム:285 閉じた状態
     ARM1_OPEN=320 # 金属アーム:250 試作アーム:320 開いた状態
-    ARM1_CATCH=285 # 金属アーム:330 試作アーム:285キャッチの状態
+    ARM1_CATCH=285 # 金属アーム:330 試作アーム:285 キャッチの状態
     ARM1_SPEED=10
     arm1.neutral()
 
@@ -26,8 +26,8 @@ class ARM():
     arm2.SERVO_NEUTRAL_ANGLE_VALUE = 300 # 手首の通常時のサーボ位置
     arm2.SERVO_SINGLESHOT_ANGLE_VALUE = 10
     ARM2_EMPTY=arm2.SERVO_NEUTRAL_ANGLE_VALUE # 閉じた状態
-    ARM2_LIFT=250 # 金属アーム:200 試作アーム:250 # 持ち上げの状態
-    ARM2_CATCH=180 # 金属アーム:150 試作アーム:180キャッチの状態
+    ARM2_LIFT=250 # 金属アーム:200 試作アーム:250 持ち上げの状態
+    ARM2_CATCH=180 # 金属アーム:150 試作アーム:180 キャッチの状態
     ARM2_SPEED=10
     arm2.neutral()
 
@@ -38,8 +38,8 @@ class ARM():
     arm3.SERVO_NEUTRAL_ANGLE_VALUE = 300 # 胴体の通常時のサーボ位置
     arm3.SERVO_SINGLESHOT_ANGLE_VALUE = 10
     ARM3_EMPTY=arm3.SERVO_NEUTRAL_ANGLE_VALUE # 前向きの状態
-    ARM3_CATCH=300 # 金属アーム: 試作アーム:300キャッチの状態
-    ARM3_PUT=180 # 金属アーム: 試作アーム:180 # 持ち上げの状態
+    ARM3_CATCH=300 # 金属アーム: 試作アーム:300 キャッチの状態
+    ARM3_PUT=180 # 金属アーム: 試作アーム:180 持ち上げの状態
     ARM3_SPEED=10
     arm3.neutral()
 

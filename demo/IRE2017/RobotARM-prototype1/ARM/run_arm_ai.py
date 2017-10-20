@@ -131,7 +131,7 @@ def do_prediction():
         output_y= graph.get_tensor_by_name('prefix/output_y:0')
         step = graph.get_tensor_by_name('prefix/step/step:0')
 
-        n_classes=5 # 出力数(アレルケア,紙コップ,いろはす,手,その他の4種類)
+        n_classes=5 # 出力数(アレルケア,紙コップ,いろはす,手,その他の5種類)
 
         ####################
         # OpenCV カメラ設定
