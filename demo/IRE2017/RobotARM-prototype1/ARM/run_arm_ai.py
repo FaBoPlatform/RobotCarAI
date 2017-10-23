@@ -14,6 +14,7 @@ from arm import ARM
 import numpy as np
 import tensorflow as tf
 import cv2
+import FaBoGPIO_PCAL6408
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,
@@ -115,7 +116,6 @@ def do_prediction():
     tf.reset_default_graph()
 
     # LED準備
-    import FaBo_GPIO_PCAL6408
     pcal6408 = FaBoGPIO_PCAL6408.PCAL6408()
     pcal6408.setDigital(1<<7, 1)
     ########################################
