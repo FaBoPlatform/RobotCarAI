@@ -129,6 +129,7 @@ def do_prediction():
         # AI入出力ノード取得
         input_x = graph.get_tensor_by_name('prefix/input_x:0')
         output_y= graph.get_tensor_by_name('prefix/output_y:0')
+        score= graph.get_tensor_by_name('prefix/score:0')
         step = graph.get_tensor_by_name('prefix/step/step:0')
 
         n_classes=5 # 出力数(アレルケア,紙コップ,いろはす,手,その他の5種類)
@@ -211,8 +212,13 @@ def do_prediction():
 
                     if SHARED_VARIABLE['CONTROL_VALUE'] == CONTROL_EMPTY:
                         image_data = cv_bgr.reshape(1,data_cols)
-                        _output_y = sess.run(output_y,feed_dict={input_x:image_data})
+                        _output_y,_score = sess.run([output_y,score],feed_dict={input_x:image_data})
                         max_index=np.argmax(_output_y[0])
+                        prediction_score = _score[0][max_index]
+                        if prediction_score >= 60:
+                            pass
+                        else:
+                            max_index=4 # その他
                         if LOCAL_VALUE == max_index:
                             same_count += 1
                         else:

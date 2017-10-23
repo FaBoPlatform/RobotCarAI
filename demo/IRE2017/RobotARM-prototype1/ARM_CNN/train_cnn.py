@@ -277,7 +277,7 @@ def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding='SAME')
 
 # VGGの固定値
-def maxpool2d(x):
+def max_pool_2x2(x):
     return tf.nn.max_pool(x, ksize=[1,2,2,1],
                           strides=[1,2,2,1], padding='SAME')
 
@@ -315,16 +315,17 @@ def convolutional_neural_network(data):
 
     # 入力画像はint[]型にして、reluはfloat型なのでtf.cast()でtf.float32型に変換する
     conv1 = tf.nn.relu(conv2d(tf.cast(data,tf.float32), weights['W_conv1']) + biases['b_conv1'])
-    conv1 = maxpool2d(conv1)
+    conv1 = max_pool_2x2(conv1)
 
     conv2 = tf.nn.relu(conv2d(conv1, weights['W_conv2']) + biases['b_conv2'])
-    conv2 = maxpool2d(conv2)
+    conv2 = max_pool_2x2(conv2)
 
-    fc = tf.reshape(conv2,[-1, fully1_width*fully1_height*fully1_inputs])
-    fc = tf.nn.relu(tf.matmul(fc, weights['W_fc'])+biases['b_fc'])
+    pool1 = tf.reshape(conv2,[-1, fully1_width*fully1_height*fully1_inputs])
+    fc = tf.nn.relu(tf.matmul(pool1, weights['W_fc'])+biases['b_fc'])
     fc = tf.nn.dropout(fc, keep_rate)
 
     prediction = tf.add(tf.matmul(fc, weights['out']), biases['out'], name='output_y')
+    score = tf.nn.softmax(prediction, name='score')
 
     return prediction
 
