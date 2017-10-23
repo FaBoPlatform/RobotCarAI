@@ -214,20 +214,25 @@ def do_prediction():
                         image_data = cv_bgr.reshape(1,data_cols)
                         _output_y,_score = sess.run([output_y,score],feed_dict={input_x:image_data})
                         max_index=np.argmax(_output_y[0])
-                        prediction_score = _score[0][max_index]
-                        if prediction_score >= 60:
+                        max_score = _score[0][max_index]
+                        if max_score >= 0.6:
+                            # スコアが高い
+                            prediction_index = max_index
+                            prediction_score = max_score
                             pass
                         else:
-                            max_index=4 # その他
-                        if LOCAL_VALUE == max_index:
+                            # スコアが低いのでその他にする
+                            prediction_index = 4 # その他
+                            prediction_score = _score[0][prediction_index]
+                        if LOCAL_VALUE == prediction_index:
                             same_count += 1
                         else:
                             same_count = 0
-                        LOCAL_VALUE = max_index
+                        LOCAL_VALUE = prediction_index
                         if same_count == 3:
                             same_count = 0
-                            SHARED_VARIABLE['PREDICTION_VALUE'] = max_index
-                        print("prediction:{}".format(max_index)) # 予測クラス 0:アレルケア 1:紙コップ 2:ペットボトル 3:危険待機 4:その他
+                            SHARED_VARIABLE['PREDICTION_VALUE'] = prediction_index
+                        print("max:{} score{}, prediction:{} score{}".format(max_index, max_score, prediction_index, prediction_score)) # 予測クラス 0:アレルケア 1:紙コップ 2:ペットボトル 3:危険待機 4:その他
 
                         if SAVE_PREDICTION:
                             SAVE_DIR=PREDICTION_DIR+"/"+str(max_index)
@@ -235,7 +240,7 @@ def do_prediction():
                                 os.makedirs(SAVE_DIR)
                             cv2.imwrite(SAVE_DIR+"/pred1-"+str(frame_cnt)+".png",cv_bgr)
                     else:
-                        print("prediction else")
+                        print("prediction skip. sleep 0.5 sec")
                         time.sleep(0.5)
                     frame_cnt += 1
             except:
