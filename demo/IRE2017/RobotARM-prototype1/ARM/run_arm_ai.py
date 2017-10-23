@@ -114,11 +114,15 @@ def do_prediction():
     SHARED_VARIABLE['PREDICTION_READY']=True
     tf.reset_default_graph()
 
+    # LED準備
+    import FaBo_GPIO_PCAL6408
+    pcal6408 = FaBoGPIO_PCAL6408.PCAL6408()
+    pcal6408.setDigital(1<<7, 1)
     ########################################
     # AI準備
     ########################################
     try:
-
+        
         # AIモデルファイル名とディレクトリ
         FROZEN_MODEL_NAME="cnn_model.pb"
         MODEL_DIR = "./model"
@@ -147,6 +151,16 @@ def do_prediction():
             vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
         print(vid.isOpened())
         if not vid.isOpened():
+            # LEDを全灯する
+            pcal6408.setDigital(1<<0, 1)
+            pcal6408.setDigital(1<<1, 1)
+            pcal6408.setDigital(1<<2, 1)
+            pcal6408.setDigital(1<<3, 1)
+            pcal6408.setDigital(1<<4, 1)
+            pcal6408.setDigital(1<<5, 1)
+            pcal6408.setDigital(1<<6, 1)
+            pcal6408.setDigital(1<<7, 1)
+            time.sleep(5)
             raise IOError(("Couldn't open video file or webcam. If you're "
                            "trying to open a webcam, make sure you video_path is an integer!"))
 
@@ -196,14 +210,13 @@ def do_prediction():
 
             # 3回連続で同じ分類になったら確定する
             same_count = 0
-            LOCAL_VALUE = None
+            LAST_VALUE = None
             prev_time = time.time()
             try:
                 ####################
                 # ループ実行
                 ####################
                 while SHARED_VARIABLE['PREDICTION_READY']:
-                    
                     if frame_cnt >= 10000:
                         frame_cnt = 0
                         prev_time = time.time()
@@ -228,16 +241,31 @@ def do_prediction():
                             # スコアが低いのでその他にする
                             prediction_index = 4 # その他
                             prediction_score = _score[0][prediction_index]
-                        if LOCAL_VALUE == prediction_index:
+                        if LAST_VALUE == prediction_index: # 前回と予測値が同じならsame_count+1
                             same_count += 1
                         else:
                             same_count = 0
-                        LOCAL_VALUE = prediction_index
-                        if same_count == 3:
+                        LAST_VALUE = prediction_index
+                        if same_count == 3: # N回連続で同じ予測結果なら、予測値として使う
                             same_count = 0
                             SHARED_VARIABLE['PREDICTION_VALUE'] = prediction_index
-                        print("max:{} score{}, prediction:{} score{}".format(max_index, max_score, prediction_index, prediction_score)) # 予測クラス 0:アレルケア 1:紙コップ 2:ペットボトル 3:危険待機 4:その他
 
+                        # 分類番号のLEDを消灯する
+                        pcal6408.setDigital(1<<0, 0)
+                        pcal6408.setDigital(1<<1, 0)
+                        pcal6408.setDigital(1<<2, 0)
+                        pcal6408.setDigital(1<<3, 0)
+                        pcal6408.setDigital(1<<4, 0)
+                        pcal6408.setDigital(1<<5, 0)
+                    
+                        # 分類番号のLEDを点灯する
+                        pcal6408.setDigital(1<<prediction_index, 1)
+                        if max_index == prediction_index :
+                            print("prediction:{} score{}".format(prediction_index, prediction_score)) # 予測クラス 0:アレルケア 1:紙コップ 2:ペットボトル 3:手 4:その他
+                        else:
+                            # スコア未満の時は、予測値も表示する
+                            print("prediction:{} score{}, max:{} score{}".format(prediction_index, prediction_score, max_index, max_score)) # 予測クラス 0:アレルケア 1:紙コップ 2:ペットボトル 3:手 4:その他
+                            
                         if SAVE_PREDICTION:
                             SAVE_DIR=PREDICTION_DIR+"/"+str(max_index)
                             if not os.path.exists(SAVE_DIR):
@@ -263,6 +291,7 @@ def do_prediction():
         if not SHARED_VARIABLE['PREDICTION_READY']:
             print('error! PREDICTION_READY is False')
     finally:
+        pcal6408.setAllClear()
         print("prediction finally")
         return
 
