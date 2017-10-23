@@ -70,8 +70,12 @@ step = graph.get_tensor_by_name('prefix/step/step:0')
 #cv_bgr = cv2.imread(os.path.join(path, file_name), imageFormat)
 
 # OpenCV Webカメラ準備
-#vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
-vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
+import platform
+vid = None
+if platform.machine() == 'aarch64':
+    vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
+else: # armv7l
+    vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
 print(vid.isOpened())
 if not vid.isOpened():
     raise IOError(("Couldn't open video file or webcam. If you're "
