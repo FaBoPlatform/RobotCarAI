@@ -104,7 +104,7 @@ class ARM():
         self.ARM1_STATUS=1
         self.arm1.set_angle_with_speed(self.ARM1_OPEN,self.ARM1_SPEED)
         time.sleep(0.5*self.DELAY)
-        self.arm2.set_angle_with_speed(self.ARM2_EMPTY,self.ARM3_SPEED)
+        self.arm2.set_angle_with_speed(self.ARM2_EMPTY,self.ARM2_SPEED)
         time.sleep(0.5*self.DELAY)
 
         return
