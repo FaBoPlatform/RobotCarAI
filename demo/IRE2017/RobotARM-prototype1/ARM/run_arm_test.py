@@ -43,8 +43,9 @@ def main():
             #    STEP=+1
             #ANGLE+=STEP
 
-    except KeyboardInterrupt:
-        pass
+    except:
+        import traceback
+        traceback.print_exc()
     finally:
         arm_cls.arm_empty()
 

@@ -1,22 +1,29 @@
-import FaBoGPIO_PCAL6408
+# coding: utf-8 
 import time
 import sys
+from led import LED
 
-pcal6408 = FaBoGPIO_PCAL6408.PCAL6408()
-
+print("start")
 try:
-    while True:
-        for i in range(8):
-            pcal6408.setDigital(1<<i, 1)
-            time.sleep(1)
-
-        pcal6408.setAllClear()
-        time.sleep(1)
-        if i == 7:
-            break
-
+    led = LED()
+    led.start('light0to7') # ここは新規スレッドで実行されるため、終了を待たずにすぐに次に進む。スレッドではlockを取得してからの動作になる。forループとsleepによる動作のため、すぐには終わらない
+    led.start('blink 7') # ここは新規スレッドで実行されるため、すぐに次に進む。スレッドではlockを取得してからの動作になるため、light0to7の終了を待ってから実行される。while無限ループとsleepによる動作のため、stopを受けるまで終わらない
+    time.sleep(12) # ここはlight0to7とblinkの終了を待たずに来るため、長めに取ってある
+    led.stop() # ここはLED停止を待ってから次に進む。他スレッドへの停止フラグはすぐに立つが、他スレッドが開放したlockを取得後に消灯する。他スレッドはsleep明けにlockを開放するため、すぐには消灯しない。
+    led.start('light 0') # ここは新規スレッドで実行されるため、すぐに次に進む。スレッドではlockを取得してからの動作になる。
+    time.sleep(2)
+    led.stop()
+    time.sleep(0.5)
+    led.start('lightall')
+    time.sleep(2)
+    led.start('stop 1 3 4 6')
+    time.sleep(2)
+    led.stop()
+    
 except:
-    pass
+    import traceback
+    traceback.print_exc()
 finally:
-    pcal6408.setAllClear()
-sys.exit()
+    pass
+
+print("end")
