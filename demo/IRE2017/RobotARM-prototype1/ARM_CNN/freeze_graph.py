@@ -5,7 +5,7 @@ import os, argparse
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
 
-MODEL_DIR="./model"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 FROZEN_MODEL_NAME="cnn_model.pb"
 OUTPUT_NODE_NAMES="input_x,output_y,score,step/step"
 

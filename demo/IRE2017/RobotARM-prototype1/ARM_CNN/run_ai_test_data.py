@@ -11,11 +11,11 @@ import cv2
 
 tf.reset_default_graph()
 
-MODEL_DIR="./model"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 FROZEN_MODEL_NAME="cnn_model.pb"
 
-path="./test_data/0"
-file_name="capture288.png"
+path=os.path.abspath(os.path.dirname(__file__))+"/test_data/0"
+file_name="capture-352.png"
 
 def print_graph_operations(graph):
     # print operations
@@ -80,7 +80,7 @@ with tf.Session(graph=graph) as sess:
     #print(image_data)
     #cv2.imwrite("output.png",image_data)
     learned_step = sess.run(step)
-    print("learned_step:{}").format(learned_step)
+    print("learned_step:{}".format(learned_step))
 
     _output_y,_score = sess.run([output_y,score],feed_dict={input_x:image_data})
     print(_output_y[0]) # 予測値
