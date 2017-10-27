@@ -19,6 +19,9 @@ try:
     led.start('stop 1 3 4 6')
     time.sleep(2)
     led.stop()
+    led.start('lightline')
+    time.sleep(5)
+    led.stop()
     
 except:
     import traceback

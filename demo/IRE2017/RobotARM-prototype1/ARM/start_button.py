@@ -53,7 +53,7 @@ proc = None
 
 led = LED()
 try:
-    led.start('light0to7')
+    led.start('lightline')
     cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_arm_ai.py"
     while True:
         data = readadc(SPI_PIN) # data: 0-1023
@@ -64,7 +64,7 @@ try:
             proc = Popen(cmd,shell=True)
             proc.wait()
             led.stop()
-            led.start('light0to7')
+            led.start('lightline')
 
         time.sleep(0.1)
 except:

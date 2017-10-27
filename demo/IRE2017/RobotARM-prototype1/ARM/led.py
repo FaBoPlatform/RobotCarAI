@@ -22,10 +22,10 @@ class LED():
         sleep_interval = 0.01
 
         while sleep_time < sectime: # time.sleep(sectime) に停止フラグ検証を追加
-            time.sleep(sleep_interval)
-            sleep_time += sleep_interval
             if self.STOP_PATTERN:
                 break        
+            time.sleep(sleep_interval)
+            sleep_time += sleep_interval
         
         
     '''
@@ -67,9 +67,41 @@ class LED():
                 self.pcal6408.setDigital(1<<i, 0)
                 self.rem_sleep(0.5)
 
-            return
+        return
 
+    '''
+    上一列を点滅させた後、下一列を点滅させることを繰り返し行う
+    '''
+    def lightline(self):
+        print('start lightline')
+        with self.lock:
+            while True:
+                if self.STOP_PATTERN:
+                    break
+                for i in range(4):
+                    if self.STOP_PATTERN:
+                        break
+                    self.pcal6408.setDigital(1<<i, 1)
+                    self.rem_sleep(0.01)
+                    if self.STOP_PATTERN:
+                        break
+                    self.pcal6408.setDigital(1<<i, 0)
+                    self.rem_sleep(0.01)
 
+                self.rem_sleep(0.5)
+                for i in range(4,8):
+                    if self.STOP_PATTERN:
+                        break
+                    self.pcal6408.setDigital(1<<i, 1)
+                    self.rem_sleep(0.01)
+                    if self.STOP_PATTERN:
+                        break
+                    self.pcal6408.setDigital(1<<i, 0)
+                    self.rem_sleep(0.01)
+
+                self.rem_sleep(0.5)
+        return
+        
     '''
     blink動作中は他の機能(light,light0to7)はlock待ちにより動作しない
     途中で切り替えるには一度stopを実行後、他の機能を実行すること
@@ -127,6 +159,10 @@ class LED():
         elif self.PATTERN[0] == 'light0to7':
             print('pattern {}'.format(self.PATTERN))
             t = threading.Thread(target=self.light0to7,args=())
+            t.start()
+        elif self.PATTERN[0] == 'lightline':
+            print('pattern {}'.format(self.PATTERN))
+            t = threading.Thread(target=self.lightline,args=())
             t.start()
         elif self.PATTERN[0] == 'blink':
             print('pattern {}'.format(self.PATTERN))
