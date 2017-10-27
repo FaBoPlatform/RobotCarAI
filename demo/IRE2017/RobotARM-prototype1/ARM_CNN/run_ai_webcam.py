@@ -11,11 +11,11 @@ import cv2
 
 tf.reset_default_graph()
 
-MODEL_DIR="./model"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 FROZEN_MODEL_NAME="cnn_model.pb"
 
 # 予測結果を./predictionディレクトリ以下に保存するかどうか
-PREDICTION_DIR="./prediction"
+PREDICTION_DIR=os.path.abspath(os.path.dirname(__file__))+"/prediction"
 SAVE_PREDICTION=True
 
 def print_graph_operations(graph):
@@ -141,7 +141,7 @@ with tf.Session(graph=graph) as sess:
             #print(_output_y[0]) # 予測値
             max_index=np.argmax(_output_y[0])
             prediction_score = _score[0][max_index]
-            print("prediction:{} score:{}".format(max_index,prediction_score)) # 予測クラス 0:アレルケア 1:紙コップ 2:ペットボトル 3:危険待機 4:その他
+            print("prediction:{} score:{}".format(max_index,prediction_score)) # 予測クラス 0:その他 1:ラベル1 2:ラベル2 ..
 
             if SAVE_PREDICTION:
                 SAVE_DIR=PREDICTION_DIR+"/"+str(pmax)

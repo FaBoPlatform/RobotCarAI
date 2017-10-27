@@ -8,23 +8,24 @@ import tensorflow as tf
 import cv2
 import numpy as np
 import sys
+import math
 
-MODEL_DIR="./model"
-SUMMARY_LOG_DIR="./log"
-TRAIN_DATA_DIR="./train_data"
-TEST_DATA_DIR="./test_data"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
+SUMMARY_LOG_DIR=os.path.abspath(os.path.dirname(__file__))+"/log"
+TRAIN_DATA_DIR=os.path.abspath(os.path.dirname(__file__))+"/train_data"
+TEST_DATA_DIR=os.path.abspath(os.path.dirname(__file__))+"/test_data"
 if not os.path.exists(MODEL_DIR):
     os.makedirs(MODEL_DIR)
 
-target_step = 200
-#n_classes = 5 # [アレルケア][紙コップ][ペットボトル][手][その他]
-n_classes = 5
+target_step = 100
+n_classes = 7 # [その他][ラベル1][ラベル2][ラベル3][ラベル4][ラベル5][ラベル6]
 class_batch_size = 10 # ミニバッチデータに入れる各クラスデータ件数
 class_max_read = 100000 # 特定のクラスだけが特別に多くのバリエーションがあることを制限する。多くのデータがある状態なら制限の必要はない
 view_step = 1 # 表示するステップ間隔
 batch_size = class_batch_size*n_classes # バッチサイズは10〜100前後に
-#label_bytes = 1 # 0-3
-label_bytes = 2 # 4-7
+#label_bytes = 1 # n_classes = 0-3
+#label_bytes = 2 # n_classes = 4-7
+label_bytes = int(math.log2(n_classes)) # 数値からバイト数を求める。n_classes >= 2
 image_width = 160
 image_height = 120
 image_depth = 3
