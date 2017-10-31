@@ -19,63 +19,111 @@ elif SMBUS == 'smbus2':
 class ServoAngleError(Exception):
     pass
 
+class ServoConfig():
+    # サーボの限界軸角度
+    SERVO_MIN_PULSE = 650   # サーボの軸角度が0度になるHIGH時間のμ秒。サーボ毎に特性が異なる。
+    SERVO_MAX_PULSE = 2350  # サーボの軸角度が180度になるHIGH時間のμ秒。サーボ毎に特性が異なる。
+    # サーボの中央位置
+    SERVO_CENTER_PULSE = (SERVO_MIN_PULSE + SERVO_MAX_PULSE)/2
+    # サーボの角速度
+    SERVO_SPEED = 10
+
+
 class Servo():
     '''
     ロボットアームのSERVOサーボ回転を制御するクラス
     arm = Servo(channel=#PWD)
-    arm.SERVO_MIN_ANGLE_VALUE = 0
-    arm.SERVO_MAX_ANGLE_VALUE = 600
-    arm.SERVO_NEUTRAL_ANGLE_VALUE = 300
     '''
     CHANNEL = 0 # PCA9685 サーボ接続チャネル
 
-    # サーボの限界回転角。サーボ自体の回転角の他に、サーボを取り付けた部分の稼働可能角を考慮して、稼働可能な回転角を決めること
-    SERVO_MIN_ANGLE_VALUE = 0
-    SERVO_MAX_ANGLE_VALUE = 600
-    # サーボの中央位置
-    SERVO_NEUTRAL_ANGLE_VALUE = 300
-    # サーボの角速度
-    SERVO_SPEED = 10
+    
+    # サーボの限界軸角度。サーボ自体の軸角度の他に、サーボを取り付けた部分の稼働可能角を考慮して、稼働可能な軸角度を決めること
+    SERVO_MIN_ANGLE = 0
+    SERVO_MAX_ANGLE = 180
+    SERVO_CENTER_ANGLE = 90
 
-    # 現在のサーボの回転角
-    SERVO_ANGLE_VALUE = 0
+    # PWM周期 PCA9685設定になるため、全てのサーボで同じ値を使うこと
+    SERVO_HZ = 50
 
-    def __init__(self,bus=1,channel=0):
+    def __init__(self,bus=1,channel=0,conf=ServoConfig()):
         try:
             self.CHANNEL = channel
             self.bus = smbus.SMBus(bus)
             self.PCA9685 = Fabo_PCA9685.PCA9685(self.bus)
-            # self.PCA9685.set_freq(50) default: 50 Hz
+            self.conf = conf
+            self.PCA9685.set_freq(self.SERVO_HZ)
         except:
             import traceback
             traceback.print_exc()
         return
 
+    def translate(self, value, leftMin, leftMax, rightMin, rightMax):
+        # Figure out how 'wide' each range is
+        leftSpan = leftMax - leftMin
+        rightSpan = rightMax - rightMin
+
+        # Convert the left range into a 0-1 range (float)
+        valueScaled = float(value - leftMin) / float(leftSpan)
+
+        # Convert the 0-1 range into a value in the right range.
+        return rightMin + (valueScaled * rightSpan)        
+
+    def angle_to_analog(self, angle):
+        '''
+        angle: 0 to 180 degree.
+        return: PWM value.
+        '''
+        pulse = self.translate(angle, 0, 180, self.conf.SERVO_MIN_PULSE, self.conf.SERVO_MAX_PULSE)
+        analog = round(float(pulse) / 1000000 * self.SERVO_HZ * 4096)
+        return analog
+
+    def analog_to_angle(self, analog):
+        '''
+        analog: PWM value.
+        return: 0 to 180 degree.
+        '''
+        pulse = float(analog) * 1000000 / self.SERVO_HZ / 4096
+        angle = round(self.translate(pulse, self.conf.SERVO_MIN_PULSE, self.conf.SERVO_MAX_PULSE, 0, 180))
+        return angle
+    
+    def get_analog(self):
+        return self.PCA9685.get_channel_value(self.CHANNEL)
+
+    def set_analog(self, analog):
+        self.PCA9685.set_channel_value(self.CHANNEL, analog)
+
     def set_angle(self, angle, speed=None):
+        '''
+        angle: 0 to 180 degree.
+        '''
+        target_analog = self.angle_to_analog(angle)
+        
         if speed is None:
-            speed = self.SERVO_SPEED
+            speed = self.conf.SERVO_SPEED
         try:
-            START_ANGLE = self.get_angle()
-            print("servo set_angle:{} -> {} speed:{}".format(START_ANGLE,angle,speed))
-            if START_ANGLE == angle:
+            START_ANALOG = self.get_analog()
+            START_ANGLE = self.analog_to_angle(START_ANALOG)
+            print("servo set_angle:{}({}) -> {}({}) speed:{}".format(START_ANGLE,START_ANALOG,angle,target_analog,speed))
+            if START_ANALOG == target_analog:
                 return
             if speed == 0:
-                self.PCA9685.set_channel_value(self.CHANNEL, angle)
+                self.set_analog(target_analog)
                 return
 
-            if START_ANGLE >= angle:
+            if START_ANALOG >= target_analog:
                 STEP=-1
-            if START_ANGLE <= angle:
+            if START_ANALOG <= target_analog:
                 STEP=+1
 
-            ANGLE = START_ANGLE
+            ANALOG = self.get_analog()
             while True:
-                ANGLE+=STEP
-                self.PCA9685.set_channel_value(self.CHANNEL, ANGLE)
+                ANALOG+=STEP
+                self.set_analog(ANALOG)
                 time.sleep(1.0/(speed*10.0))
-                if ANGLE == angle:
-                    END_ANGLE = self.get_angle()
-                    if not ANGLE == END_ANGLE:
+                if ANALOG == target_analog:
+                    END_ANALOG = self.get_analog()
+                    END_ANGLE = self.analog_to_angle(END_ANALOG)
+                    if not ANALOG == END_ANALOG:
                         msg = 'Servo angle error. Couldn\'t move '+str(START_ANGLE)+" to "+str(angle)+". Now "+str(END_ANGLE)+"."
                         raise ServoAngleError(Exception(msg))
                     else:
@@ -87,17 +135,24 @@ class Servo():
             traceback.print_exc()
 
     def get_angle(self):
+        '''
+        return: 0 to 180 degree.
+        '''
         try:
-            self.SERVO_ANGLE_VALUE = self.PCA9685.get_channel_value(self.CHANNEL)
-            return self.SERVO_ANGLE_VALUE
+            analog = self.get_analog()
+            return self.analog_to_angle(analog)
         except:
             import traceback
             traceback.print_exc()
 
     def neutral(self, value=None):
+        '''
+        value: 0 to 180 degree.
+        ちょうどいい初期位置が中央位置とも限らないので、ここはニュートラル位置と呼ぶことにする
+        '''
         try:
             if value is None:
-                value = self.SERVO_NEUTRAL_ANGLE_VALUE
+                value = self.SERVO_CENTER_ANGLE
             '''
             サーボをニュートラル位置に戻す
             引数valueはニュートラル位置を更新する
@@ -106,23 +161,25 @@ class Servo():
                 return
 
             # 引数valueをニュートラル位置に更新する
-            self.SERVO_NEUTRAL_ANGLE_VALUE = value
-            #self.PCA9685.set_channel_value(self.CHANNEL, self.SERVO_NEUTRAL_ANGLE_VALUE)
+            self.SERVO_CENTER_ANGLE = value
             # サーボをゆっくりニュートラル位置に移動する
-            self.set_angle(self.SERVO_NEUTRAL_ANGLE_VALUE)
+            self.set_angle(90)
         except:
             import traceback
             traceback.print_exc()
 
     def servo_angle_validation(self,value):
+        '''
+        value: 0 to 180 degree.
+        '''
         try:
             '''
             引数valueがサーボの可動範囲内かどうかを確認する
             '''
-            # バリデーション: SERVO_MIN_ANGLE_VALUE <= value <= SERVO_MAX_ANGLE_VALUE
-            if not (self.SERVO_MIN_ANGLE_VALUE <= value):
+            # バリデーション: SERVO_MIN_ANGLE <= value <= SERVO_MAX_ANGLE
+            if not (self.SERVO_MIN_ANGLE <= value):
                 return False
-            if not (value <= self.SERVO_MAX_ANGLE_VALUE):
+            if not (value <= self.SERVO_MAX_ANGLE):
                 return False
             return True
         except:

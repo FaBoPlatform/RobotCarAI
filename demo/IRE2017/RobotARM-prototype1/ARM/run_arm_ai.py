@@ -30,7 +30,6 @@ CONTROL_FORCE_STOP = 100
 SHARED_VARIABLE['LED_READY']=True であるうちは実行を続ける
 '''
 def do_led():
-    import Queue
     from led import LED
     logging.debug("enter")
     SHARED_VARIABLE['LED_READY']=True
@@ -64,22 +63,16 @@ def do_led():
 SHARED_VARIABLE['CONTROL_READY']=True であるうちは実行を続ける
 '''
 def do_control():
-    import Queue
     logging.debug("enter")
     SHARED_VARIABLE['CONTROL_READY']=True
 
     ####################
     # ARM準備
     ####################
-    callback_bucket = Queue.Queue()
-    arm_cls = None
-    try:
-        arm_cls = ARM(args=callback_bucket)
-    except:
-        import traceback
-        traceback.print_exc()
-    arm_cls.run_empty()
-    arm_cls.start()
+    arm_cls = ARM()
+    arm_cls.start('empty')
+    while not arm_cls.checkCallback(): # アームの移動完了を待つ。Ctrl+cによる強制終了を受け付けるためにarm_cls.wait()ではなくarm_cls.checkCallback()でempty処理の終了キューを確認する
+        time.sleep(0.5)
 
     LOCAL_AI_VALUE = None; # 動作時のAI判定結果を保持する。None を初期値とする。
     ####################
@@ -89,31 +82,21 @@ def do_control():
         while SHARED_VARIABLE['CONTROL_READY']:
             if SHARED_VARIABLE['FORCE_STOP_VALUE']:
                 print('control FORCE STOP')
-                arm_cls.force_stop()
+                arm_cls.stop()
                 break
 
             # ARM状態を確認する
-            ARM_STATUS = arm_cls.get_status()
+            ARM_WORKING = arm_cls.get_status()
 
-            if ARM_STATUS == CONTROL_EMPTY:
+            if not ARM_WORKING:
                 # ARM停止中なら、前回実行したARMスレッドの実行終了の存在を確認する
-                try:
-                    exc = callback_bucket.get(block=False)
-                except Queue.Empty:
-                    # ARMスレッド終了通知キューが空なら続行する
-                    pass
-                else:
-                    # ARMスレッド終了通知キューがあるなら、キューを取得し
-                    for exc_value in exc:
-                        # deal with the exception
-                        print("{}".format(exc_value))
-                    # ARM停止中にスレッド終了情報があった場合、ステータス群を初期化する
+                if arm_cls.checkCallback(): # ARMスレッド終了通知キューがあるなら、キューを廃棄する
+                    # ARM動作終了したので、ステータス群を初期化する
                     SHARED_VARIABLE['PREDICTION_VALUE'] = None
                     print("control empty")
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_EMPTY
                     SHARED_VARIABLE['LED_VALUE'] = 'stop 0 1 2 3 4 5 6'
                     time.sleep(0.02)
-                    #arm_cls.join() # threads can only be started once. なのでthreadをjoinしておき、新しいARMスレッドを作成する
                     continue
 
                 if not SHARED_VARIABLE['CONTROL_VALUE'] == CONTROL_SHOULD_MOVE:
@@ -132,51 +115,39 @@ def do_control():
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_MOVING
                     SHARED_VARIABLE['LED_VALUE']='blink '+str(LOCAL_AI_VALUE)
                     print("control "+str(LOCAL_AI_VALUE)+" start")
-                    arm_cls = ARM(args=callback_bucket)
-                    arm_cls.run_catch_and_put()
-                    arm_cls.start()
+                    arm_cls.start('catch put empty')
                 if LOCAL_AI_VALUE == 2: # ラベル2
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_MOVING
                     SHARED_VARIABLE['LED_VALUE']='blink '+str(LOCAL_AI_VALUE)
                     print("control "+str(LOCAL_AI_VALUE)+" start")
-                    arm_cls = ARM(args=callback_bucket)
-                    arm_cls.run_catch_and_put()
-                    arm_cls.start()
+                    arm_cls.start('catch put empty')
                 if LOCAL_AI_VALUE == 3: # ラベル3
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_MOVING
                     SHARED_VARIABLE['LED_VALUE']='blink '+str(LOCAL_AI_VALUE)
                     print("control "+str(LOCAL_AI_VALUE)+" start")
-                    arm_cls = ARM(args=callback_bucket)
-                    arm_cls.run_catch_and_put()
-                    arm_cls.start()
+                    arm_cls.start('catch put empty')
                 if LOCAL_AI_VALUE == 4: # ラベル4
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_MOVING
                     SHARED_VARIABLE['LED_VALUE']='blink '+str(LOCAL_AI_VALUE)
                     print("control "+str(LOCAL_AI_VALUE)+" start")
-                    arm_cls = ARM(args=callback_bucket)
-                    arm_cls.run_catch_and_put()
-                    arm_cls.start()
+                    arm_cls.start('catch put empty')
                 if LOCAL_AI_VALUE == 5: # ラベル5
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_MOVING
                     SHARED_VARIABLE['LED_VALUE']='blink '+str(LOCAL_AI_VALUE)
                     print("control "+str(LOCAL_AI_VALUE)+" start")
-                    arm_cls = ARM(args=callback_bucket)
-                    arm_cls.run_catch_and_put()
-                    arm_cls.start()
+                    arm_cls.start('catch put empty')
                 if LOCAL_AI_VALUE == 6: # ラベル6
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_MOVING
                     SHARED_VARIABLE['LED_VALUE']='blink '+str(LOCAL_AI_VALUE)
                     print("control "+str(LOCAL_AI_VALUE)+" start")
-                    arm_cls = ARM(args=callback_bucket)
-                    arm_cls.run_catch_and_put()
-                    arm_cls.start()
+                    arm_cls.start('catch put empty')
                 if LOCAL_AI_VALUE == None:
                     SHARED_VARIABLE['CONTROL_VALUE'] = CONTROL_EMPTY
                     print("control None")
                     time.sleep(0.5)
                     continue
                 time.sleep(0.1)
-            else: # not ARM_STATUS == CONTROL_EMPTY:
+            else: # ARM_RUNNING:
                 # アームクラスの返答が動作中の時
                 print("control "+str(LOCAL_AI_VALUE)+" moving")
                 time.sleep(0.5)
@@ -189,8 +160,7 @@ def do_control():
         SHARED_VARIABLE['PREDICTION_READY']=False
         SHARED_VARIABLE['LED_READY']=False
         if not SHARED_VARIABLE['FORCE_STOP_VALUE']: # 強制停止でなければアームをEMPTYに移動する
-            arm_cls.run_empty()
-            arm_cls.start()
+            arm_cls.start('empty')
     return
 
 def load_graph(frozen_graph_filename):

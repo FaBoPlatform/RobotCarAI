@@ -26,8 +26,8 @@ class LED():
                 break        
             time.sleep(sleep_interval)
             sleep_time += sleep_interval
-        
-        
+        return
+
     '''
     light動作中は他の機能(light0to7,blink)はlock待ちにより動作しない
     途中で切り替えるには一度stopを実行後、他の機能を実行すること

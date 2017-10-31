@@ -4,16 +4,19 @@
 from __future__ import division
 import time
 from arm import ARM
+import Queue
+
 
 print("start")
 
 arm_cls=ARM()
 
-arm=arm_cls.arm3
+arm=arm_cls.arm1
 HUMAN_INPUT=False
 AUTO=True
+
 def main():
-    ANGLE=300
+    ANGLE=90 # 0-180 degree
     try:
         while True:
             # 人力確認
@@ -25,29 +28,25 @@ def main():
                 arm.set_angle(ARM_ANGLE)
 
             if AUTO:
-                arm_cls.arm_catch()
-                #time.sleep(1)
-                arm_cls.arm_put()
-                #time.sleep(1)
-                #arm_release()
-                arm_cls.arm_empty()
-                time.sleep(2)
+                arm_cls.start('catch put empty')
+                time.sleep(7)
+                arm_cls.stop()
 
-
-            #arm2.set_angle(ANGLE)
-            #time.sleep(0.0005)
-            
-            #if ANGLE >= 300:
-            #    STEP=-1
-            #if ANGLE <=150:
-            #    STEP=+1
-            #ANGLE+=STEP
+                '''
+                動作終了まで待機する
+                '''
+                #arm_cls.wait() # waitだと処理終わりまでCtrl+cによるKeyboardInterruptの例外処理を受け付けず、自身が止まっているので停止命令も受理出来なくなるので使わないことにする。代わりにcallbackを確認する。
+                while not arm_cls.checkCallback():
+                    time.sleep(1)
 
     except:
         import traceback
         traceback.print_exc()
     finally:
-        arm_cls.arm_empty()
+        #arm_cls.stop()
+        #arm_cls.arm_empty()
+        #arm_cls.wait()
+        pass
 
 main()
 
