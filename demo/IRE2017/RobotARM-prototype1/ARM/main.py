@@ -1,6 +1,7 @@
 # coding: utf-8
 import RPi.GPIO as GPIO
 import sys
+import threading
 
 # Button pin
 BUTTONPIN_RED = 5
@@ -53,9 +54,9 @@ def main():
         while True:
             # ボタンの取得
             # 強制停止
-            if( GPIO.input(R_BUTTONPIN)):
+            if GPIO.input(R_BUTTONPIN):
                 self.state = ARM_STATE_STOP
-            elif( GPIO.input(B_BUTTONPIN)):
+            elif GPIO.input(B_BUTTONPIN):
                 self.state = ARM_STATE_RUN
                 self.counter = 0
             else:
