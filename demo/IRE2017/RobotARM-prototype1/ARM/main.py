@@ -13,14 +13,13 @@ ARM_STATE_RUN = 2
 ARM_STATE_FINISH = 3
 ARM_STATE_STOP = 4
 
-
 # Static state
 state = ARM_STATE_IDLE
 
 # Static counter
 counter = 0
 
-# Thread state
+# Static thread state
 runnning = False
 
 """
@@ -39,12 +38,24 @@ def controlArm(self, counter):
     else self.counter < 300:
 
 """
+Button Event
+"""
+def buttonCallback(channel):
+    if GPIO.input(BUTTONPIN_RED):
+        self.state = ARM_STATE_STOP
+    if GPIO.input(BUTTONPIN_BLUE):
+        self.state = ARM_STATE_IDLE
+        self.counter = 0
+        
+"""
 初期化処理
 """
 def init():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(BUTTONPIN_RED, GPIO.IN)
-    GPIO.setup(BUTTONPIN_BLUE, GPIO.IN)
+    GPIO.setup(BUTTONPIN_RED, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(BUTTONPIN_BLUE, GPIO.IN,  pull_up_down=GPIO.PUD_DOWN)
+    GPIO.add_event_detect(BUTTONPIN_RED, GPIO.RISING, callback=buttonCallback, bouncetime=300)
+    GPIO.add_event_detect(BUTTONPIN_BLUE, GPIO.RISING, callback=buttonCallback, bouncetime=300)
 
 """
 各State毎の処理を記載する
@@ -52,15 +63,7 @@ def init():
 def main():
     try:
         while True:
-            # ボタンの取得
-            # 強制停止
-            if GPIO.input(R_BUTTONPIN):
-                self.state = ARM_STATE_STOP
-            elif GPIO.input(B_BUTTONPIN):
-                self.state = ARM_STATE_RUN
-                self.counter = 0
-            else:
-
+            # ロジック
             if state == ARM_STATE_STOP:
                 # 強制ストップ処理
             elif state == ARM_STATE_RUN:
