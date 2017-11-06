@@ -6,7 +6,14 @@ import time
 from servo import Servo
 from servo import ServoConfig
 import threading
-import Queue
+
+import sys
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
+if PY2:
+    import Queue
+elif PY3:
+    import queue as Queue
 
 class ARM():
     STOP_PATTERN = False

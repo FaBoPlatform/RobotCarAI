@@ -43,7 +43,7 @@ class Servo():
     SERVO_CENTER_ANGLE = 90
 
     # PWM周期 PCA9685設定になるため、全てのサーボで同じ値を使うこと
-    SERVO_HZ = 50
+    SERVO_HZ = 60
 
     def __init__(self,bus=1,channel=0,conf=ServoConfig()):
         try:
@@ -51,7 +51,10 @@ class Servo():
             self.bus = smbus.SMBus(bus)
             self.PCA9685 = Fabo_PCA9685.PCA9685(self.bus)
             self.conf = conf
-            self.PCA9685.set_freq(self.SERVO_HZ)
+            prescale = self.PCA9685.calc_prescale(self.SERVO_HZ)
+            self.PCA9685.set_prescale(prescale)
+            hz = self.PCA9685.calc_hz(prescale)
+            print("hz:{}".format(hz))
         except:
             import traceback
             traceback.print_exc()

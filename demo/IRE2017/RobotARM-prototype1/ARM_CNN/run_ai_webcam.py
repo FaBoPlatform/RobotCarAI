@@ -144,7 +144,7 @@ with tf.Session(graph=graph) as sess:
             print("prediction:{} score:{}".format(max_index,prediction_score)) # 予測クラス 0:その他 1:ラベル1 2:ラベル2 ..
 
             if SAVE_PREDICTION:
-                SAVE_DIR=PREDICTION_DIR+"/"+str(pmax)
+                SAVE_DIR=PREDICTION_DIR+"/"+str(max_index)
                 if not os.path.exists(SAVE_DIR):
                     os.makedirs(SAVE_DIR)
                 cv2.imwrite(SAVE_DIR+"/pred1-"+str(frame_cnt)+".png",cv_bgr)
