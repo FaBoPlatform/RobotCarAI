@@ -273,7 +273,7 @@ def do_prediction():
         '''
         with tf.Session(graph=graph) as sess:
             # CNNモデルの入力値となる画像サイズ
-            data_cols=image_height * image_width * image_depth # 160*120*3
+            data_cols=image_height * image_width * image_depth # 120*160*3
             frame_cnt = 0
             learned_step = sess.run(step)
             print("learned_step:{}".format(learned_step))

@@ -36,7 +36,7 @@ class Servo():
     '''
     CHANNEL = 0 # PCA9685 サーボ接続チャネル
 
-    
+
     # サーボの限界軸角度。サーボ自体の軸角度の他に、サーボを取り付けた部分の稼働可能角を考慮して、稼働可能な軸角度を決めること
     SERVO_MIN_ANGLE = 0
     SERVO_MAX_ANGLE = 180
@@ -51,10 +51,8 @@ class Servo():
             self.bus = smbus.SMBus(bus)
             self.PCA9685 = Fabo_PCA9685.PCA9685(self.bus)
             self.conf = conf
-            prescale = self.PCA9685.calc_prescale(self.SERVO_HZ)
-            self.PCA9685.set_prescale(prescale)
-            hz = self.PCA9685.calc_hz(prescale)
-            print("hz:{}".format(hz))
+            self.PCA9685.set_hz(self.SERVO_HZ)
+            print("hz:{}".format(self.SERVO_HZ))
         except:
             import traceback
             traceback.print_exc()
