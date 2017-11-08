@@ -3,13 +3,21 @@
 
 import time
 import logging
+import threading
 from arm import ARM
 from ai import AI
+from spi import SPI
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] time:%(created).8f pid:%(process)d pn:%(processName)-10s tid:%(thread)d tn:%(threadName)-10s fn:%(funcName)-10s %(message)s',
 )
+
+########################################
+# ステータス
+########################################
+BUTTON_STATE_RUN = True
+MAIN_STATE_RUN = True
 
 ########################################
 # ARMとAI準備
@@ -19,7 +27,27 @@ arm = ARM()
 # AI準備
 ai = AI()
 ai.init_webcam()
+# 停止ボタン準備
+A0 = 0 # SPI PIN
+STOP_BUTTON_SPI_PIN = A0
+spi = SPI()
 
+########################################
+# 停止ボタンの値を取得し続ける関数
+########################################
+def do_stop_button():
+    global BUTTON_STATE_RUN
+    global MAIN_STATE_RUN
+    while BUTTON_STATE_RUN:
+        data = spi.readadc(STOP_BUTTON_SPI_PIN)
+        if data >= 1000:
+            # 停止ボタンが押された
+            MAIN_STATE_RUN = False
+            BUTTON_STATE_RUN = False
+            break
+        time.sleep(0.1)
+            
+        
 '''
 メイン処理を行う部分
 '''
@@ -28,7 +56,7 @@ def main():
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
 
-        while True:
+        while MAIN_STATE_RUN:
             ########################################
             # AI予測結果を取得する
             ########################################
@@ -72,4 +100,7 @@ def main():
     return
 
 if __name__ == '__main__':
+    # 停止ボタンの状態を監視するスレッドを起動する
+    t = threading.Thread(target=do_stop_button,args=())
+    t.start()
     main()
