@@ -18,28 +18,28 @@ logging.basicConfig(level=logging.DEBUG,
 ########################################
 # ステータス
 ########################################
-BUTTON_STATE_RUN = True
-MAIN_STATE_RUN = True
+MAIN_THREAD_RUN = True
+FORCE_STOP_THREAD_RUN = True
 
 
 ########################################
 # 停止ボタンの値を取得し続ける関数
 ########################################
-def do_stop_button():
-    global BUTTON_STATE_RUN
-    global MAIN_STATE_RUN
+def do_force_stop_button():
+    global FORCE_STOP_THREAD_RUN
+    global MAIN_THREAD_RUN
 
     # 停止ボタン準備
     A0 = 0 # SPI PIN
     STOP_BUTTON_SPI_PIN = A0
     spi = SPI()
 
-    while BUTTON_STATE_RUN:
+    while FORCE_STOP_THREAD_RUN
         data = spi.readadc(STOP_BUTTON_SPI_PIN)
         if data >= 1000:
             # 停止ボタンが押された
-            MAIN_STATE_RUN = False
-            BUTTON_STATE_RUN = False
+            MAIN_THREAD_RUN = False
+            FORCE_STOP_THREAD_RUN = False
             break
         time.sleep(0.1)
     return
@@ -49,8 +49,8 @@ def do_stop_button():
 '''
 def main():
 
-    global MAIN_STATE_RUN
-    global BUTTON_STATE_RUN
+    global MAIN_THREAD_RUN
+    global FORCE_STOP_THREAD_RUN
 
     # LED 準備
     led = LED()
@@ -68,26 +68,30 @@ def main():
         import traceback
         traceback.print_exc()
         # WebCamの準備に失敗
-        BUTTON_STATE_RUN = False
+        FORCE_STOP_THREAD_RUN = False
         led.stop()
         led.start('lightall')
         time.sleep(5)
+        led.stop()
         sys.exit(0)
     finally:
-        led.stop()
+        pass
 
     try:
         led.start('light 7')
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
 
-        while MAIN_STATE_RUN:
+        while MAIN_THREAD_RUN:
+            if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
+
             ########################################
             # AI予測結果を取得する
             ########################################
             same_count = 1 # 連続で同じ結果になった回数を保持する。初回を1回目とカウントする
             last_ai_value = None # 前回の分類結果を保持する
             while same_count < 3: # N回連続で同じ分類になったら確定する
+                if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
                 # 今回の予測結果を取得する
                 ai_value = ai.get_prediction(score)
                 # 分類番号のLEDを消灯する
@@ -117,9 +121,29 @@ def main():
             # 予測番号のLEDを点滅する
             led.start('blink '+str(ai_value))
             # アームでつかむ
+            ARM_STATE_RUN = True
             arm.start('catch put empty')
             # アームの処理が終わるまで待機する
-            arm.wait()
+            #arm.wait()
+            while ARM_STATE_RUN:
+                if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
+                # アームに次の動作命令キューが残っているかどうかを確認する
+                ARM_HAS_NEXT_QUEUE = arm.get_status()
+                if ARM_HAS_NEXT_QUEUE:
+                    # 動作命令キューが残っているなら何もしないでsleep
+                    pass
+                else:
+                    # 動作命令キューが残っていないなら、ARM終了通知キューを調べる
+                    if arm.checkCallback():
+                        # ARMの動作が終了した
+                        ARM_STATE_RUN = False
+                        break
+                    else:
+                        # 最後の動作命令キューを実行中のため何もしないでsleep
+                        pass
+                time.sleep(0.5)
+                        
+            if not FORCE_STOP_THREAD_RUN: arm.stop() # 強制停止ならアームを停止する
             # LED点滅を停止する
             led.start('stop 0 1 2 3 4 5 6')
 
@@ -130,7 +154,7 @@ def main():
     finally:
         print("main end")
         # ボタンスレッドを停止させる
-        BUTTON_STATE_RUN = False
+        FORCE_STOP_THREAD_RUN = False
         # LEDを消灯する
         led.stop()
         pass
