@@ -68,6 +68,8 @@ def main():
         import traceback
         traceback.print_exc()
         # WebCamの準備に失敗
+        BUTTON_STATE_RUN = False
+        led.stop()
         led.start('lightall')
         time.sleep(5)
         sys.exit(0)
@@ -83,7 +85,7 @@ def main():
             ########################################
             # AI予測結果を取得する
             ########################################
-            same_count = 0 # 連続で同じ結果になった回数を保持する
+            same_count = 1 # 連続で同じ結果になった回数を保持する。初回を1回目とカウントする
             last_ai_value = None # 前回の分類結果を保持する
             while same_count < 3: # N回連続で同じ分類になったら確定する
                 # 今回の予測結果を取得する
@@ -99,8 +101,8 @@ def main():
                     # 前回の予測結果と同じならsame_countに1を加算する
                     same_count += 1
                 else:
-                    # 前回の予測結果と違うならsame_countを0に戻す
-                    same_count = 0
+                    # 前回の予測結果と違うならsame_countを1に戻す
+                    same_count = 1
                 # 今回の予測結果をlast_ai_valueに保存する
                 last_ai_value = ai_value
 
