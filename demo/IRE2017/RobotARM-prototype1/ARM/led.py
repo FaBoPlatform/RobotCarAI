@@ -33,7 +33,7 @@ class LED():
     途中で切り替えるには一度stopを実行後、他の機能を実行すること
     '''
     def light(self, target):
-        print('start light {}'.format(target))
+        #print('start light {}'.format(target))
         with self.lock:
             self.pcal6408.setDigital(1<<target, 1)
         return
@@ -42,7 +42,7 @@ class LED():
     全灯する
     '''
     def lightall(self):
-        print('start lightall')
+        #print('start lightall')
         with self.lock:
             for i in range(8):
                 self.pcal6408.setDigital(1<<i, 1)
@@ -53,7 +53,7 @@ class LED():
     途中で切り替えるには一度stopを実行後、他の機能を実行すること
     '''
     def light0to7(self):
-        print('start light0to7')
+        #print('start light0to7')
         with self.lock:
             for i in range(8):
                 if self.STOP_PATTERN:
@@ -73,7 +73,7 @@ class LED():
     上一列を点滅させた後、下一列を点滅させることを繰り返し行う
     '''
     def lightline(self):
-        print('start lightline')
+        #print('start lightline')
         with self.lock:
             while True:
                 if self.STOP_PATTERN:
@@ -107,7 +107,7 @@ class LED():
     途中で切り替えるには一度stopを実行後、他の機能を実行すること
     '''
     def blink(self, target):
-        print('start blink {}'.format(target))
+        #print('start blink {}'.format(target))
         sleep_time = 0.0
         sleep_interval = 0.01
         with self.lock:
@@ -124,7 +124,7 @@ class LED():
         return
 
     def stop(self, targets=None):
-        print('start stop targets:{}'.format(targets))
+        #print('start stop targets:{}'.format(targets))
         self.STOP_PATTERN = True
         with self.lock:
             if targets is None:
@@ -144,7 +144,7 @@ class LED():
         self.STOP_PATTERN = False
         t=None
         if self.PATTERN[0] == 'light':
-            print('pattern {}'.format(self.PATTERN))
+            #print('pattern {}'.format(self.PATTERN))
             target = 7
             if len(self.PATTERN) == 1:
                 target = 7
@@ -153,19 +153,19 @@ class LED():
             t = threading.Thread(target=self.light,args=(target,))
             t.start()
         elif self.PATTERN[0] == 'lightall':
-            print('pattern {}'.format(self.PATTERN))
+            #print('pattern {}'.format(self.PATTERN))
             t = threading.Thread(target=self.lightall,args=())
             t.start()
         elif self.PATTERN[0] == 'light0to7':
-            print('pattern {}'.format(self.PATTERN))
+            #print('pattern {}'.format(self.PATTERN))
             t = threading.Thread(target=self.light0to7,args=())
             t.start()
         elif self.PATTERN[0] == 'lightline':
-            print('pattern {}'.format(self.PATTERN))
+            #print('pattern {}'.format(self.PATTERN))
             t = threading.Thread(target=self.lightline,args=())
             t.start()
         elif self.PATTERN[0] == 'blink':
-            print('pattern {}'.format(self.PATTERN))
+            #print('pattern {}'.format(self.PATTERN))
             target = 7
             if len(self.PATTERN) == 1:
                 target = 7
@@ -174,7 +174,7 @@ class LED():
             t = threading.Thread(target=self.blink,args=(target,))
             t.start()
         elif self.PATTERN[0] == 'stop': # stop()を呼び出してもよい
-            print('pattern {}'.format(self.PATTERN))
+            #print('pattern {}'.format(self.PATTERN))
             targets = None
             if len(self.PATTERN) == 1:
                 targets = None

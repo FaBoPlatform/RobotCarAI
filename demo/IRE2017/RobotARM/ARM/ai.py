@@ -16,14 +16,10 @@ logging.basicConfig(level=logging.DEBUG,
 class AI():
 
     sess = None
-    threshold_score = 0 # 予測結果に必要なスコア閾値
     other_label = 0 # その他と判断するラベル番号
     learned_step = None # モデルの学習ステップ数
 
-    def __init__(self, score=0):
-        '''
-        score: 予測結果に必要なスコア閾値
-        '''
+    def __init__(self):
         # グラフ初期化
         tf.reset_default_graph()
 
@@ -47,9 +43,9 @@ class AI():
         self.score = self.graph.get_tensor_by_name('prefix/score:0')
         self.step = self.graph.get_tensor_by_name('prefix/step/step:0')
 
-        # スコア閾値
-        self.threshold_score = score
+        self.sess = tf.Session(graph=self.graph)
 
+        return
     def __del__(self):
         if self.vid is not None:
             self.vid.release()
@@ -144,18 +140,15 @@ class AI():
         モデルが保持する学習済みステップ数を取得する
         '''
         if self.learned_step is None:
-            if self.sess is None:
-                self.sess = tf.Session(graph=self.graph)
             self.learned_step = self.sess.run(self.step)
 
         return self.learned_step
 
-    def get_prediction(self):
+    def get_prediction(self,score=0):
         '''
         AI予測を実行する
+        score: 予測結果に必要なスコア閾値
         '''
-        if self.sess is None:
-            self.sess = tf.Session(graph=self.graph)
 
         # 予測結果をその他で初期化する
         prediction_index = self.other_label
@@ -168,7 +161,7 @@ class AI():
             max_score = _score[0][max_index]
 
             # 予測結果の最大値のスコアと閾値を比較する
-            if max_score >= self.threshold_score:
+            if max_score >= score:
                 # スコアが高い
                 prediction_index = max_index
                 prediction_score = max_score
