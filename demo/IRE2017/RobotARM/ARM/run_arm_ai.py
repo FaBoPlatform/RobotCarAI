@@ -34,7 +34,7 @@ def do_force_stop_button():
     STOP_BUTTON_SPI_PIN = A0
     spi = SPI()
 
-    while FORCE_STOP_THREAD_RUN
+    while FORCE_STOP_THREAD_RUN:
         data = spi.readadc(STOP_BUTTON_SPI_PIN)
         if data >= 1000:
             # 停止ボタンが押された
@@ -163,6 +163,6 @@ def main():
 
 if __name__ == '__main__':
     # 停止ボタンの状態を監視するスレッドを起動する
-    t = threading.Thread(target=do_stop_button,args=())
+    t = threading.Thread(target=do_force_stop_button,args=())
     t.start()
     main()
