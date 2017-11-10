@@ -60,7 +60,7 @@ def main():
     arm = ARM()
     # AI準備
     ai = AI()
-    score = 0 # スコア閾値
+    score = 0.95 # スコア閾値
     # WebCam準備
     try:
         ai.init_webcam()
@@ -90,10 +90,17 @@ def main():
             ########################################
             same_count = 1 # 連続で同じ結果になった回数を保持する。初回を1回目とカウントする
             last_ai_value = None # 前回の分類結果を保持する
+            frame_buffer = 10 # OpenCV フレームバッファサイズ。この分のフレームを廃棄する
+            while frame_buffer > 0: # OpenCVカメラ画像が過去のバッファの可能性があるので、その分を廃棄する
+                if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
+                ai.webcam_capture()
+                frame_buffer -= 1
             while same_count < 3: # N回連続で同じ分類になったら確定する
                 if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
                 # 今回の予測結果を取得する
                 ai_value = ai.get_prediction(score)
+
+
                 # 分類番号のLEDを消灯する
                 led.start('stop 0 1 2 3 4 5 6')
                 time.sleep(0.02)
