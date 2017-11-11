@@ -15,6 +15,7 @@ elif SMBUS == 'smbus2':
     import smbus2 as smbus
 
 import time
+from servo import Servo
 
 class Motor():
     ## DRV8830 Default I2C address
@@ -107,6 +108,7 @@ class RobotCar():
 print("start")
 
 car = RobotCar()
+handle = Servo()
 car.motor_forward(100)
 time.sleep(1)
 car.motor_back(100)
@@ -114,5 +116,13 @@ time.sleep(1)
 car.motor_forward(100)
 time.sleep(1)
 car.motor_stop()
+
+handle.set_angle(91)
+time.sleep(1)
+handle.set_angle(70)
+time.sleep(1)
+handle.set_angle(110)
+time.sleep(1)
+handle.set_angle(91)
 
 print("end")
