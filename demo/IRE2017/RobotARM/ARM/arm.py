@@ -24,19 +24,19 @@ class ARM():
     CONTROL_STATUS = CONTROL_EMPTY # アーム動作状態定義
 
     # つまみ関節稼働値
-    ARM1_CLOSE=62 # 初期位置[0-180] 試作アーム:60
+    ARM1_CLOSE=62 # 初期位置[0-180] 試作アーム:62
     ARM1_OPEN=90  # 開いた状態[0-180] 試作アーム:90
-    ARM1_CATCH=65 # キャッチ[0-180] 試作アーム:65
+    ARM1_CATCH=60 # キャッチ[0-180] 試作アーム:60
 
     # 手首関節可動値
     ARM2_EMPTY=80 # 初期位置[0-180] 試作アーム:80
     ARM2_LIFT=45  # 持ち上げ[0-180] 試作アーム:45
-    ARM2_CATCH=12 # キャッチ[0-180] 試作アーム:25
+    ARM2_CATCH=10 # キャッチ[0-180] 試作アーム:10
 
     # 胴体関節稼働値
-    ARM3_EMPTY=85 # 初期位置[0-180] 試作アーム:85
-    ARM3_CATCH=85 # キャッチ[0-180] 試作アーム:85
-    ARM3_PUT=30   # 持ち上げ[0-180] 試作アーム:20
+    ARM3_EMPTY=90 # 初期位置[0-180] 試作アーム:90
+    ARM3_CATCH=90 # キャッチ[0-180] 試作アーム:90
+    ARM3_PUT=30   # 置く位置[0-180] 試作アーム:30
 
     ARM1_STATUS=0 # 0:close, 1:open, 2:catch
     ARM2_STATUS=0 # 0:empty, 1:catch, 2:lift
@@ -192,8 +192,8 @@ class ARM():
             self.rem_sleep(0.5*self.DELAY)
             if self.STOP_PATTERN:
                 return        
-        if not self.arm2.get_angle() == self.ARM2_LIFT-10:
-            self.arm2.set_angle(self.ARM2_LIFT-10)
+        if not self.arm2.get_angle() == self.ARM2_CATCH+12:
+            self.arm2.set_angle(self.ARM2_CATCH+12)
             self.ARM2_STATUS=1
             self.rem_sleep(0.5*self.DELAY)
             if self.STOP_PATTERN:
