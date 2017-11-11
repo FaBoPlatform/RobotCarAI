@@ -27,8 +27,6 @@ def main():
 
             if AUTO:
                 arm_cls.start('catch put empty')
-                time.sleep(7)
-                arm_cls.stop()
 
                 '''
                 動作終了まで待機する
