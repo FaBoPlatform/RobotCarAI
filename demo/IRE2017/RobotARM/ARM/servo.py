@@ -47,10 +47,11 @@ class Servo():
 
     def __init__(self,bus=1,channel=0,conf=ServoConfig()):
         try:
+            self.conf = conf
             self.CHANNEL = channel
             self.bus = smbus.SMBus(bus)
-            self.PCA9685 = Fabo_PCA9685.PCA9685(self.bus)
-            self.conf = conf
+            init_analog = self.angle_to_analog(90)
+            self.PCA9685 = Fabo_PCA9685.PCA9685(self.bus,init_analog)
             self.PCA9685.set_hz(self.SERVO_HZ)
             print("hz:{}".format(self.SERVO_HZ))
         except:
@@ -116,19 +117,19 @@ class Servo():
             if START_ANALOG <= target_analog:
                 STEP=+1
 
-            ANALOG = self.get_analog()
+            ANALOG = START_ANALOG
             while True:
                 ANALOG+=STEP
                 self.set_analog(ANALOG)
                 time.sleep(1.0/(speed*10.0))
                 if ANALOG == target_analog:
-                    END_ANALOG = self.get_analog()
-                    END_ANGLE = self.analog_to_angle(END_ANALOG)
-                    if not ANALOG == END_ANALOG:
-                        msg = 'Servo angle error. Couldn\'t move '+str(START_ANGLE)+" to "+str(angle)+". Now "+str(END_ANGLE)+"."
+                    NOW_ANALOG = self.get_analog()
+                    NOW_ANGLE = self.analog_to_angle(NOW_ANALOG)
+                    if not ANALOG == NOW_ANALOG:
+                        msg = 'Servo angle error. Couldn\'t move '+str(START_ANGLE)+" to "+str(angle)+". Now "+str(NOW_ANGLE)+"."
                         raise ServoAngleError(Exception(msg))
                     else:
-                        print("Servo angle ok. start:{} target:{} now:{}".format(START_ANGLE,angle,END_ANGLE))
+                        print("Servo angle ok. start:{} target:{} now:{}".format(START_ANGLE,angle,NOW_ANGLE))
                     break
             return
         except:
