@@ -306,12 +306,38 @@ def do_stop():
     return
 
 '''
+ここはプロセスで実行される
+'''
+def do_stop_button():
+    from spi import SPI
+    # 停止ボタン準備
+    A0 = 0 # SPI PIN
+    STOP_BUTTON_SPI_PIN = A0
+    spi = SPI()
+
+    SHARED_VARIABLE['STOP_BUTTON_READY']=True
+    while SHARED_VARIABLE['STOP_BUTTON_READY']:
+        data = spi.readadc(STOP_BUTTON_SPI_PIN)
+        if data >= 1000:
+            # 停止ボタンが押された
+            print("stop button pushed")
+            SHARED_VARIABLE['CONTROL_READY']=False
+            SHARED_VARIABLE['PREDICTION_READY']=False
+            SHARED_VARIABLE['IF_READY']=False
+            SHARED_VARIABLE['STOP_BUTTON_READY']=False
+            break
+        time.sleep(0.1)
+    return
+    
+
+'''
 process pattern
 '''
 SHARED_VARIABLE=Manager().dict()
 SHARED_VARIABLE['CONTROL_READY']=False
 SHARED_VARIABLE['PREDICTION_READY']=False
 SHARED_VARIABLE['IF_READY']=False
+SHARED_VARIABLE['STOP_BUTTON_READY']=False
 SHARED_VARIABLE['PREDICTION_VALUE']=0
 SHARED_VARIABLE['PREDICTION_SPEED']=0 # 0 - 100
 SHARED_VARIABLE['PREDICTION_ANGLE']=0.0 # 0.0 - 1.0 
@@ -319,8 +345,9 @@ SHARED_VARIABLE['PREDICTION_ANGLE']=0.0 # 0.0 - 1.0
 '''
 プロセスによる実行関数の振り分け定義
 '''
-PROCESS_LIST=['do_control','do_prediction','do_stop']
-#PROCESS_LIST=['do_control','do_if','do_stop']
+PROCESS_LIST=['do_control','do_prediction','do_stop_button']
+#PROCESS_LIST=['do_control','do_prediction','do_stop','do_stop_button']
+#PROCESS_LIST=['do_control','do_if','do_stop','do_stop_button']
 def do_process(target):
 
     if target == 'do_control':
@@ -335,6 +362,9 @@ def do_process(target):
     if target == 'do_stop':
         do_stop()
         return "end do_stop"
+    if target == 'do_stop_button':
+        do_stop_button()
+        return "end do_stop_button"
 
 '''
 メイン処理を行う部分
