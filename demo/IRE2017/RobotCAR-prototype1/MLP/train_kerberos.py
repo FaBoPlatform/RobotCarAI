@@ -80,6 +80,14 @@ def load_and_enqueue(sess):
             break
     print("finished enqueueing")
 
+def weight_variable(shape):
+    initial = tf.truncated_normal(shape, stddev=0.1)
+    return tf.Variable(initial)
+
+def bias_variable(shape):
+    initial = tf.constant(0.1, shape=shape)
+    return tf.Variable(initial)
+    
 with tf.variable_scope("input"):
     placeholder_input_data = tf.placeholder('float', [None, data_cols], name='input_data') # for load_and_enqueue. use dequeue_data_op for prediction
     placeholder_input_target = tf.placeholder('float', name='input_target') # for load_and_enqueue. use dequeue_target_op for prediction
@@ -105,11 +113,11 @@ with tf.variable_scope("queue"):
 
 
 with tf.variable_scope('neural_network_model'):
-    hidden_1_layer = {'weights':tf.Variable(tf.random_normal([data_cols, n_nodes_hl1])),
-                      'biases':tf.Variable(tf.random_normal([n_nodes_hl1]))}
+    hidden_1_layer = {'weights':tf.Variable(weight_variable([data_cols, n_nodes_hl1])),
+                      'biases':tf.Variable(bias_variable([n_nodes_hl1]))}
 
-    output_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_classes])),
-                    'biases':tf.Variable(tf.random_normal([n_classes])),}
+    output_layer = {'weights':tf.Variable(weight_variable([n_nodes_hl1, n_classes])),
+                    'biases':tf.Variable(bias_variable([n_classes])),}
 
 
     l1 = tf.add(tf.matmul(dequeue_data_op,hidden_1_layer['weights']), hidden_1_layer['biases'])
@@ -202,8 +210,9 @@ with tf.Session() as sess:
         coord.request_stop()
         coord.join(threads)
 
-    _step = sess.run(step_op,feed_dict={placeholder_step:step}) # variable_stepにstepを記録する
-    saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
+    if step > _step: # ステップ学習時
+        _step = sess.run(step_op,feed_dict={placeholder_step:step}) # variable_stepにstepを記録する
+        saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
 
 
     # テストデータを新たに生成し、精度を確認する

@@ -12,9 +12,9 @@ import numpy as np
 
 class SensorGenerator():
     # 車両全幅(cm)
-    OVERALL_WIDTH=19.0
+    OVERALL_WIDTH=16.5
     # ホイールベース + ノーズ(cm)
-    WHEELBASE=24.5 + 14.0
+    WHEELBASE=19.0 + 14.0
     # 最小回転半径(cm)
     TURNING_CIRCLE=75 # 旋回半径
     # 旋回禁止距離定義
@@ -29,7 +29,7 @@ class SensorGenerator():
     a=(TURNING_CIRCLE-OVERALL_WIDTH/2-(TURNING_CIRCLE-x))
     y=np.sqrt(np.power(TURNING_CIRCLE,2)-np.power(a,2))
     z=y-WHEELBASE
-    FRONT_MIN_DRIVE_CONTROL_DISTANCE=z+10 # 22.6363 全面に障害物があり、曲がってもぶつかる前方障害物までの距離。停止のために10cmおまけで追加しておく
+    FRONT_MIN_DRIVE_CONTROL_DISTANCE=z # 22.6363 全面に障害物があり、曲がってもぶつかる前方障害物までの距離。停止のために10cmおまけで追加しておく
 
     UNLIMIT=1000 # 生成するセンサー値の最大値
 
