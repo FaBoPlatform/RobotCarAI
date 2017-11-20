@@ -7,7 +7,7 @@ from tensorflow.python.framework import graph_util
 
 MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 FROZEN_MODEL_NAME="cnn_model.pb"
-OUTPUT_NODE_NAMES="input_x,output_y,score,step/step"
+OUTPUT_NODE_NAMES="input_x,output_y,score,step/step,keep_prob"
 
 CLEAR_DEVICES=True
 

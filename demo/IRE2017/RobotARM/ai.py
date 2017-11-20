@@ -74,6 +74,7 @@ class AI():
         self.output_y = self.graph.get_tensor_by_name('prefix/output_y:0')
         self.score = self.graph.get_tensor_by_name('prefix/score:0')
         self.step = self.graph.get_tensor_by_name('prefix/step/step:0')
+        self.keep_prob = self.graph.get_tensor_by_name('prefix/keep_prob:0')
 
         self.sess = tf.Session(graph=self.graph)
 
@@ -194,7 +195,7 @@ class AI():
             return
 
         image_data = self.cv_bgr.reshape(1,self.data_cols)
-        _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:image_data})
+        _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:image_data,self.keep_prob:1.0})
 
         max_index = np.argmax(_output_y[0])
         max_score = _score[0][max_index]

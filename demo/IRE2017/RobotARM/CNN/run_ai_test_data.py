@@ -63,6 +63,7 @@ input_x = graph.get_tensor_by_name('prefix/input_x:0')
 output_y= graph.get_tensor_by_name('prefix/output_y:0')
 score= graph.get_tensor_by_name('prefix/score:0')
 step = graph.get_tensor_by_name('prefix/step/step:0')
+keep_prob= graph.get_tensor_by_name('prefix/keep_prob:0')
 
 
 imageFormat=1
@@ -82,7 +83,7 @@ with tf.Session(graph=graph) as sess:
     learned_step = sess.run(step)
     print("learned_step:{}".format(learned_step))
 
-    _output_y,_score = sess.run([output_y,score],feed_dict={input_x:image_data})
+    _output_y,_score = sess.run([output_y,score],feed_dict={input_x:image_data,keep_prob:1.0})
     print(_output_y[0]) # 予測値
     max_index=np.argmax(_output_y[0])
     prediction_score = _score[0][max_index]
