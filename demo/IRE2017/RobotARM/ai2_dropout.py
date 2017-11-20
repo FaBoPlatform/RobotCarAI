@@ -63,7 +63,6 @@ class AI():
         カレントディレクトリが別の場所からの実行でも問題ないように、
         ディレクトリパスはこのファイルと同じディレクトリとして取得する
         '''
-        #FROZEN_MODEL_NAME="cnn_model-420-dropout.pb"
         FROZEN_MODEL_NAME="cnn_model_murayama_1570.pb"
         MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 

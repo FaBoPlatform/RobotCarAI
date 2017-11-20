@@ -6,7 +6,8 @@ import logging
 import threading
 import sys
 from arm import ARM
-from ai import AI
+#from ai import AI
+from ai2_dropout import AI
 from spi import SPI
 from led import LED
 

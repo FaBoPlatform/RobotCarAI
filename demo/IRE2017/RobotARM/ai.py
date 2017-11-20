@@ -63,7 +63,7 @@ class AI():
         カレントディレクトリが別の場所からの実行でも問題ないように、
         ディレクトリパスはこのファイルと同じディレクトリとして取得する
         '''
-        FROZEN_MODEL_NAME="cnn_model.pb"
+        FROZEN_MODEL_NAME="cnn_model_220.pb"
         MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 
         # AIモデル読み込み

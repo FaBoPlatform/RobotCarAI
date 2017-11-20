@@ -5,9 +5,10 @@ import time
 import logging
 import threading
 import sys
-from ai import AI
-from ai import SaveConfig
-#from ai_murayama import AI
+#from ai import AI
+#from ai import SaveConfig
+from ai2_dropout import AI
+from ai2_dropout import SaveConfig
 from spi import SPI
 from led import LED
 
