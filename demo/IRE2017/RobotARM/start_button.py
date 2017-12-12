@@ -2,14 +2,16 @@
 # pip3 install spidev
 # AI開始ボタン
 
+import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
+
 import spidev
 import time
 import sys
-import os
 import subprocess
 from subprocess import Popen
-from led import LED
-from spi import SPI
+from lib.led import LED
+from lib.spi import SPI
 
 # 開始ボタンのSPI接続コネクタ番号
 A1 = 1
@@ -23,8 +25,8 @@ led = LED()
 proc = None
 try:
     led.start('lightline')
-    cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_arm_ai.py"
-    cmd_test = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_ai_test.py"
+    cmd = "python "+_FILE_DIR+"/run_arm_ai.py"
+    cmd_test = "python "+_FILE_DIR+"/test/run_ai_test.py"
     while True:
         data = spi.readadc(START_BUTTON_SPI_PIN) # data: 0-1023
         if data >= 1000:

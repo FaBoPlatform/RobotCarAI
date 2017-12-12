@@ -1,6 +1,11 @@
 # coding: utf-8
+import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
+
 import time
-from spi import SPI
+import sys
+sys.path.append(_FILE_DIR+'/..')
+from lib import SPI
 
 A0 = 0
 SPI_PIN = A0

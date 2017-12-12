@@ -1,9 +1,14 @@
 #!/usr/bin/python
 # coding: utf-8 
-
 from __future__ import division
+
+import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
+
 import time
-from arm import ARM
+import sys
+sys.path.append(_FILE_DIR+'/..')
+from lib import ARM
 
 print("start")
 

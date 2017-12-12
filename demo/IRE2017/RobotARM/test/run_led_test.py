@@ -1,7 +1,10 @@
 # coding: utf-8 
+import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
 import time
 import sys
-from led import LED
+sys.path.append(_FILE_DIR+'/..')
+from lib import LED
 
 print("start")
 try:

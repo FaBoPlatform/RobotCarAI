@@ -5,11 +5,10 @@ import time
 import logging
 import threading
 import sys
-from arm import ARM
-#from ai import AI
-from ai2_dropout import AI
-from spi import SPI
-from led import LED
+from lib import ARM
+from lib import AI
+from lib import SPI
+from lib import LED
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,

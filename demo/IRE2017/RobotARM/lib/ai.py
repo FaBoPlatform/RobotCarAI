@@ -20,7 +20,7 @@ class SaveConfig():
     # TRUE_LABEL = None # Noneならprediction結果をそのまま保存する
     # TRUE_LABEL = ラベル番号 # prediction結果が指定ラベル番号でなかった時に保存する
     # 画像ファイル名: PREFIX_PRED_SCORE_NUMBER
-    CAPTURE_DIR = os.path.abspath(os.path.dirname(__file__))+"/capture"
+    CAPTURE_DIR = os.path.abspath(os.path.dirname(__file__))+"/../capture"
     PREFIX = None
     TRUE_LABEL = None # prediction結果が指定ラベル番号でなかった時に保存する
     SAVE_PREDICTION = True # True:保存する False:保存しない
@@ -63,8 +63,8 @@ class AI():
         カレントディレクトリが別の場所からの実行でも問題ないように、
         ディレクトリパスはこのファイルと同じディレクトリとして取得する
         '''
-        FROZEN_MODEL_NAME="cnn_model_murayama_1570.pb"
-        MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
+        FROZEN_MODEL_NAME="cnn_model_220.pb"
+        MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../model"
 
         # AIモデル読み込み
         self.graph = self.load_graph(MODEL_DIR+"/"+FROZEN_MODEL_NAME)
@@ -72,9 +72,9 @@ class AI():
         # AI入出力ノード取得
         self.input_x = self.graph.get_tensor_by_name('prefix/input_x:0')
         self.output_y = self.graph.get_tensor_by_name('prefix/output_y:0')
-        self.keep_prob = self.graph.get_tensor_by_name('prefix/Placeholder:0')
         self.score = self.graph.get_tensor_by_name('prefix/score:0')
         self.step = self.graph.get_tensor_by_name('prefix/step/step:0')
+        self.keep_prob = self.graph.get_tensor_by_name('prefix/keep_prob:0')
 
         self.sess = tf.Session(graph=self.graph)
 
@@ -197,7 +197,7 @@ class AI():
         image_data = self.cv_bgr.reshape(1,self.data_cols)
         _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:image_data,self.keep_prob:1.0})
 
-        max_index = np.argmax(_score[0])
+        max_index = np.argmax(_output_y[0])
         max_score = _score[0][max_index]
 
         # 予測結果の最大値のスコアと閾値を比較する
@@ -252,14 +252,9 @@ class AI():
                             # スコアを考慮しないので正解となり保存しない
                             pass
 
-
-
-
         return prediction_index
 
     def set_save_config(self,config=SaveConfig(prefix='capture')):
         self.save_config = config
         return
-
-
 

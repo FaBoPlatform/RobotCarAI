@@ -3,8 +3,7 @@
 
 from __future__ import division
 import time
-from servo import Servo
-from servo import ServoConfig
+from .servo import Servo, ServoConfig
 import threading
 
 import sys

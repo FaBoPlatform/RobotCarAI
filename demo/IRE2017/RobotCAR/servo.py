@@ -42,8 +42,8 @@ class Servo():
     SERVO_MAX_ANGLE = 180
     SERVO_CENTER_ANGLE = 90
 
-    # PWM周期 PCA9685設定になるため、全てのサーボで同じ値を使うこと
-    SERVO_HZ = 60
+    # PWM周期 PCA9685設定になるため、全てのサーボで同じ値を使うこと。60Hzだと壊れるサーボを使うため、50Hzに設定する。
+    SERVO_HZ = 50
 
     def __init__(self,bus=1,channel=0,conf=ServoConfig()):
         try:
