@@ -5,6 +5,8 @@ CNNでモデルを作成しておく。
 【起動方法】
 ・ボタン起動
 python start_button.py
+・起動ボタン無しでの起動
+python run_arm_ai.py
 
 
 【テスト】
