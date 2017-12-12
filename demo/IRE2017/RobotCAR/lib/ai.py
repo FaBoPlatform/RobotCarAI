@@ -31,7 +31,7 @@ class AI():
         ディレクトリパスはこのファイルと同じディレクトリとして取得する
         '''
         FROZEN_MODEL_NAME="car_model.pb"
-        MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
+        MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../model"
 
         # AIモデル読み込み
         self.graph = self.load_graph(MODEL_DIR+"/"+FROZEN_MODEL_NAME)

@@ -1,6 +1,9 @@
 CNNでモデルを作成しておく。
 出来たモデルをfreeze_graph.pyでcnn_model.pbファイルに変換し、modelディレクトリに設置する。
 ./model/cnn_model.pb
+モデルの読み込みは./lib/ai.pyとai2_dropout.pyで行っている
+__init__.pyでどちらのAIを使うか決定している
+
 
 【起動方法】
 ・ボタン起動
