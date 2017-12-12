@@ -5,11 +5,11 @@ import time
 import logging
 import threading
 import numpy as np
-from kerberos import Kerberos
-from car import Car
-from spi import SPI
-from ai import AI
-from sensordatagenerator import SensorGenerator
+from lib import Kerberos
+from lib import Car
+from lib import SPI
+from lib import AI
+from lib import SensorGenerator
 import copy
 
 import sys
@@ -124,6 +124,9 @@ def main():
                 time.sleep(LIDAR_INTERVAL)
                 continue
 
+            ########################################
+            # 速度調整を行う
+            ########################################
             if distance2 >= 100:
                 speed = 100
             else:
@@ -131,6 +134,9 @@ def main():
                 if speed < 40:
                     speed = 40
 
+            ########################################
+            # ハンドル角調整を行う
+            ########################################
             if ai_value == 1: # 左に行くけど、左右スペース比で舵角を制御する
                 ratio = float(distance1)/(distance1 + distance3) # 角度をパーセント減にする
                 if distance2 < 75 or distance3 < 8.0 :
@@ -163,10 +169,11 @@ def main():
             # もし停止なら、ロボットカーを後進する
             ########################################
             '''
-            バック時、N件分を真っ直ぐバックし、その後、狭い方にハンドルを切ってバックする
+            バック時、直前のハンドルログからN件分を真っ直ぐバックし、M件分を逆ハンドルでバックする
+            その後、狭い方にハンドルを切ってバックする
             '''
             if ai_value == STOP:
-                time.sleep(1) # とりあえず1秒、車体が安定するまで待つ
+                time.sleep(1) # 停止後1秒、車体が安定するまで待つ
                 if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
                 count_stop += 1
                 if count_stop >= 1:
@@ -185,7 +192,9 @@ def main():
 
                     speed = 60
                     car.back(speed) # バックする
+                    ####################
                     # N件分を真っ直ぐバックする
+                    ####################
                     for i in range(0,back_forward):
                         if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
                         car.set_angle(HANDLE_NEUTRAL)
@@ -193,7 +202,9 @@ def main():
                         back_queue.get(block=False)
                         time.sleep(LIDAR_INTERVAL)
 
-                    # ログ分のハンドル操作の最大方向をハンドルに設定する
+                    ####################
+                    # 残りのログ分のハンドル操作の最大方向をハンドルに設定する
+                    ####################
                     angle = 0 # 左右どちらが多いか
                     angle_forward = 0 # 前進方向の回数
                     back_queue_size = back_queue.qsize()
@@ -205,11 +216,11 @@ def main():
                             angle -= 1
                         elif value == FORWARD:
                             angle_forward +=1
-                    if angle_forward >= back_queue_size/3: # 前進が多いので真っ直ぐバックする
+                    if angle_forward >= back_queue_size/3: # ハンドルログは前進が多いので真っ直ぐバックする
                         back = FORWARD
-                    elif angle > 0: # 右にバッグする
+                    elif angle > 0: # ハンドルログは左が多いので右にバッグする
                         back = RIGHT
-                    else:
+                    else: # ハンドルログは右が多いので左にバックする
                         back = LEFT
                     for i in range(0,back_queue_size):
                         if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
@@ -232,7 +243,9 @@ def main():
                             car.set_angle(HANDLE_NEUTRAL - HANDLE_ANGLE) # 左にハンドルを切る
                         time.sleep(LIDAR_INTERVAL)
                     '''
-                    # ここで1,3に100cm以上の空きスペースを見つけられない場合はひたすらバックする
+                    ####################
+                    # ここで左,前,右に20cm以上の空きスペースを見つけられない場合はひたすらバックする
+                    ####################
                     speed=60
                     car.back(speed) # バックする
                     while True:
@@ -267,7 +280,7 @@ def main():
             else:
                 if not FORCE_STOP_THREAD_RUN: break # 強制停止ならループを抜ける
                 count_stop = 0
-                # 直前の動作を記憶する
+                # 前進の時は直前のハンドル操作を記憶する
                 qsize = log_queue.qsize()
                 if qsize >= max_log_length:
                     log_queue.get(block=False)

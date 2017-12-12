@@ -1,7 +1,11 @@
 # coding: utf-8
+import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
 
 import time
-from car import Car
+import sys
+sys.path.append(_FILE_DIR+'/..')
+from lib import Car
 
 print("start")
 

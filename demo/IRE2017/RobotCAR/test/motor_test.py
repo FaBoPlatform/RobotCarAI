@@ -1,8 +1,12 @@
 # coding: utf-8
+import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
 
 import time
-from motor import Motor
-from servo import Servo
+import sys
+sys.path.append(_FILE_DIR+'/..')
+from lib import Motor
+from lib import Servo
 
 print("start")
 

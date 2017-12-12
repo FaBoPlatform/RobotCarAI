@@ -8,7 +8,7 @@ import sys
 import os
 import subprocess
 from subprocess import Popen
-from spi import SPI
+from lib import SPI
 
 # 開始ボタンのSPI接続コネクタ番号
 A1 = 1
