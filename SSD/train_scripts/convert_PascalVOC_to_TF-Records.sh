@@ -1,0 +1,28 @@
+########################################
+# Convert Pascal VOC datasets to TF-Records
+########################################
+# Balancap SSDではTF-Recordsデータに変化する必要がある
+MY_TRAIN=roadsign
+SSD_TENSORFLOW_DIR=/notebooks/github/SSD-Tensorflow
+DATASET_DIR=/notebooks/roadsign_data/PascalVOC/
+OUTPUT_DIR=/notebooks/roadsign_data/tfrecords
+
+
+####################
+OUTPUT_NAME=${MY_TRAIN}_train
+
+#OUTPUT_NAMEは読み込み時にSSD-TensorFlowのどこかにハードコーディングされている
+# find ./ -type f -name "*.py" | xargs grep -Hn -B 0 -A 0 "voc_2007_" 2> /dev/null
+#./datasets/pascalvoc_2007.py:22:FILE_PATTERN = 'voc_2007_%s_*.tfrecord'
+#voc_2007_train_*.tfrecord
+
+
+cd $SSD_TENSORFLOW_DIR
+
+python tf_convert_data_$MY_TRAIN.py \
+    --dataset_name=pascalvoc \
+    --dataset_dir=$DATASET_DIR \
+    --output_name=$OUTPUT_NAME \
+    --output_dir=$OUTPUT_DIR
+
+
