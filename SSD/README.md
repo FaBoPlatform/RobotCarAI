@@ -2,10 +2,10 @@
 
 TensorFlowを使った物体検出として、Balancap SSD-Tensorflowを用いて道路標識を学習し、Jetson TX2で実行してみます。
 
-[止まれを認識する動画](./media/stop.avi)
-![jetson_tx2-stop.png](./media/jetson_tx2-stop.png)
-[コースを走行しながら認識する動画](./media/course160x120.avi)
-![20171222_152319.jpg](./media/20171222_152319.jpg)
+[止まれを認識する動画](./media/stop.avi)  
+![jetson_tx2-stop.png](./media/jetson_tx2-stop.png)  
+[コースを走行しながら認識する動画](./media/course160x120.avi)  
+![20171222_152319.jpg](./media/20171222_152319.jpg)  
 
 
 Balancap SSD-Tensorflowはこちら:
