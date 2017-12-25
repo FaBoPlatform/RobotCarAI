@@ -55,7 +55,7 @@ checkpointへの保存は一定時間毎に行われるようです。
 [https://github.com/balancap/SSD-Tensorflow/blob/master/notebooks/ssd_notebook.ipynb](https://github.com/balancap/SSD-Tensorflow/blob/master/notebooks/ssd_notebook.ipynb)
 を参考に。
 
-#####FFMPEG UDP Streamingを使う場合。  
+##### FFMPEG UDP Streamingを使う場合。  
 送信側コマンド(192.168.0.77は受信側アドレス)
 ```
 ffmpeg -thread_queue_size 1024 -r 30 -video_size 160x120 -input_format yuyv422 -i /dev/video0 -pix_fmt yuv422p -threads 4 -f mpegts udp://192.168.0.77:8090
@@ -76,6 +76,7 @@ cp ./notebooks/ssd_webcam_streaming.ipynb /notebooks/github/SSD-Tensorflow/noteb
 Balancap SSD-TensorflowはPascal VOCデータ形式のみ対応なので、
 [https://github.com/tzutalin/labelImg](https://github.com/tzutalin/labelImg)
 を使って画像のラベルデータを作成します。
+![labelImg.png](./media/labelImg.png)
 ```
 chmod 755 ./gui_labelimg/install_labelimg.sh
 ./gui_labelimg/install_labelimg.sh
