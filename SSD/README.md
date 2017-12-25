@@ -76,13 +76,14 @@ cp ./notebooks/ssd_webcam_streaming.ipynb /notebooks/github/SSD-Tensorflow/noteb
 Balancap SSD-TensorflowはPascal VOCデータ形式のみ対応なので、
 [https://github.com/tzutalin/labelImg](https://github.com/tzutalin/labelImg)
 を使って画像のラベルデータを作成します。
-![labelImg.png](./media/labelImg.png)
 ```
 chmod 755 ./gui_labelimg/install_labelimg.sh
 ./gui_labelimg/install_labelimg.sh
 ```
+![labelImg.png](./media/labelImg.png)
+
 GUIツールなので画面のあるマシンで学習データ作成を行ってください。  
-TF-Recordへのコンバート時は画像ファイルをJPEGImagesに、ラベルファイルをAnnotationsに分けます  
+TF-Recordへのコンバート時は画像ファイルをJPEGImagesに、ラベルファイルをAnnotationsに分けます。  
 画像データ:/notebooks/roadsign_data/PascalVOC/JPEGImages/  
 ラベルデータ:/notebooks/roadsign_data/PascalVOC/Annotations/  
 
