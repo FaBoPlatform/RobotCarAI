@@ -1,0 +1,14 @@
+chmod 755 ./install_scripts/*.sh
+chmod 755 ./train_scripts/*.sh
+
+########################################
+# Balancap SSD-Tensorflow インストール
+########################################
+./install_scripts/install_balancap_ssd-tensorflow.sh
+
+
+########################################
+# Bug fix
+########################################
+./install_scripts/setup_bugfix.sh
+
