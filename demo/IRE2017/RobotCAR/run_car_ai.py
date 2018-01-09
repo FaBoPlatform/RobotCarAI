@@ -9,7 +9,7 @@ from lib import Kerberos
 from lib import Car
 from lib import SPI
 from lib import AI
-from lib import SensorGenerator
+from generator import SensorGenerator
 import copy
 
 import sys

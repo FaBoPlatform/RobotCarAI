@@ -14,7 +14,7 @@ import threading
 from sklearn.utils import shuffle
 import sys
 sys.path.append(_FILE_DIR+'/..')
-from lib import SensorGenerator
+from generator import SensorGenerator
 import numpy as np
 
 tf.reset_default_graph()
