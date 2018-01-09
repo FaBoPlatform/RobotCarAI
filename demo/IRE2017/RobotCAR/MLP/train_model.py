@@ -20,7 +20,7 @@ import numpy as np
 tf.reset_default_graph()
 
 MODEL_DIR=_FILE_DIR+"/model"
-SUMMARY_LOG_DIR=_FILE_DIR++"/log"
+SUMMARY_LOG_DIR=_FILE_DIR+"/log"
 if not os.path.exists(MODEL_DIR):
     os.makedirs(MODEL_DIR)
 
