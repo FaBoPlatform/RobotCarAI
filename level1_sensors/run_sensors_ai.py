@@ -1,5 +1,5 @@
 # coding: utf-8
-# センサー値から予測を実行する
+# センサー値を取得し、予測を実行する
 
 import time
 import logging
@@ -21,18 +21,19 @@ logging.basicConfig(level=logging.DEBUG,
 )
 
 
-# スレッド停止フラグ
-STOP_FLAG = False
+# スレッド実行フラグ
+RUN_FLAG = True
 
-def do_stop(running_sec):
+def do_stop(run_sec=10):
     '''
-    時間が経ったら停止フラグを立てる
-    running_sec: スレッド停止フラグを立てるまでの時間(秒)
+    時間が経ったら実行フラグを落とす
+    run_sec: スレッド停止フラグを立てるまでの時間(秒)
     '''
+    global RUN_FLAG
     logging.debug("enter")
 
-    time.sleep(running_sec)
-    STOP_FLAG = True
+    time.sleep(run_sec)
+    RUN_FLAG = False
     return
 
 
@@ -44,6 +45,10 @@ def main():
     ai = AI()
     # スコア閾値。予測結果がこれより低いスコアの時はその他と見なす。
     score = 0.6
+    STOP = 0
+    LEFT = 1
+    FORWARD = 2
+    RIGHT = 3
 
     # 近接センサー準備
     kerberos = Kerberos()
@@ -59,10 +64,7 @@ def main():
         ########################################
         # 予測を実行する
         ########################################
-        while True:
-            if STOP_FLAG:
-                break;
-            
+        while RUN_FLAG:
             ########################################
             # 近接センサー値を取得する
             ########################################
@@ -76,7 +78,6 @@ def main():
             ########################################
             # 今回の予測結果を取得する
             ai_value = ai.get_prediction(sensors,score)
-
 
             ########################################
             # 予測結果を文字列に変換する
@@ -100,7 +101,7 @@ def main():
             sys.stdout.write("result:"+result+" "+str(sensors)+"        \r")
             sys.stdout.flush()
 
-            
+            # 次のセンサー値更新まで待機する
             time.sleep(LIDAR_INTERVAL)
 
     except:
@@ -117,10 +118,10 @@ def main():
     return
 
 if __name__ == '__main__':
-    # スレッド停止フラグを立てるまでの時間(秒)
-    running_sec = 10
-    # 停止フラグを立てるスレッドを起動する
-    t = threading.Thread(target=do_stop,args=(running_sec))
+    # スレッド実行フラグを落とすまでの時間(秒)
+    run_sec = 10
+    # 実行フラグを落とすスレッドを起動する
+    t = threading.Thread(target=do_stop,args=(run_sec,))
     t.start()
     main()
 
