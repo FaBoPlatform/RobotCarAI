@@ -1,5 +1,5 @@
 # coding: utf-8
-# frozen_model.pbファイルを読み込む
+# カメラ画像をキャプチャし保存する
 
 import numpy as np
 import time
@@ -50,12 +50,8 @@ else:
 
 
 def capture():
-    PREDICTION_DIR="prediction"
-    if not os.path.exists(PREDICTION_DIR):
-        os.makedirs(PREDICTION_DIR)
+    global OUTPUT_DIR
     start_time, clock_time = time.time(), time.clock()
-    # CNNモデルの入力値となる画像サイズ
-    data_cols=image_height * image_width * image_depth
 
     frame_cnt = 0
     prev_time = time.time()
@@ -73,9 +69,7 @@ def capture():
             ########################################
             #cv_bgr = cv2.resize(cv_bgr, (image_height,image_width), interpolation = cv2.INTER_LINEAR)
 
-            image_data = cv_bgr.reshape(1,data_cols)
-
-            cv2.imwrite(PREDICTION_DIR+"/capture-"+str(frame_cnt)+".png",cv_bgr)
+            cv2.imwrite(OUTPUT_DIR+"/capture-"+str(frame_cnt)+".png",cv_bgr)
 
             time.sleep(0.2)
 
@@ -95,6 +89,9 @@ def capture():
 
 
 
+OUTPUT_DIR="capture"
+if not os.path.exists(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
 
 capture()
 print("end")
