@@ -12,8 +12,8 @@ python run_car_ai.py
 
 【テスト】
 ・近接センサ取得確認
-python test/kerberos-check.py
 python test/kerberos_test.py
+python test/kerberoslib_test.py
 
 ・サーボ,モーター動作確認
 python motor_test.py

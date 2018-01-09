@@ -7,19 +7,20 @@
 # scoreを追加
 
 import os
+_FILE_DIR=os.path.abspath(os.path.dirname(__file__))
 import time
 import tensorflow as tf
 import threading
 from sklearn.utils import shuffle
 import sys
-sys.path.append('./')
-import sensordatagenerator
+sys.path.append(_FILE_DIR+'/..')
+from lib import SensorGenerator
 import numpy as np
 
 tf.reset_default_graph()
 
-MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
-SUMMARY_LOG_DIR=os.path.abspath(os.path.dirname(__file__))+"/log"
+MODEL_DIR=_FILE_DIR+"/model"
+SUMMARY_LOG_DIR=_FILE_DIR++"/log"
 if not os.path.exists(MODEL_DIR):
     os.makedirs(MODEL_DIR)
 
@@ -34,35 +35,36 @@ target_step = 10000000 # ステップ数
 
 TEST_NUM = 10000 # テストデータ件数
 
-sg = sensordatagenerator.SensorGenerator()
+generator = SensorGenerator()
 def generate_random_train_data(batch_size):
     CSVDATA=[]
-    # 全体的に学習させる 100万step
+    # 10m以内の判定を学習させる
     #sensors = np.random.randint(0,1000,[batch_size,3])
-    # 停止付近だけを集中的に学習させる 100万step
+    # 前方20cm以内の判定を学習させる
     #LEFT45 = np.random.randint(0,1000,batch_size)
     #FRONT = np.random.randint(0,20,batch_size)
     #RIGHT45 = np.random.randint(0,1000,batch_size)
-    # 左右判定だけを集中的に学習させる 100万step
+    # 前方20cm-100cm、左右100cm以内のの判定を学習させる
     #LEFT45 = np.random.randint(0,100,batch_size)
     #FRONT = np.random.randint(20,200,batch_size)
     #RIGHT45 = np.random.randint(0,100,batch_size)
-    # 近距離全体的に学習させる 1000万step
+    # 2m以内の判定を学習させる
     #LEFT45 = np.random.randint(0,200,batch_size)
     #FRONT = np.random.randint(0,200,batch_size)
     #RIGHT45 = np.random.randint(0,200,batch_size)
-    # 近距離だけを集中的に学習させる 100万step
+    # 1m以内の判定を学習させる
     #LEFT45 = np.random.randint(0,100,batch_size)
     #FRONT = np.random.randint(0,100,batch_size)
     #RIGHT45 = np.random.randint(0,100,batch_size)
-    # 全体的に学習させる 200万step
+
+    # 2m以内の判定を学習させる
     sensors = np.random.randint(0,200,[batch_size,3])
 
     #sensors = np.c_[LEFT45,FRONT,RIGHT45]
 
     for i in range(batch_size):
-        CONTRES = sg.driving_instruction(sensors[i])
-        CSVROW = np.hstack((sensors[i],CONTRES[0:4]))
+        GENERATOR_RESULT = generator.driving_instruction(sensors[i])
+        CSVROW = np.hstack((sensors[i],GENERATOR_RESULT[0:4]))
         CSVDATA.append(CSVROW)
     CSVDATA = np.array(CSVDATA)
 
@@ -199,8 +201,6 @@ with tf.Session() as sess:
                 _step = sess.run(step_op,feed_dict={placeholder_step:step}) # variable_stepにstepを記録する
                 saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
 
-
-
         sess.run(queue.close(cancel_pending_enqueues=True))
     except Exception as e:
         # Report exceptions to the coodinator.
@@ -210,7 +210,8 @@ with tf.Session() as sess:
         coord.request_stop()
         coord.join(threads)
 
-    if step > _step: # ステップ学習時
+    # ステップ学習時、保存する
+    if step > _step:
         _step = sess.run(step_op,feed_dict={placeholder_step:step}) # variable_stepにstepを記録する
         saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
 
