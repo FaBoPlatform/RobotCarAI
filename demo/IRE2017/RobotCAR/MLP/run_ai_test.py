@@ -13,13 +13,13 @@ MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 
 def print_graph_operations(graph):
     # print operations
-    print "----- operations in graph -----"
+    print("----- operations in graph -----")
     for op in graph.get_operations():
-        print op.name,op.outputs 
+        print(op.name,op.outputs)
         
 def print_graph_nodes(graph_def):
     # print nodes
-    print "----- nodes in graph_def -----"
+    print("----- nodes in graph_def -----")
     for node in graph_def.node:
         print(node)
 
