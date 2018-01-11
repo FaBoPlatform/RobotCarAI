@@ -70,6 +70,7 @@ label0 | 1 | 0 | 0 | 0
 label1 | 0 | 1 | 0 | 0
 label2 | 0 | 0 | 1 | 0
 label3 | 0 | 0 | 0 | 1
+
 pythonでは、numpyを使ってone hot valueを作ることが出来ます。
 ```python
 # coding: utf-8
