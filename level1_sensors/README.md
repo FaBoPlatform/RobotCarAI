@@ -1,4 +1,5 @@
 <a name='top'>
+
 【タイトル】
 # レベル1：距離センサーの値をニューラルネットワークで使う
 <hr>
@@ -15,6 +16,7 @@
 <hr>
 
 <a name='0'>
+
 【目次】
 * [Hardware] [距離センサーLidar Lite v3について](#1)
   * 取得できる距離、値、誤差、測定周期
@@ -36,6 +38,7 @@
 <hr>
 
 <a name='1'>
+
 ## [Hardware] 距離センサーLidar Lite v3について
 CLASS1 LASERで距離を計測する機器。
 #### 取得できる距離、値、誤差、測定周期
@@ -50,6 +53,7 @@ CLASS1 LASERで距離を計測する機器。
 <hr>
 
 <a name='2'>
+
 ## [Neural Networks] 学習データのフォーマットについて
 #### クラス分類
 ロボットカーの進行方向の予測は、STOP,LEFT,FOWARD,RIGHTのどれか一つに属します。これを一般的にクラス分類と呼びます。<br>
@@ -103,12 +107,14 @@ for i in range(n_classes):
 <hr>
 
 <a name='3'>
+
 ## [Python] 学習データのジェネレータを作る
 学習データフォーマットが決まったので、実際に学習データを作っていきます。<br>
 CSVデータを人力で用意していってもよいのですが、IF文で書ける分岐条件なので関数で書いてしまうことにします。<br>
 <hr>
 
 <a name='3-1'>
+
 #### 簡単なIF文での判定
 ```python
 # coding: utf-8
@@ -219,6 +225,7 @@ print("--- batch data ---\n{}".format(CSVDATA))
 <hr>
 
 <a name='4'>
+
 ## [Neural Networks] 学習モデルについて
 <hr>
 
@@ -227,21 +234,25 @@ print("--- batch data ---\n{}".format(CSVDATA))
 <hr>
 
 <a name='5'>
+
 ## [Python/TensorFlow] 学習用コードのコーディング
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='6'>
+
 ## [Python/TensorFlow] 学習と保存
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='7'>
+
 ## [Python/TensorFlow] 予測を実行
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='8'>
+
 ## Python/TensorFlow] 予測精度を評価
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
