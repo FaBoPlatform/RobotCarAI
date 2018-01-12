@@ -35,7 +35,8 @@ N_NODES_HL1 = 11
 DATA_COLS = 3 # センサーの数。left45,front,right45
 N_CLASSES = 4 # 予測結果の数。stop,left,forward,right
 BATCH_SIZE = 100 # バッチサイズは10〜100前後に
-CHUNK_SIZE = BATCH_SIZE*2 # queueで保持するデータ件数
+CHUNK_SIZE = BATCH_SIZE*1 # queueで保持するデータ件数
+N_THREADS = 1 # データ生成スレッド件数。ミニバッチデータ作成時間より学習時間の方が処理負荷が高いので、データ生成スレッドは1スレッドにする
 
 TARGET_STEP = 10000 # ステップ数
 
@@ -156,8 +157,7 @@ with tf.Session() as sess:
     start_time, start_clock = time.time(), time.clock()
 
     # 学習データ ジェネレータを用いてミニバッチデータを作成し、enqueue_op実行によりqueueへデータを挿入するスレッドを開始する
-    # ミニバッチデータ作成時間より学習時間の方が処理負荷が高いので、データ生成スレッドは1スレッドにする
-    for i in range(0,1):
+    for i in range(0,N_THREADS):
         enqueue_thread = threading.Thread(target=load_and_enqueue, args=[sess])
         enqueue_thread.isDaemon()
         enqueue_thread.start()
