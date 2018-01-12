@@ -89,11 +89,13 @@ class AI():
     def get_prediction(self,sensors,score=0):
         '''
         AI予測を実行する
-        score: 予測結果に必要なスコア閾値
+        args:
+            sensors: [左センサー値,前センサー値,右センサー値]
+            score: 予測結果に必要なスコア閾値。0.0-1.0
+        return:
+            prediction_index: 予測結果のクラス番号
         '''
 
-        # 予測結果をその他で初期化する
-        prediction_index = self.OTHER_LABEL
 
         _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:[sensors]})
 
@@ -105,10 +107,43 @@ class AI():
             # スコアが高い
             prediction_index = max_index
             prediction_score = max_score
-            pass
         else:
             # スコアが低いのでその他にする
             prediction_index = self.OTHER_LABEL # その他
             #prediction_score = _score[0][prediction_index] # その他ラベルを持たなければ、取得できるスコアは存在しない
 
         return prediction_index
+
+    def get_predictions(self,sensors,score=0):
+        '''
+        AI予測を実行する
+        評価用に複数のデータセットで実行する
+        args:
+            sensors: [[左センサー値,前センサー値,右センサー値],[左センサー値,前センサー値,右センサー値],...]
+            score: 予測結果に必要なスコア閾値。0.0-1.0
+        return:
+            prediction_indices: [予測結果のクラス番号,予測結果のクラス番号,...]
+        '''
+
+        _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:sensors})
+
+        prediction_indices = []
+        
+        n_rows = len(sensors)
+        for i in range(0,n_rows):
+            max_index = np.argmax(_output_y[i])
+            max_score = _score[i][max_index]
+
+            # 予測結果の最大値のスコアと閾値を比較する
+            if max_score >= score:
+                # スコアが高い
+                prediction_index = max_index
+                prediction_score = max_score
+            else:
+                # スコアが低いのでその他にする
+                prediction_index = self.OTHER_LABEL # その他
+                #prediction_score = _score[0][prediction_index] # その他ラベルを持たなければ、取得できるスコアは存在しない
+            prediction_indices += [prediction_index]
+
+        return prediction_indices
+    

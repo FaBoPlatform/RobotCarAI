@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.DEBUG,
 )
 
 
-def print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counter,keep=False):
+def print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counter,log=False):
     '''
     コンソールに表示する
     '''
@@ -58,8 +58,8 @@ def print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counte
 
     sys.stdout.write("accuracy:"+str((counter-miss_counter)/(counter*1.0))+" total:"+str(counter)+" miss:"+str(miss_counter)+" bad score:"+str(bad_score_counter)+" result:"+result+" "+str(sensors)+" - "+suffix+"                \r")
     sys.stdout.flush()
-    if keep:
-        print("")
+    if log:
+        #sys.stdout.write("\n")
         sys.stdout.flush()
 
     return
@@ -97,37 +97,39 @@ def main():
             for distance2 in range(MIN_RANGE,MAX_RANGE):
                 sensors=[]
                 for distance3 in range(MIN_RANGE,MAX_RANGE):
-                    sensors = [distance1,distance2,distance3]
+                    sensors.append([distance1,distance2,distance3])
+                sensors=np.array(sensors)
+                    
+                ########################################
+                # AI予測結果を取得する
+                ########################################
+                # 今回の予測結果を取得する
+                ai_values = ai.get_predictions(sensors,SCORE)
+
+                n_rows = len(sensors)
+                # 予測結果のスコアが低かった回数をカウントする
+                for i in range(n_rows):
                     counter +=1
-
-                    ########################################
-                    # AI予測結果を取得する
-                    ########################################
-                    # 今回の予測結果を取得する
-                    ai_value = ai.get_prediction(sensors,SCORE)
-
-                    # 予測結果のスコアが低かった回数をカウントする
-                    if ai_value == ai.get_other_label():
+                    if ai_values[i] == ai.get_other_label():
                         bad_score_counter += 1
 
                     ########################################
                     # IF結果を取得する
                     ########################################
                     # 今回の結果を取得する
-                    w = generator.get_label(sensors)
-                    if_value = np.argmax(w[0:4])
+                    generator_result = generator.get_label(sensors[i])
+                    if_value = np.argmax(generator_result)
 
                     # 予測結果とジェネレータ結果が異なった回数をカウントする
-                    if not if_value == ai_value:
+                    if not if_value == ai_values[i]:
                         miss_counter += 1
-                        print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counter,True)
+                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter,log=True)
 
                     ########################################
                     # 予測結果をコンソールに表示する
                     ########################################
-                    if counter % 1000 == 0:
-                        print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counter)
-
+                    if counter % 10000 == 0:
+                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
     except:
         import traceback
         traceback.print_exc()
