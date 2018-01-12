@@ -1,5 +1,6 @@
 # coding: utf-8
 # frozen_model.pbファイルを読み込む
+# ランダムなセンサー値を生成し、予測を実行する
 
 import tensorflow as tf
 import numpy as np
@@ -54,31 +55,30 @@ print_graph_operations(graph)
 
 ####################
 input_x = graph.get_tensor_by_name('prefix/queue/dequeue_op:0')
-output_y= graph.get_tensor_by_name('prefix/neural_network_model/output_y:0')
-score= graph.get_tensor_by_name('prefix/neural_network_model/score:0')
-ph_batch_size = graph.get_tensor_by_name('prefix/input/batch_size:0')
+output_y = graph.get_tensor_by_name('prefix/neural_network_model/output_y:0')
+score = graph.get_tensor_by_name('prefix/neural_network_model/score:0')
+step = graph.get_tensor_by_name('prefix/step/step:0')
 
-
-y_true = graph.get_tensor_by_name('prefix/queue/dequeue_op:1')
-accuracy= graph.get_tensor_by_name('prefix/accuracy/accuracy:0')
-
-
-loop=100
-n_classes=4
 total_start_time, total_start_clock = time.time(), time.clock()
-# We start a session and restore the graph weights
-with tf.Session(graph=graph) as sess:
 
+# graphのweightsを復元してsessionを開始する
+with tf.Session(graph=graph) as sess:
+    learned_step = sess.run(step)
+    print("learned_step:{}".format(learned_step))
+
+    loop=100
     for i in range(loop):
         start_time, start_clock = time.time(), time.clock()
-        # ランダム予測
-        # sensors = [[LEFT45,FRONT,RIGHT45]] # unsigned int value
+        # センサー値をランダムな0-1000の範囲で作成する
+        # sensors = [[LEFT45,FRONT,RIGHT45]]
         sensors = np.array([np.random.randint(0,1000,3)])
-        
-        # max_value = [[N]] # N = 0:STOP,1:LEFT,2:FORWARD,3:RIGHT
+
+        # 予測を実行する
         _output_y,_score = sess.run([output_y,score],feed_dict={input_x:sensors})
+        # max_value = [[N]] # N = 0:STOP,1:LEFT,2:FORWARD,3:RIGHT
         max_value = np.argmax(_output_y) # max_value
         
         print("max_value:{} score:{} input:{}".format(max_value,_score[0][max_value],sensors))
 
 print("total_time: %.8f, total_clock: %.8f" % (time.time()-total_start_time,time.clock()-total_start_clock))
+

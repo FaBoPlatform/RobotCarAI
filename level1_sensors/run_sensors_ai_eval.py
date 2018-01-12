@@ -7,7 +7,7 @@ import logging
 import threading
 import numpy as np
 from lib import AI
-from generator import SensorGenerator
+from generator import LabelGenerator
 
 import sys
 PY2 = sys.version_info[0] == 2
@@ -72,10 +72,10 @@ def main():
     # AI準備
     ai = AI()
     # スコア閾値。予測結果がこれより低いスコアの時はその他と見なす。
-    score = 0.6
+    SCORE = 0.6
 
     # IF準備 (AI学習データジェネレータ)
-    generator = SensorGenerator()
+    generator = LabelGenerator()
 
     # 評価した回数をカウント
     counter = 0
@@ -84,8 +84,8 @@ def main():
     # 予測結果とジェネレータ結果が異なる回数をカウント(低スコアの回数も含む)
     miss_counter = 0
     # 評価する距離範囲
-    min_range = 0
-    max_range = 200
+    MIN_RANGE = 0
+    MAX_RANGE = 200
     try:
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
@@ -93,10 +93,10 @@ def main():
         ########################################
         # 近接センサー値を生成する
         ########################################
-        for distance1 in range(min_range,max_range):
-            for distance2 in range(min_range,max_range):
+        for distance1 in range(MIN_RANGE,MAX_RANGE):
+            for distance2 in range(MIN_RANGE,MAX_RANGE):
                 sensors=[]
-                for distance3 in range(min_range,max_range):
+                for distance3 in range(MIN_RANGE,MAX_RANGE):
                     sensors = [distance1,distance2,distance3]
                     counter +=1
 
@@ -104,7 +104,7 @@ def main():
                     # AI予測結果を取得する
                     ########################################
                     # 今回の予測結果を取得する
-                    ai_value = ai.get_prediction(sensors,score)
+                    ai_value = ai.get_prediction(sensors,SCORE)
 
                     # 予測結果のスコアが低かった回数をカウントする
                     if ai_value == ai.get_other_label():
@@ -114,7 +114,7 @@ def main():
                     # IF結果を取得する
                     ########################################
                     # 今回の結果を取得する
-                    w = generator.driving_instruction(sensors)
+                    w = generator.get_label(sensors)
                     if_value = np.argmax(w[0:4])
 
                     # 予測結果とジェネレータ結果が異なった回数をカウントする

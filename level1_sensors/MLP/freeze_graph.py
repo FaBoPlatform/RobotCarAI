@@ -7,7 +7,7 @@ from tensorflow.python.framework import graph_util
 
 MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 FROZEN_MODEL_NAME="car_model.pb"
-OUTPUT_NODE_NAMES="queue/dequeue_op,neural_network_model/output_y,neural_network_model/score,accuracy/accuracy,step/step"
+OUTPUT_NODE_NAMES="queue/dequeue_op,neural_network_model/output_y,neural_network_model/score,step/step"
 
 CLEAR_DEVICES=True
 
@@ -16,7 +16,7 @@ def print_graph_operations(graph):
     print("----- operations in graph -----")
     for op in graph.get_operations():
         print("{} {}".format(op.name,op.outputs))
-        
+
 def print_graph_nodes(graph_def):
     # print nodes
     print("----- nodes in graph_def -----")
@@ -24,14 +24,14 @@ def print_graph_nodes(graph_def):
         print(node)
 
 def freeze_graph():
-    global MODEL_DIR
-    global CLEAR_DEVICES
-    global OUTPUT_NODE_NAMES
-    global FROZEN_MODEL_NAME
+    MODEL_DIR
+    CLEAR_DEVICES
+    OUTPUT_NODE_NAMES
+    FROZEN_MODEL_NAME
 
     # Graphを初期化する(実行エラーで古いGraphが残っている場合に消す)
     tf.reset_default_graph()
-    
+
     checkpoint = tf.train.get_checkpoint_state(MODEL_DIR)
     if checkpoint:
         # checkpointファイルから最後に保存したモデルへのパスを取得する
@@ -42,7 +42,7 @@ def freeze_graph():
         # We precise the file fullname of our freezed graph
         absolute_model_dir = "/".join(last_model.split('/')[:-1])
         frozen_model = absolute_model_dir + "/" + FROZEN_MODEL_NAME
-        
+
         # Graphを読み込む
         # We import the meta graph and retrieve a Saver
         saver = tf.train.import_meta_graph(last_model + '.meta', clear_devices=CLEAR_DEVICES)
@@ -56,7 +56,6 @@ def freeze_graph():
         # print nodes
         #print_graph_nodes(graph_def)
 
-            
     else:
         # checkpointファイルが見つからない
         print("cannot find checkpoint.")
@@ -71,7 +70,7 @@ def freeze_graph():
         # We use a built-in TF helper to export variables to constants
         output_graph_def = graph_util.convert_variables_to_constants(
             sess, # The session is used to retrieve the weights
-            graph_def, # The graph_def is used to retrieve the nodes 
+            graph_def, # The graph_def is used to retrieve the nodes
             OUTPUT_NODE_NAMES.split(",") # The output node names are used to select the usefull nodes
         )
 

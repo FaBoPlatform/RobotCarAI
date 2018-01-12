@@ -5,7 +5,7 @@ _FILE_DIR=os.path.abspath(os.path.dirname(__file__))
 import time
 import sys
 sys.path.append(_FILE_DIR+'/..')
-from lib import Kerberos
+from fabolib import Kerberos
 
 print("start")
 

@@ -16,7 +16,7 @@ class AI():
 
     sess = None
     learned_step = None # モデルの学習ステップ数
-    other_label = 100
+    OTHER_LABEL = 100
 
     def __init__(self):
         # グラフ初期化
@@ -75,7 +75,7 @@ class AI():
         '''
         その他のラベル番号を返す
         '''
-        return self.other_label
+        return self.OTHER_LABEL
 
     def get_learned_step(self):
         '''
@@ -93,7 +93,7 @@ class AI():
         '''
 
         # 予測結果をその他で初期化する
-        prediction_index = self.other_label
+        prediction_index = self.OTHER_LABEL
 
         _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:[sensors]})
 
@@ -108,7 +108,7 @@ class AI():
             pass
         else:
             # スコアが低いのでその他にする
-            prediction_index = self.other_label # その他
+            prediction_index = self.OTHER_LABEL # その他
             #prediction_score = _score[0][prediction_index] # その他ラベルを持たなければ、取得できるスコアは存在しない
 
         return prediction_index

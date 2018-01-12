@@ -1,2 +1,2 @@
-from .sensordatagenerator import SensorGenerator
+from .labelgenerator import LabelGenerator
 

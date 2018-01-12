@@ -121,8 +121,8 @@ CSVデータを人力で用意していってもよいのですが、IF文で書
 ```python
 # coding: utf-8
 import numpy as np
-class SensorGenerator():
-    def driving_instruction(self,sensors):
+class LabelGenerator():
+    def get_label(self,sensors):
         '''
         sensors: [左センサー値,前センサー値,右センサー値]
         '''
@@ -136,17 +136,17 @@ class SensorGenerator():
         else: # 全方向に空きがある
             return [0,0,1,0] # FOWARD
 
-generator = SensorGenerator()
-batch_size = 10 # ミニバッチサイズ
-sensors = np.random.randint(0,200,[batch_size,3]) # 範囲0-200の値で3つの値を持つ配列をミニバッチ個作る
+generator = LabelGenerator()
+n_rows = 10 # 作成するデータ件数
+sensors = np.random.randint(0,200,[n_rows,3]) # 範囲0-200の値で3つの値を持つ配列をミニバッチ個作る
 print("--- sensors ---\n{}".format(sensors))
-CSVDATA=[]
-for i in range(batch_size):
-    GENERATOR_RESULT = generator.driving_instruction(sensors[i])
-    CSVROW = np.hstack((sensors[i],GENERATOR_RESULT[0:4]))
-    CSVDATA.append(CSVROW)
-CSVDATA = np.array(CSVDATA)
-print("--- batch data ---\n{}".format(CSVDATA))
+csvdata=[]
+for i in range(n_rows):
+    generator_result = generator.get_label(sensors[i])
+    csvrow = np.hstack((sensors[i],generator_result))
+    csvdata.append(csvrow)
+csvdata = np.array(csvdata)
+print("--- batch data ---\n{}".format(csvdata))
 ```
 >--- sensors ---<br>
 > [[123  76 172]<br>
@@ -171,8 +171,6 @@ print("--- batch data ---\n{}".format(CSVDATA))
 >  [108 154 136   0   0   1   0]<br>
 >  [140  53 101   0   0   1   0]]<br>
 
-ミニバッチとは、学習時に特徴量を算出し易くするために、学習データを10～100個程度に小分けにしたものになります。<br>
-1つのミニバッチデータには各クラスが同数含まれている方が精度が良くなりますが、今回は気にしないことにします。
 <hr>
 
 #### 車両旋回性能
@@ -223,21 +221,29 @@ print("--- batch data ---\n{}".format(CSVDATA))
 * コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる
 
-制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して[学習データ ジェネレータ](./generator/sensordatagenerator.py)は完成です。
+制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して[学習データ ジェネレータ](./generator/labelgenerator.py)は完成です。
 <hr>
 
 <a name='4'>
 
 ## [Neural Networks] 学習モデルについて
-<hr>
-
+学習モデルはシンプルなMulti-Layer Perceptronで作成します。
 #### Multi-Layer Perceptron
+![](./document/mlp.png)
+入力層はセンサー値を入れるため3入力を持ちます。<br>
+隠れ層は1つだけ持ち、11ノードを用意します。各ノードは3つのセンサー値を入力に持ちます。<br>
+隠れ層と出力層では全ての入力線で個別にweightを持ち、各ノード毎にbiasを持ちます。<br>
+Neural Networksではこのweightとbiasの値が学習成果となり、ノードの形をモデルと呼びます。この違いは主に学習途中からの再開時(checkpointからの値のrestore)や、学習成果を凍結する時(ノード情報と値をpbファイルに保存。freeze graph)に現れます。
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='5'>
 
 ## [Python/TensorFlow] 学習用コードのコーディング
+
+ミニバッチとは、学習時に特徴量を算出し易くするために、学習データを10～100個程度に小分けにしたものになります。<br>
+1つのミニバッチデータには各クラスが同数含まれている方が精度が良くなりますが、今回は気にしないことにします。
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -255,7 +261,7 @@ print("--- batch data ---\n{}".format(CSVDATA))
 
 <a name='8'>
 
-## Python/TensorFlow] 予測精度を評価
+## [Python/TensorFlow] 予測精度を評価
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 

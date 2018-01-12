@@ -5,7 +5,7 @@ import time
 import logging
 import threading
 import numpy as np
-from lib import Kerberos
+from fab_lib import Kerberos
 from lib import AI
 
 import sys
@@ -22,18 +22,18 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 # スレッド実行フラグ
-RUN_FLAG = True
+run_flag = True
 
 def do_stop(run_sec=10):
     '''
     時間が経ったら実行フラグを落とす
     run_sec: スレッド停止フラグを立てるまでの時間(秒)
     '''
-    global RUN_FLAG
+    global run_flag
     logging.debug("enter")
 
     time.sleep(run_sec)
-    RUN_FLAG = False
+    run_flag = False
     return
 
 
@@ -44,7 +44,7 @@ def main():
     # AI準備
     ai = AI()
     # スコア閾値。予測結果がこれより低いスコアの時はその他と見なす。
-    score = 0.6
+    SCORE = 0.6
     STOP = 0
     LEFT = 1
     FORWARD = 2
@@ -64,7 +64,7 @@ def main():
         ########################################
         # 予測を実行する
         ########################################
-        while RUN_FLAG:
+        while run_flag:
             ########################################
             # 近接センサー値を取得する
             ########################################
@@ -74,7 +74,7 @@ def main():
             # AI予測結果を取得する
             ########################################
             # 今回の予測結果を取得する
-            ai_value = ai.get_prediction(sensors,score)
+            ai_value = ai.get_prediction(sensors,SCORE)
 
             ########################################
             # 予測結果を文字列に変換する
@@ -116,9 +116,9 @@ def main():
 
 if __name__ == '__main__':
     # スレッド実行フラグを落とすまでの時間(秒)
-    run_sec = 10
+    RUN_SEC = 10
     # 実行フラグを落とすスレッドを起動する
-    t = threading.Thread(target=do_stop,args=(run_sec,))
+    t = threading.Thread(target=do_stop,args=(RUN_SEC,))
     t.start()
     main()
 
