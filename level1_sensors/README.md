@@ -186,7 +186,8 @@ print("--- batch data ---\n{}".format(csvdata))
 図に描いてみると、避けきれない前方障害物(点P)の存在も見えてきます。
 <hr>
 
-車両データを実測します。
+車両データを実測します。<br>
+赤い#1202,#605,#103,#902はFabo製プロトタイピング用基板。
 ![](./document/robotcar.png)
 ホイールベースとノーズは個別に使うことはしていないので、単純に全長と考えてよいです。
 <hr>
@@ -436,7 +437,6 @@ checkpointへの保存で使うsaver.save()は、学習済みの値の他にモ�
 
 #### checkpointを読み込む
 今回は、学習コードにモデルをフルスクラッチで書いているので、checkpointからのモデル情報の復元はスキップして、変数値だけを復元して再開します。<br>
-
 学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 ```python
 saver = tf.train.Saver(max_to_keep=100)
@@ -459,7 +459,7 @@ checkpointが無い場合は、tf.global_variables_initializer()でモデルの�
 <hr>
 
 #### 凍結する方法
-checkpointから復元した再学習可能なフルモデルデータでも予測は出来ますが、実行環境では学習でしか使わない情報は無駄なので削り落として必要なものだけをpbファイルに保存したものを使います。<br>
+checkpointから復元した再学習可能なフルモデルデータでも予測は出来ますが、実行環境においては学習でしか使わない情報は無駄なので削り落として必要なものだけをpbファイルに保存したものを使います。<br>
 <hr>
 
 #### pbファイルに保存
@@ -473,7 +473,7 @@ pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 学習コードで学習済みモデルのpbファイルを作ろうとすると、学習時のセッションとは別のセッションを作成して変数値を再読み込みしないといけないため、コードを分けて用意します。<br>
 <hr>
 
-予測時に使うOP名は、学習コードで付けた名前になります。tf.variable_scope()で名前スコープを付けた場合はスコープ名から必要になります。
+予測時に使うOP名は、学習コードで付けた名前になります。tf.variable_scope()で名前スコープを付けた場合はスコープ名から必要になります。<br>
 学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 ```python
 with tf.variable_scope("queue"):
@@ -486,7 +486,7 @@ OUTPUT_NODE_NAMES="queue/dequeue_op,...
 ```
 <hr>
 
-OP名が分からない時は、表示されるOP名から推測してください。
+OP名が分からない時は、表示されるOP名から推測してください。<br>
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```python
 def print_graph_operations(graph):
