@@ -1,6 +1,7 @@
 # coding: utf-8
 # センサー値を取得し、予測を実行する
 # ジェネレータの結果と比較し、精度を評価する
+# python run_ai_eval.py > nglog.txt
 
 import time
 import logging
@@ -22,7 +23,7 @@ logging.basicConfig(level=logging.DEBUG,
 )
 
 
-def print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counter,log=False):
+def print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counter,log=True):
     '''
     コンソールに表示する
     '''
@@ -56,11 +57,15 @@ def print_log(sensors,ai,ai_value,if_value,counter,miss_counter,bad_score_counte
         elif if_value == 3:
             suffix += ' generator:RIGHT'
 
-    sys.stdout.write("accuracy:"+str((counter-miss_counter)/(counter*1.0))+" total:"+str(counter)+" miss:"+str(miss_counter)+" bad score:"+str(bad_score_counter)+" result:"+result+" "+str(sensors)+" - "+suffix+"                \r")
-    sys.stdout.flush()
     if log:
-        #sys.stdout.write("\n")
-        sys.stdout.flush()
+        print("accuracy:"+str((counter-miss_counter)/(counter*1.0))+" total:"+str(counter)+" miss:"+str(miss_counter)+" bad score:"+str(bad_score_counter)+" result:"+result+" "+str(sensors)+" - "+suffix)
+    else:
+        # '\r': ラインの先頭にカーソルを置く
+        # '\r\033[K': ラインの全ての文字を消す
+        # stderrの現在の行に上書きする
+        sys.stderr.write('\r\033[K'+"accuracy:"+str((counter-miss_counter)/(counter*1.0))+" total:"+str(counter)+" miss:"+str(miss_counter)+" bad score:"+str(bad_score_counter)+" result:"+result+" "+str(sensors)+" - "+suffix)
+
+        sys.stderr.flush()
 
     return
 
@@ -123,23 +128,20 @@ def main():
                     # 予測結果とジェネレータ結果が異なった回数をカウントする
                     if not if_value == ai_values[i]:
                         miss_counter += 1
-                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter,log=True)
+                        # 不一致の予測結果をコンソールに表示する
+                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
 
                     ########################################
-                    # 予測結果をコンソールに表示する
+                    # 定期的に予測結果をコンソールに表示する
                     ########################################
                     if counter % 10000 == 0:
-                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
+                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter,log=False)
     except:
         import traceback
         traceback.print_exc()
         print('error! main failed.')
     finally:
-        sys.stdout.write("accuracy:"+str((counter-miss_counter)/(counter*1.0))+" total:"+str(counter)+" miss:"+str(miss_counter)+" bad score:"+str(bad_score_counter)+"                \r")
-        sys.stdout.flush()
-        print("")
-        sys.stdout.flush()
-
+        print("accuracy:"+str((counter-miss_counter)/(counter*1.0))+" total:"+str(counter)+" miss:"+str(miss_counter)+" bad score:"+str(bad_score_counter))
         print("main end")
         pass
 

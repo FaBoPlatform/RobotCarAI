@@ -233,7 +233,7 @@ print("--- batch data ---\n{}".format(csvdata))
 入力層はセンサー値を入れるため3入力を持ちます。<br>
 隠れ層は1つだけ持ち、11ノードを用意します。各ノードは3つのセンサー値を入力に持ちます。<br>
 隠れ層と出力層では全ての入力線で個別にweightを持ち、各ノード毎にbiasを持ちます。<br>
-Neural Networksではこのweightとbiasの値が学習成果となり、ノードの形をモデルと呼びます。この違いは主に学習途中からの再開時(checkpointからの値のrestore)や、学習成果を凍結する時(ノード情報と値をpbファイルに保存。freeze graph)に現れます。
+Neural Networksではこのweightとbiasの値が学習成果となり、ノードの形をモデルと呼びます。値とモデル構図が分かれていることは主に学習途中からの再開時(checkpointからの値のrestore)や、学習成果を凍結する時(ノード情報と値をpbファイルに保存。freeze graph)に現れます。
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
