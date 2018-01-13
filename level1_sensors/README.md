@@ -281,23 +281,31 @@ Neural Networksではこのweightとbiasの値が学習成果となり、ノー�
 
 ミニバッチとは、学習時に特徴量を算出しやくするために、学習データを10～100個程度に小分けにしたものになります。<br>
 1つのミニバッチデータには各クラスが同数含まれている方が精度が良くなりますが、今回は気にしないことにします。
+<hr>
+
 ![](./document/code-design1.png)
 ![](./document/code-design2.png)
 ![](./document/code-design3.png)
 ![](./document/code-design4.png)
 ![](./document/code-design5.png)
+<hr>
+
 センサー値の入力変数はplaceholder_input_dataとdequeue_input_dataの2種類あります。<br>
 予測実行時のセンサー値の入力変数はdequeue_input_dataとなるオペレーション名dequeue_op:0を使います。<br>
 学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 ```python
     dequeue_input_data, dequeue_input_target = queue.dequeue_many(placeholder_batch_size, name='dequeue_op') # instead of data/target placeholder
 ```
+<hr>
+
 ミニバッチサイズを可変とするためにplaceholderを使い、行数をNoneとしています。<br>
 学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 ```python
 placeholder_input_data = tf.placeholder('float', [None, DATA_COLS], name='input_data') # for load_and_enqueue. use dequeue_op:0 for prediction
 ```
-このことで、1つの値を予測するためであっても予測にかけるデータは配列に入れる必要が生じますが([[左センサー値,前センサー値,右センサー値]])、学習時のミニバッチサイズと予測時のデータ件数は異なるため、入力変数に使うplaceholderの行数はNoneとすることで、モデルで可変行数の入力値を扱えるようにします。<br>
+<hr>
+
+placeholderの行数をNoneとすることで、1つの値を予測するためであっても予測にかけるデータは配列に入れる必要が生じますが([[左センサー値,前センサー値,右センサー値]])、学習時のミニバッチサイズと予測時のデータ件数は異なるため、入力変数に使うplaceholderの行数はNoneとすることで、モデルで可変行数の入力値を扱えるようにします。<br>
 予測コード：[./lib/ai.py](./lib/ai.py)
 ```python
     def get_prediction(self,sensors,score=0):
@@ -343,6 +351,8 @@ TARGET_STEPを増やすことで、さらに学習させることが出来ます
 
 #### 再利用可能な方法
 学習コードで保存する時はcheckpointに保存します。
+<hr>
+
 ##### checkpointに保存
 checkpointでの保存はとても簡単です。
 ```python
@@ -361,6 +371,8 @@ checkpointはデフォルトでは最新5件までしか残さないため、長
                 saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
 ```
 checkpointへの保存で使うsaver.save()は、学習済みの値の他にモデル構成情報となるmeta_graphも出力します。
+<hr>
+
 ##### checkpointを読み込む
 checkpointには学習・実行に必要な全てのモデル構成と変数値が保存されています。そのため、checkpointを読み込むことで学習を再開することが出来ます。<br>
 今回は、学習コードにモデルをフルスクラッチで書いているので、checkpointからのモデル情報の復元はスキップして、変数値だけを復元して再開します。<br>
@@ -388,6 +400,8 @@ checkpointが無い場合は、tf.global_variables_initializer()でモデルの�
 
 #### 凍結する方法
 予測実行アプリケーションで使う場合はpbファイルに保存します。
+<hr>
+
 ##### pbファイルに保存
 学習が終わったら学習用のモデル情報や変数値をそぎ落として、軽量な学習済みモデルとしてpbファイルに保存します。<br>
 
@@ -490,7 +504,7 @@ pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
         tf.train.write_graph(output_graph_def, MODEL_DIR,
                              FROZEN_MODEL_NAME, as_text=False)
 ```
-as_text=Trueにすると、テキストファイルですることが出来ます。
+as_text=Trueにすると、テキストファイルで保存することが出来ます。
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
