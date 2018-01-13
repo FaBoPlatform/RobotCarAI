@@ -221,10 +221,9 @@ print("--- batch data ---\n{}".format(csvdata))
 * コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる
 
-制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して学習データ ジェネレータは完成です。
-
-ラベル ジェネレータ：[./generator/labelgenerator.py](./generator/labelgenerator.py)
-学習データ ジェネレータ：[./MLP/train_model.py](./MLP/train_model.py)
+制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して学習データ ジェネレータは完成です。<br>
+ラベル ジェネレータ：[./generator/labelgenerator.py](./generator/labelgenerator.py)<br>
+学習データ ジェネレータ：[./MLP/train_model.py](./MLP/train_model.py)<br>
 ```python
 def generate_random_train_data(n_rows):
     '''
