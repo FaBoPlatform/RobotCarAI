@@ -371,6 +371,8 @@ step pbファイル変換後
 ```
 prefix/step/step [<tf.Tensor 'prefix/step/step:0' shape=() dtype=int32>]
 ```
+prefix/はpb読み込み時に追加した接頭辞
+
 
 neural_network_model/Variable_1 pbファイル変換前
 ```
@@ -405,6 +407,7 @@ neural_network_model/Variable_1 pbファイル変換後
 prefix/neural_network_model/Variable_1 [<tf.Tensor 'prefix/neural_network_model/Variable_1:0' shape=(3, 11) dtype=float32>]
 prefix/neural_network_model/Variable_1/read [<tf.Tensor 'prefix/neural_network_model/Variable_1/read:0' shape=(3, 11) dtype=float32>]
 ```
+prefix/はpb読み込み時に追加した接頭辞
 
 <hr>
 
