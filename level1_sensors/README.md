@@ -359,16 +359,18 @@ pbファイルで保存すると、予測に必要なオペレーション名だ
 pbファイルでは変数値を定数に変換しモデル構成の中に埋め込みます。
 
 step変換前
->`step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]`<br>
->`step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]`<br>
->`step/step [<tf.Tensor 'step/step:0' shape=() dtype=int32_ref>]`<br>
->`step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]`<br>
->`step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]`<br>
->`step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]`<br>
-
+```
+step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]
+step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]
+step/step [<tf.Tensor 'step/step:0' shape=() dtype=int32_ref>]
+step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]
+step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]
+step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]
+```
 step変換後
->`prefix/step/step [<tf.Tensor 'prefix/step/step:0' shape=() dtype=int32>]`<br>
-
+```
+prefix/step/step [<tf.Tensor 'prefix/step/step:0' shape=() dtype=int32>]
+```
 
 neural_network_model/Variable_1変換前
 ```
@@ -487,16 +489,18 @@ def print_graph_operations(graph):
         # print operations
         print_graph_operations(graph)
 ```
->`----- operations in graph -----`<br>
->`input/input_data [<tf.Tensor 'input/input_data:0' shape=(?, 3) dtype=float32>]`<br>
->`input/input_target [<tf.Tensor 'input/input_target:0' shape=<unknown> dtype=float32>]`<br>
->`input/batch_size [<tf.Tensor 'input/batch_size:0' shape=<unknown> dtype=int32>]`<br>
->`step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]`<br>
->`step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]`<br>
->`step/step [<tf.Tensor 'step/step:0' shape=() dtype=int32_ref>]`<br>
->`step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]`<br>
->`step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]`<br>
->`step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]`<br>
+```
+----- operations in graph -----
+input/input_data [<tf.Tensor 'input/input_data:0' shape=(?, 3) dtype=float32>]
+input/input_target [<tf.Tensor 'input/input_target:0' shape=<unknown> dtype=float32>]
+input/batch_size [<tf.Tensor 'input/batch_size:0' shape=<unknown> dtype=int32>]
+step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]
+step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]
+step/step [<tf.Tensor 'step/step:0' shape=() dtype=int32_ref>]
+step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]
+step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]
+step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]
+```
 
 freeze_graph.pyは、他のモデルのcheckpointでも使うことが出来ます。
 <hr>
