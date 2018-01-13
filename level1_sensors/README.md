@@ -463,8 +463,8 @@ checkpointから復元した再学習可能なフルモデルデータでも予�
 <hr>
 
 #### pbファイルに保存
-> cd ./MLP/
-> python freeze_graph.py
+> cd ./MLP/<br>
+> python freeze_graph.py<br>
 
 ./MLP/model/car_model.pb ファイルが作成されます。<br>
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
