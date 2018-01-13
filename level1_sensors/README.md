@@ -34,7 +34,7 @@
 * [Python/TensorFlow] [学習と保存](#6)
 * [Python/TensorFlow] [予測を実行](#7)
 * [Python/TensorFlow] [予測精度を評価](#8)
-
+* [ディレクトリとファイルについて] (#9)
 <hr>
 
 <a name='1'>
@@ -259,6 +259,18 @@ Neural Networksではこのweightとbiasの値が学習成果となり、ノー�
 ![](./document/code-design3.png)
 ![](./document/code-design4.png)
 ![](./document/code-design5.png)
+センサー値の入力変数はplaceholder_input_dataとdequeue_input_dataの2種類あります。<br>
+予測実行時のセンサー値の入力変数はdequeue_input_dataとなるオペレーション名dequeue_op:0を使います。<br>
+```python
+    dequeue_input_data, dequeue_input_target = queue.dequeue_many(placeholder_batch_size, name='dequeue_op') # instead of data/target placeholder
+```
+ミニバッチサイズを可変とするためにplaceholderを使い、行数をNoneとしています。
+```python
+placeholder_input_data = tf.placeholder('float', [None, DATA_COLS], name='input_data') # for load_and_enqueue. use dequeue_op:0 for prediction
+```
+このことで、1つの値を予測するためであっても予測にかけるデータは配列に入れる必要が生じますが([[左センサー値,前センサー値,右センサー値]])、学習時のミニバッチサイズと予測時のデータ件数は異なるため、入力変数に使うplaceholderの行数はNoneとすることで、モデルで可変行数の入力値を扱えるようにします。<br>
+
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -278,6 +290,31 @@ Neural Networksではこのweightとbiasの値が学習成果となり、ノー�
 <a name='8'>
 
 ## [Python/TensorFlow] 予測精度を評価
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='9'>
+
+## ディレクトリとファイルについて
+* ディレクトリについて
+  * document/ ドキュメント関連
+  * fabolib/ Fabo製基板関連
+  * generator/ 学習データのラベル生成関連
+  * lib/ 予測関連
+  * MLP/ 学習とpbファイル作成関連
+  * model/ 学習済みモデル置き場
+  * test/ Fabo基板動作確認関連
+* ファイルについて
+  * README.md これ
+  * run_ai_eval.py 予測精度評価用コード
+  * run_ai.py センサー値を取得して予測を実行するコード。Fabo基板、LidarLite V3が必要。
+  * MLP/train_model.py 学習実行コード
+    * MLP/log/にTensorboard用のログファイルが出力される
+    * MLP/model/にcheckpointファイルが出力される
+  * MLP/freeze_graph.py pbファイル作成コード
+    * MLP/model/car_model.pbファイルを作成する
+  * MLP/run_ai_test.py ランダム値を入力値として予測を実行するコード
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 

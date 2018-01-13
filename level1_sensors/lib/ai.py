@@ -96,7 +96,6 @@ class AI():
             prediction_index: 予測結果のクラス番号
         '''
 
-
         _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:[sensors]})
 
         max_index = np.argmax(_output_y[0])
