@@ -43,13 +43,15 @@ class LabelGenerator():
         print("停止距離:{} (曲がってもぶつかる前方障害物までの距離)".format(self.FRONT_MIN_DRIVE_CONTROL_DISTANCE))
         return
 
-    '''
-    return 
-    0:安全範囲につき制御不要
-    1:危険範囲につき制御が必要
-    2:曲がれない
-    '''
     def left45_control(self,left45_sensor_distance):
+        '''
+        args:
+            left45_sensor_distance: 左センサー値
+        return:
+            0:安全範囲につき制御不要
+            1:危険範囲につき制御が必要
+            2:曲がれない
+        '''
         # 安全範囲
         if self.LEFT45_MAX_DRIVE_CONTROL_DISTANCE < left45_sensor_distance:
             return 0
@@ -60,13 +62,15 @@ class LabelGenerator():
         if left45_sensor_distance < self.LEFT45_MIN_DRIVE_CONTROL_DISTANCE:
             return 2
 
-    '''
-    return 
-    0:安全範囲につき制御不要
-    1:危険範囲につき制御が必要
-    2:曲がれない
-    '''
     def right45_control(self,right45_sensor_distance):
+        '''
+        args:
+            right45_sensor_distance: 右センサー値
+        return:
+            0:安全範囲につき制御不要
+            1:危険範囲につき制御が必要
+            2:曲がれない
+        '''
         # 安全範囲
         if self.RIGHT45_MAX_DRIVE_CONTROL_DISTANCE < right45_sensor_distance:
             return 0
@@ -77,13 +81,15 @@ class LabelGenerator():
         if right45_sensor_distance < self.RIGHT45_MIN_DRIVE_CONTROL_DISTANCE:
             return 2
 
-    '''
-    return 
-    0:安全範囲につき制御不要
-    1:危険範囲につき制御が必要
-    2:曲がれない
-    '''
     def front_control(self,front_sensor_distance):
+        '''
+        args:
+            front_sensor_distance: 前センサー値
+        return:
+            0:安全範囲につき制御不要
+            1:危険範囲につき制御が必要
+            2:曲がれない、進めない
+        '''
         # 安全範囲
         if self.FRONT_MAX_DRIVE_CONTROL_DISTANCE < front_sensor_distance:
             return 0
@@ -94,10 +100,15 @@ class LabelGenerator():
         if front_sensor_distance < self.FRONT_MIN_DRIVE_CONTROL_DISTANCE:
             return 2
 
-    '''
-    sensors=[LEFT45_SENSOR_DISTANCE,FRONT_SENSOR_DISTANCE,RIGHT45_SENSOR_DISTANCE]
-    '''
     def control(self,sensors):
+        '''
+        args:
+            sensors: [左センサー値,前センサー値,右センサー値]
+        return:
+            [stop,left,forward,right,error,control_number]
+
+        error,control_number分岐漏れ確認のためのdebug用。
+        '''
 
         left45_control = self.left45_control(sensors[0])
         front_control = self.front_control(sensors[1])
