@@ -24,7 +24,7 @@
   * クラス分類
   * one hot value
   * データフォーマット
-* [Python] [学習データのジェネレータを作る](#3)
+* [Python] [学習データ ジェネレータを作る](#3)
   * 簡単なIF文での判定
   * 車両旋回性能
   * 曲がる、止まる判定
@@ -110,7 +110,7 @@ for i in range(n_classes):
 
 <a name='3'>
 
-## [Python] 学習データのジェネレータを作る
+## [Python] 学習データ ジェネレータを作る
 学習データフォーマットが決まったので、実際に学習データを作っていきます。<br>
 CSVデータを人力で用意していってもよいのですが、IF文で書ける分岐条件なので関数で書いてしまうことにします。<br>
 <hr>
@@ -221,7 +221,34 @@ print("--- batch data ---\n{}".format(csvdata))
 * コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる
 
-制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して[学習データ ジェネレータ](./generator/labelgenerator.py)は完成です。
+制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して学習データ ジェネレータは完成です。
+
+ラベル ジェネレータ：[./generator/labelgenerator.py](./generator/labelgenerator.py)
+学習データ ジェネレータ：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+def generate_random_train_data(n_rows):
+    '''
+    ランダムなセンサー値と、それに対応するラベルデータを作成する
+    args:
+        n_rows: 作成するデータ件数
+    return:
+        batch_data: センサー値
+        batch_target: ラベルデータ
+    '''
+    csvdata=[]
+    # 2m以内のランダムなINT値を作成する
+    sensors = np.random.randint(0,200,[n_rows,DATA_COLS])
+
+    for i in range(n_rows):
+        generator_result = generator.get_label(sensors[i])
+        csvrow = np.hstack((sensors[i],generator_result))
+        csvdata.append(csvrow)
+    csvdata = np.array(csvdata)
+
+    batch_data = csvdata[0:n_rows,0:DATA_COLS]
+    batch_target = csvdata[0:n_rows,DATA_COLS:]
+    return batch_data, batch_target
+```
 <hr>
 
 <a name='4'>
@@ -261,16 +288,30 @@ Neural Networksではこのweightとbiasの値が学習成果となり、ノー�
 ![](./document/code-design5.png)
 センサー値の入力変数はplaceholder_input_dataとdequeue_input_dataの2種類あります。<br>
 予測実行時のセンサー値の入力変数はdequeue_input_dataとなるオペレーション名dequeue_op:0を使います。<br>
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 ```python
     dequeue_input_data, dequeue_input_target = queue.dequeue_many(placeholder_batch_size, name='dequeue_op') # instead of data/target placeholder
 ```
-ミニバッチサイズを可変とするためにplaceholderを使い、行数をNoneとしています。
+ミニバッチサイズを可変とするためにplaceholderを使い、行数をNoneとしています。<br>
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
 ```python
 placeholder_input_data = tf.placeholder('float', [None, DATA_COLS], name='input_data') # for load_and_enqueue. use dequeue_op:0 for prediction
 ```
 このことで、1つの値を予測するためであっても予測にかけるデータは配列に入れる必要が生じますが([[左センサー値,前センサー値,右センサー値]])、学習時のミニバッチサイズと予測時のデータ件数は異なるため、入力変数に使うplaceholderの行数はNoneとすることで、モデルで可変行数の入力値を扱えるようにします。<br>
+予測コード：[./lib/ai.py](./lib/ai.py)
+```python
+    def get_prediction(self,sensors,score=0):
+        '''
+        AI予測を実行する
+        args:
+            sensors: [左センサー値,前センサー値,右センサー値]
+            score: 予測結果に必要なスコア閾値。0.0-1.0
+        return:
+            prediction_index: 予測結果のクラス番号
+        '''
 
-学習コード：[./MLP/train_model.py](./MLP/train_model.py)
+        _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:[sensors]})
+```
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -305,7 +346,7 @@ placeholder_input_data = tf.placeholder('float', [None, DATA_COLS], name='input_
   * model/ 学習済みモデル置き場
   * test/ Fabo基板動作確認関連
 * ファイルについて
-  * README.md これ
+  * README.md このファイル
   * run_ai_eval.py 予測精度評価用コード
   * run_ai.py センサー値を取得して予測を実行するコード。Fabo基板、LidarLite V3が必要。
   * MLP/train_model.py 学習実行コード
