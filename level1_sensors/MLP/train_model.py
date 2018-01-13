@@ -109,17 +109,20 @@ with tf.variable_scope("queue"):
     dequeue_input_data, dequeue_input_target = queue.dequeue_many(placeholder_batch_size, name='dequeue_op') # instead of data/target placeholder
 
 with tf.variable_scope('neural_network_model'):
-    hidden_1_layer = {'weights':tf.Variable(weight_variable([DATA_COLS, N_NODES_HL1])),
+    # 中間層定義
+    hidden_layer_1 = {'weights':tf.Variable(weight_variable([DATA_COLS, N_NODES_HL1])),
                       'biases':tf.Variable(bias_variable([N_NODES_HL1]))}
 
+    # 出力層定義
     output_layer = {'weights':tf.Variable(weight_variable([N_NODES_HL1, N_CLASSES])),
                     'biases':tf.Variable(bias_variable([N_CLASSES])),}
 
-    l1 = tf.add(tf.matmul(dequeue_input_data,hidden_1_layer['weights']), hidden_1_layer['biases'])
-    l1 = tf.nn.relu(l1)
+    # 中間層計算
+    layer_1 = tf.add(tf.matmul(dequeue_input_data,hidden_layer_1['weights']), hidden_layer_1['biases'])
+    layer_1 = tf.nn.relu(layer_1)
 
-    # 予測結果
-    prediction = tf.add(tf.matmul(l1,output_layer['weights']), output_layer['biases'], name='output_y')
+    # 予測結果(出力層計算)
+    prediction = tf.add(tf.matmul(layer_1,output_layer['weights']), output_layer['biases'], name='output_y')
     # スコア
     score = tf.nn.softmax(prediction, name='score')
 
@@ -157,7 +160,7 @@ with tf.Session() as sess:
     start_time, start_clock = time.time(), time.clock()
 
     # 学習データ ジェネレータを用いてミニバッチデータを作成し、enqueue_op実行によりqueueへデータを挿入するスレッドを開始する
-    for i in range(0,N_THREADS):
+    for i in range(N_THREADS):
         enqueue_thread = threading.Thread(target=load_and_enqueue, args=[sess])
         enqueue_thread.isDaemon()
         enqueue_thread.start()

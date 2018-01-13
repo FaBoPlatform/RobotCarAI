@@ -241,9 +241,25 @@ Neural Networksではこのweightとbiasの値が学習成果となり、ノー�
 <a name='5'>
 
 ## [Python/TensorFlow] 学習用コードのコーディング
+#### 学習コード設計
+* 簡単かつスケール増減が単純なMulti-Layer Perceptronモデルとする
+* 学習データ ジェネレータを作成する
+* 実装はミニバッチでおこなう
+* 学習データ処理には分散処理が可能なqueueを用いる
+* 予測時に用いる入出力オペレーションには名前を付ける
+* ステップ数を記録する
+* checkpoint保存と途中から再開する
+* Tensorboard用にsummary出力する
+* 定数の変数は大文字にする
 
 ミニバッチとは、学習時に特徴量を算出し易くするために、学習データを10～100個程度に小分けにしたものになります。<br>
 1つのミニバッチデータには各クラスが同数含まれている方が精度が良くなりますが、今回は気にしないことにします。
+![](./document/code-design1.png)
+![](./document/code-design2.png)
+![](./document/code-design3.png)
+![](./document/code-design4.png)
+![](./document/code-design5.png)
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
