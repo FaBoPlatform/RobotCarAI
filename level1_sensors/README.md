@@ -358,7 +358,7 @@ checkpointでは、モデル構成と変数値はそれぞれ別のファイル�
 pbファイルで保存すると、予測に必要なオペレーション名だけを指定してモデル構成と変数値を保存することが出来ます。そのため、再学習に用いることは出来ませんが、バイナリサイズは小さくなります。<br>
 pbファイルでは変数値を定数に変換しモデル構成の中に埋め込みます。
 
-step変換前
+step pbファイル変換前
 ```
 step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]
 step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]
@@ -367,12 +367,12 @@ step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]
 step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]
 step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]
 ```
-step変換後
+step pbファイル変換後
 ```
 prefix/step/step [<tf.Tensor 'prefix/step/step:0' shape=() dtype=int32>]
 ```
 
-neural_network_model/Variable_1変換前
+neural_network_model/Variable_1 pbファイル変換前
 ```
 neural_network_model/Variable_1 [<tf.Tensor 'neural_network_model/Variable_1:0' shape=(3, 11) dtype=float32_ref>]
 neural_network_model/Variable_1/IsVariableInitialized [<tf.Tensor 'neural_network_model/Variable_1/IsVariableInitialized:0' shape=() dtype=bool>]
@@ -400,7 +400,7 @@ neural_network_model/Variable_1/Adam_1/read [<tf.Tensor 'neural_network_model/Va
 train_op/update_neural_network_model/Variable_1/ApplyAdam [<tf.Tensor 'train_op/update_neural_network_model/Variable_1/ApplyAdam:0' shape=(3, 11) dtype=float32_ref>]
 ```
 
-neural_network_model/Variable_1変換後
+neural_network_model/Variable_1 pbファイル変換後
 ```
 prefix/neural_network_model/Variable_1 [<tf.Tensor 'prefix/neural_network_model/Variable_1:0' shape=(3, 11) dtype=float32>]
 prefix/neural_network_model/Variable_1/read [<tf.Tensor 'prefix/neural_network_model/Variable_1/read:0' shape=(3, 11) dtype=float32>]
@@ -456,10 +456,16 @@ checkpointが無い場合は、tf.global_variables_initializer()でモデルの�
 <hr>
 
 #### 凍結する方法
-checkpointから復元した再学習可能なフルモデルデータでも予測は出来ますが、実行環境では学習でしか使わない情報は無駄なので削り落として必要なものだけをpbファイルに保存したものを使います。
+checkpointから復元した再学習可能なフルモデルデータでも予測は出来ますが、実行環境では学習でしか使わない情報は無駄なので削り落として必要なものだけをpbファイルに保存したものを使います。<br>
 <hr>
 
 #### pbファイルに保存
+> cd ./MLP/
+> python freeze_graph.py
+
+./MLP/model/car_model.pb ファイルが作成されます。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+
 ![](./document/freeze-design1.png)
 学習コードで学習済みモデルのpbファイルを作ろうとすると、学習時のセッションとは別のセッションを作成して変数値を再読み込みしないといけないため、コードを分けて用意します。<br>
 <hr>
