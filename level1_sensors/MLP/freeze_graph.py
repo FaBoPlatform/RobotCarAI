@@ -1,7 +1,7 @@
 # coding: utf-8
 # saver.save()で保存したcheckpointのmeta(NNモデル)と値を読み込み、学習値込みのNNモデルをmodel.pbに保存する
 
-import os, argparse
+import os
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
 
@@ -24,11 +24,6 @@ def print_graph_nodes(graph_def):
         print(node)
 
 def freeze_graph():
-    MODEL_DIR
-    CLEAR_DEVICES
-    OUTPUT_NODE_NAMES
-    FROZEN_MODEL_NAME
-
     # Graphを初期化する(実行エラーで古いGraphが残っている場合に消す)
     tf.reset_default_graph()
 
@@ -36,7 +31,7 @@ def freeze_graph():
     if checkpoint:
         # checkpointファイルから最後に保存したモデルへのパスを取得する
         last_model = checkpoint.model_checkpoint_path
-        print(("load {0}".format(last_model)))
+        print("load {}".format(last_model))
 
         # pbファイル名を設定する
         # We precise the file fullname of our freezed graph
@@ -74,15 +69,18 @@ def freeze_graph():
             OUTPUT_NODE_NAMES.split(",") # The output node names are used to select the usefull nodes
         )
 
+        # pbファイルに保存する
+        ''' バイナリならこれでもよい
         # Finally we serialize and dump the output graph to the filesystem
         with tf.gfile.GFile(frozen_model, "wb") as f:
             f.write(output_graph_def.SerializeToString())
             print("%d ops in the final graph." % len(output_graph_def.node))
-
-
-        # グラフを書き出し
+        '''
+        ''' バイナリ、テキストどちらも対応 '''
         tf.train.write_graph(output_graph_def, MODEL_DIR,
                              FROZEN_MODEL_NAME, as_text=False)
+
+        print("%d ops in the final graph." % len(output_graph_def.node))
 
 
 freeze_graph()

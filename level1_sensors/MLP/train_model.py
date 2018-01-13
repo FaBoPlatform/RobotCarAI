@@ -140,14 +140,14 @@ summary_op = tf.summary.merge_all()
 
 train_op = tf.train.AdamOptimizer(0.0001).minimize(loss_op, name='train_op')
 
-saver = tf.train.Saver(max_to_keep=100)
 test_data, test_target =generate_random_train_data(TEST_NUM)
+saver = tf.train.Saver(max_to_keep=100)
 with tf.Session() as sess:
     ckpt = tf.train.get_checkpoint_state(MODEL_DIR)
     if ckpt:
         # checkpointファイルから最後に保存したモデルへのパスを取得する
         last_model = ckpt.model_checkpoint_path
-        print("load {0}".format(last_model))
+        print("load {}".format(last_model))
         # 学習済みモデルを読み込む
         saver.restore(sess, last_model)
     else:
@@ -197,11 +197,11 @@ with tf.Session() as sess:
                 _step = sess.run(step_op,feed_dict={placeholder_step:step}) # variable_stepにstepを記録する
                 saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
 
-        sess.run(queue.close(cancel_pending_enqueues=True))
-    except Exception as e:
-        # Report exceptions to the coodinator.
-        print(e)
+    except:
+        import traceback
+        traceback.print_exc()
     finally:
+        sess.run(queue.close(cancel_pending_enqueues=True))
         pass
 
     # ステップ学習時、保存する

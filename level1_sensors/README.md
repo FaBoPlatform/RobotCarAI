@@ -222,6 +222,7 @@ print("--- batch data ---\n{}".format(csvdata))
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる
 
 制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して学習データ ジェネレータは完成です。<br>
+
 ラベル ジェネレータ：[./generator/labelgenerator.py](./generator/labelgenerator.py)<br>
 学習データ ジェネレータ：[./MLP/train_model.py](./MLP/train_model.py)<br>
 ```python
@@ -318,6 +319,179 @@ placeholder_input_data = tf.placeholder('float', [None, DATA_COLS], name='input_
 <a name='6'>
 
 ## [Python/TensorFlow] 学習と保存
+#### 学習実行
+> cd MLP
+> python train_model.py
+学習はTARGET_STEPまで学習を行います。<br>
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+TARGET_STEP = 10000 # ステップ数
+```
+今回はステップ数もモデルに変数として保存しているので、途中から再開してもTARGET_STEPまで学習したらそこで終了します。<br>
+TARGET_STEPを増やすことで、さらに学習させることが出来ます。
+<hr>
+
+#### 2種類の保存と読み込み方法
+保存と読み込み方法は2種類あります。
+* 再学習可能な方法
+  * checkpointに保存
+  * checkpointを読み込む
+* 凍結する方法
+  * pbファイルに保存
+  * pbファイルを読み込む
+<hr>
+
+#### 再利用可能な方法
+学習コードで保存する時はcheckpointに保存します。
+##### checkpointに保存
+checkpointでの保存はとても簡単です。
+```python
+saver = tf.train.Saver(max_to_keep=100)
+''' 学習を実行 '''
+saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
+```
+checkpointはデフォルトでは最新5件までしか残さないため、長時間の学習を行う時はmax_to_keepの値を指定しておきます。<br>
+例えば5000万ステップを学習する場合は、checkpointは100万ステップ毎に保存する感じで使います。<br>
+
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+            # 1000000 step毎にsaveする
+            if step % 1000000 == 0:
+                _step = sess.run(step_op,feed_dict={placeholder_step:step}) # variable_stepにstepを記録する
+                saver.save(sess, MODEL_DIR + '/model-'+str(step)+'.ckpt')
+```
+checkpointへの保存で使うsaver.save()は、学習済みの値の他にモデル構成情報となるmeta_graphも出力します。
+##### checkpointを読み込む
+checkpointには学習・実行に必要な全てのモデル構成と変数値が保存されています。そのため、checkpointを読み込むことで学習を再開することが出来ます。<br>
+今回は、学習コードにモデルをフルスクラッチで書いているので、checkpointからのモデル情報の復元はスキップして、変数値だけを復元して再開します。<br>
+
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+saver = tf.train.Saver(max_to_keep=100)
+with tf.Session() as sess:
+    ckpt = tf.train.get_checkpoint_state(MODEL_DIR)
+    if ckpt:
+        # checkpointファイルから最後に保存したモデルへのパスを取得する
+        last_model = ckpt.model_checkpoint_path
+        print("load {}".format(last_model))
+        # 学習済みモデルを読み込む
+        saver.restore(sess, last_model)
+    else:
+        print("initialization")
+        # 初期化処理
+        init_op = tf.global_variables_initializer()
+        sess.run(init_op)
+```
+checkpointがある場合、学習済みの変数値をsaver.restore()で復元します。この時、checkpointのモデル情報と今のモデル情報が一致している必要があります。モデル情報を変更していると復元に失敗します。<br>
+checkpointが無い場合は、tf.global_variables_initializer()でモデルの変数値を初期化します。
+<hr>
+
+#### 凍結する方法
+予測実行アプリケーションで使う場合はpbファイルに保存します。
+##### pbファイルに保存
+学習が終わったら学習用のモデル情報や変数値をそぎ落として、軽量な学習済みモデルとしてpbファイルに保存します。<br>
+
+![](./document/freeze-design1.png)
+学習コードで学習済みモデルのpbファイルを作ろうとすると、学習時のセッションとは別のセッションを作成して変数値を再読み込みしないといけないため、コードを分けて用意します。<br>
+<hr>
+
+予測時に使うOP名は、学習コードで付けた名前になります。tf.variable_scope()で名前スコープを付けた場合はスコープ名から必要になります。
+学習コード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+with tf.variable_scope("queue"):
+...
+    dequeue_input_data, dequeue_input_target = queue.dequeue_many(placeholder_batch_size, name='dequeue_op') # instead of data/target placeholder
+```
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+OUTPUT_NODE_NAMES="queue/dequeue_op,...
+```
+<hr>
+
+OP名が分からない時は、表示されるOP名から推測してください。
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+def print_graph_operations(graph):
+    # print operations
+    print("----- operations in graph -----")
+    for op in graph.get_operations():
+        print("{} {}".format(op.name,op.outputs))
+...
+        # print operations
+        print_graph_operations(graph)
+```
+>`----- operations in graph -----`<br>
+>`input/input_data [<tf.Tensor 'input/input_data:0' shape=(?, 3) dtype=float32>]`<br>
+>`input/input_target [<tf.Tensor 'input/input_target:0' shape=<unknown> dtype=float32>]`<br>
+>`input/batch_size [<tf.Tensor 'input/batch_size:0' shape=<unknown> dtype=int32>]`<br>
+>`step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]`<br>
+>`step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]`<br>
+>`step/step [<tf.Tensor 'step/step:0' shape=() dtype=int32_ref>]`<br>
+>`step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]`<br>
+>`step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]`<br>
+>`step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]`<br>
+
+freeze_graph.pyは、他のモデルのcheckpointでも使うことが出来ます。
+<hr>
+
+学習環境と実行環境で異なるマシン環境の場合は、モデル構成情報からデバイス情報を削除します。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+CLEAR_DEVICES=True
+...
+        # Graphを読み込む
+        # We import the meta graph and retrieve a Saver
+        saver = tf.train.import_meta_graph(last_model + '.meta', clear_devices=CLEAR_DEVICES)
+```
+<hr>
+
+freeze_graphにはモデル構成をコードに書いていないため、checkpointからモデルを復元します。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+        # Graphを読み込む
+        # We import the meta graph and retrieve a Saver
+        saver = tf.train.import_meta_graph(last_model + '.meta', clear_devices=CLEAR_DEVICES)
+```
+tf.train.import_meta_graph()でモデル構成が復元され、さらにsaverが作成されます。<br>
+<hr>
+
+モデル構成を読み込んだら、グラフ定義を取得します。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+        # We retrieve the protobuf graph definition
+        graph = tf.get_default_graph()
+        graph_def = graph.as_graph_def()
+```
+<hr>
+
+学習済みの値を復元します。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+        saver.restore(sess, last_model)
+```
+
+<hr>
+
+必要な情報だけに削り落とします。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+        # We use a built-in TF helper to export variables to constants
+        output_graph_def = graph_util.convert_variables_to_constants(
+            sess, # The session is used to retrieve the weights
+            graph_def, # The graph_def is used to retrieve the nodes
+            OUTPUT_NODE_NAMES.split(",") # The output node names are used to select the usefull nodes
+        )
+```
+<hr>
+
+pbファイルにバイナリデータで保存します。<br>
+pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
+```python
+        tf.train.write_graph(output_graph_def, MODEL_DIR,
+                             FROZEN_MODEL_NAME, as_text=False)
+```
+as_text=Trueにすると、テキストファイルですることが出来ます。
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
