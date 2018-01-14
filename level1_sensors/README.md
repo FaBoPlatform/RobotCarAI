@@ -9,7 +9,7 @@
 
 【画像】
 ![](./document/robotcar.jpg)
-必要になるもの
+実行環境の構成
 * Raspberry Pi3
 * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
 * Fabo #902 Kerberos ver 1.0.0
