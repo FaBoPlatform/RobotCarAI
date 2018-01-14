@@ -759,6 +759,8 @@ from fab_lib import Kerberos
                         # 不一致の予測結果をコンソールに表示する
                         print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
 ```
+<hr>
+
 学習範囲(0-199)の評価は精度はかなりよくなりますが、800万件の予測を実行するのでJetson TX2で15分程度の時間がかかります。<br>
 読み込むモデルはAIクラスを初期化する際に変更できます。<br>
 評価実行コード：[./run_ai_eval.py](./run_ai_eval.py)<br>
@@ -780,6 +782,8 @@ from fab_lib import Kerberos
 40M | 0.999991875 | 65 | 51
 50M | 0.99979775 | 1618 | 1176
 
+<hr>
+
 学習範囲外(0-399から学習範囲を除外)の精度の評価はデータ件数が5600万件と多いためJetson TX2ではかなり時間がかかります。<br>
 > time python ./run_ai_eval_400.py > eval_400.log<br>
 > real	81m45.326s<br>
@@ -793,6 +797,8 @@ from fab_lib import Kerberos
 30M | - | - | -
 40M | - | - | -
 50M | 0.9193687857142857 | 4515348 | 40832
+
+<hr>
 
 この評価結果はとても興味深いことを示しています。<br>
 学習途中に学習範囲内のデータでの精度がよくなるモデルが現れることがありますが、それは学習範囲外でも同様に精度がよいとは限らないことを示しています。<br>
