@@ -756,15 +756,24 @@ from fab_lib import Kerberos
                         print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
 ```
 学習範囲(0-199)の評価は精度はかなりよくなりますが、800万件の予測を実行するのでJetson TX2で15分程度の時間がかかります。<br>
-読み込むpbファイルはAIライブラリ：[./lib/ai.py](./lib/ai.py)で指定します。<br>
-> python ./run_ai_eval.py > eval.log
+読み込むモデルはAIクラスを初期化する際に変更できます。<br>
+評価実行コード：[./run_ai_eval.py](./run_ai_eval.py)<br>
+```python
+    # AI準備
+    ai = AI("car_model.pb")
+```
+
+> python ./run_ai_eval.py > eval.log<br>
+> real	12m21.061s<br>
+> user	12m19.992s<br>
+> sys	0m13.420s<br>
 
 学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
 -- | -- | -- | --
 10M | 0.999633875 | 2929 | 2890
 50M | 0.99979775 | 1618 | 1176
 
-学習範囲外(0-399から学習範囲を除外)の精度の評価はデータ件数が5600万件とかなり多いためかなり時間がかかります。<br>
+学習範囲外(0-399から学習範囲を除外)の精度の評価はデータ件数が5600万件と多いためJetson TX2ではかなり時間がかかります。<br>
 > time python ./run_ai_eval_400.py > eval_400.log<br>
 > real	81m45.326s<br>
 > user	81m41.752s<br>
@@ -774,8 +783,6 @@ from fab_lib import Kerberos
 -- | -- | -- | --
 10M | - | - | -
 50M | 0.9193687857142857 | 4515348 | 40832
-
-
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -793,8 +800,9 @@ from fab_lib import Kerberos
   * test/ Fabo基板動作確認関連
 * ファイルについて
   * README.md このファイル
-  * run_ai_eval.py 予測精度評価用コード
-  * run_ai.py センサー値を取得して予測を実行するコード。Fabo基板、LidarLite v3が必要。
+  * run_ai_eval.py 学習範囲内の予測精度評価用コード
+  * run_ai_eval_400.py 学習範囲外の予測精度評価用コード
+  * run_ai.py センサー値を取得して予測を実行するコード。Fabo #902、LidarLite v3が必要。
   * MLP/train_model.py 学習実行コード
     * MLP/log/にTensorboard用のログファイルが出力される
     * MLP/model/にcheckpointファイルが出力される
