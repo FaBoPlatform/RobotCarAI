@@ -710,7 +710,7 @@ from fab_lib import Kerberos
 ## [Python/TensorFlow] 予測精度を評価
 入力値はfor文で生成可能で、対応する正解ラベルはIF文で求めることが出来るため、網羅的に予測を実行し、IF文の結果と比較することで精度を評価してみることにします。<br>
 
-一度に200件の入力データを作成し、予測にかけます。1件ずつ予測するよりも速く予測出来ます。<br>
+一度に40000件の入力データを作成し、予測にかけます。1件ずつ予測するよりも速く予測出来ます。<br>
 予測実行コード：[./run_ai_eval.py](./run_ai_eval.py)
 ```python
     # 評価する距離範囲
@@ -723,11 +723,12 @@ from fab_lib import Kerberos
         ########################################
         # 距離センサー値を生成する
         ########################################
+        sensors=[]
         for distance1 in range(MIN_RANGE,MAX_RANGE):
             for distance2 in range(MIN_RANGE,MAX_RANGE):
-                sensors=[]
                 for distance3 in range(MIN_RANGE,MAX_RANGE):
                     sensors.append([distance1,distance2,distance3])
+            if (distance1+1) % 10 == 0:
                 sensors=np.array(sensors)
 
                 ########################################

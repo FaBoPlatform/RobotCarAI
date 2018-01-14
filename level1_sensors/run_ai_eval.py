@@ -1,7 +1,7 @@
 # coding: utf-8
 # センサー値を取得し、予測を実行する
 # ジェネレータの結果と比較し、精度を評価する
-# 学習範囲内で評価する
+# 学習範囲外で評価する
 # python run_ai_eval.py > eval.log
 
 import time
@@ -99,13 +99,14 @@ def main():
         ########################################
         # 距離センサー値を生成する
         ########################################
+        sensors=[]
         for distance1 in range(MIN_RANGE,MAX_RANGE):
             for distance2 in range(MIN_RANGE,MAX_RANGE):
-                sensors=[]
                 for distance3 in range(MIN_RANGE,MAX_RANGE):
                     sensors.append([distance1,distance2,distance3])
+            if (distance1+1) % 10 == 0:
                 sensors=np.array(sensors)
-                    
+
                 ########################################
                 # AI予測結果を取得する
                 ########################################
@@ -137,6 +138,8 @@ def main():
                     ########################################
                     if counter % 10000 == 0:
                         print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter,log=False)
+                # sensorsを初期化する
+                sensors=[]
     except:
         import traceback
         traceback.print_exc()
