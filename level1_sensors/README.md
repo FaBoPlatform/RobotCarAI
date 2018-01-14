@@ -762,7 +762,7 @@ from fab_lib import Kerberos
 ```
 <hr>
 
-学習範囲(0-199)の評価は精度はかなりよくなりますが、800万件の予測を実行するのでJetson TX2で15分程度の時間がかかります。<br>
+学習範囲(0-199)の評価は精度はかなりよくなりますが、800万件の予測を実行するのでJetson TX2でそこそこ時間がかかります。<br>
 読み込むモデルはAIクラスを初期化する際に変更できます。<br>
 評価実行コード：[./run_ai_eval.py](./run_ai_eval.py)<br>
 ```python
@@ -770,10 +770,10 @@ from fab_lib import Kerberos
     ai = AI("car_model.pb")
 ```
 
-> python ./run_ai_eval.py > eval.log<br>
-> real	12m21.061s<br>
-> user	12m19.992s<br>
-> sys	0m13.420s<br>
+> time python ./run_ai_eval.py > eval.log<br>
+> real	11m12.715s<br>
+> user	11m11.452s<br>
+> sys	0m5.844s<br>
 
 学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
 -- | -- | -- | --
