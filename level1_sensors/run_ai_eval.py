@@ -112,9 +112,9 @@ def main():
                 ai_values = ai.get_predictions(sensors,SCORE)
 
                 n_rows = len(sensors)
-                # 予測結果のスコアが低かった回数をカウントする
                 for i in range(n_rows):
                     counter +=1
+                    # 予測結果のスコアが低かった回数をカウントする
                     if ai_values[i] == ai.get_other_label():
                         bad_score_counter += 1
 

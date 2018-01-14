@@ -723,13 +723,13 @@ from fab_lib import Kerberos
                 # 今回の予測結果を取得する
                 ai_values = ai.get_predictions(sensors,SCORE)
 ```
-ジェネレータは一気に複数行を計算出来ないので、予測と一件ずつ比較します。<br>
+ジェネレータは一気に複数行を計算出来ないので、予測結果と一件ずつ比較します。<br>
 予測実行コード：[./run_ai_eval.py](./run_ai_eval.py)
 ```python
                 n_rows = len(sensors)
-                # 予測結果のスコアが低かった回数をカウントする
                 for i in range(n_rows):
                     counter +=1
+                    # 予測結果のスコアが低かった回数をカウントする
                     if ai_values[i] == ai.get_other_label():
                         bad_score_counter += 1
 
