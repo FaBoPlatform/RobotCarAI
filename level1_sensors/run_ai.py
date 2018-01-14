@@ -50,7 +50,7 @@ def main():
     FORWARD = 2
     RIGHT = 3
 
-    # 近接センサー準備
+    # 距離センサー準備
     kerberos = Kerberos()
     # Lidar取得間隔(秒)
     LIDAR_INTERVAL = 0.05
@@ -66,7 +66,7 @@ def main():
         ########################################
         while run_flag:
             ########################################
-            # 近接センサー値を取得する
+            # 距離センサー値を取得する
             ########################################
             distance1,distance2,distance3 = kerberos.get_distance()
             sensors = [distance1,distance2,distance3]

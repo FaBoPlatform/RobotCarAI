@@ -665,26 +665,26 @@ max_scoreはその点数で、1.0に近い方が強く結果を示している�
 
 <hr>
 
-#### 近接センサーから値を取得して予測を実行する
+#### 距離センサーから値を取得して予測を実行する
 実行環境向けにモデルを別の場所にコピーします。<br>
 > mkdir ./model/<br>
 > cp ./MLP/model/car_model.pb ./model/<br>
 
-近接センサー値の取得方法はクラス化して簡単に取得できるように書いてあります。<br>
+距離センサー値の取得方法はクラス化して簡単に取得できるように書いてあります。<br>
 また、TensorFlow部分もクラス化してあります。<br>
-近接センサー用ライブラリ：[./fabo_lib/kerberos.py](./fabo_lib/kerberos.py)<br>
+距離センサー用ライブラリ：[./fabo_lib/kerberos.py](./fabo_lib/kerberos.py)<br>
 AIライブラリ：[./lib/ai.py](./lib/ai.py)<br>
 予測実行コード：[./run_ai.py](./run_ai.py)<br>
 ```python
 from fab_lib import Kerberos
 ...
-    # 近接センサー準備
+    # 距離センサー準備
     kerberos = Kerberos()
     # Lidar取得間隔(秒)
     LIDAR_INTERVAL = 0.05
 ...
             ########################################
-            # 近接センサー値を取得する
+            # 距離センサー値を取得する
             ########################################
             distance1,distance2,distance3 = kerberos.get_distance()
             sensors = [distance1,distance2,distance3]
@@ -710,7 +710,7 @@ from fab_lib import Kerberos
         print("learned_step:{}".format(learned_step))
 
         ########################################
-        # 近接センサー値を生成する
+        # 距離センサー値を生成する
         ########################################
         for distance1 in range(MIN_RANGE,MAX_RANGE):
             for distance2 in range(MIN_RANGE,MAX_RANGE):

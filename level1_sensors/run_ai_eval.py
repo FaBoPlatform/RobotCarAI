@@ -96,7 +96,7 @@ def main():
         print("learned_step:{}".format(learned_step))
 
         ########################################
-        # 近接センサー値を生成する
+        # 距離センサー値を生成する
         ########################################
         for distance1 in range(MIN_RANGE,MAX_RANGE):
             for distance2 in range(MIN_RANGE,MAX_RANGE):
