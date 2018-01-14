@@ -748,12 +748,9 @@ from fab_lib import Kerberos
                         # 不一致の予測結果をコンソールに表示する
                         print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
 ```
-学習範囲の精度はかなりよくなりますが、800万件の予測を実行するのでJetson TX2で15分程度の時間がかかります。<br>
-> python ./run_ai_eval.py > eval.log
-
+学習範囲の評価は精度はかなりよくなりますが、800万件の予測を実行するのでJetson TX2で15分程度の時間がかかります。<br>
 読み込むpbファイルはAIライブラリ：[./lib/ai.py](./lib/ai.py)で指定します。<br>
-
-学習データ ジェネレータの値範囲と同じ0-199の範囲で800万件を確認
+> python ./run_ai_eval.py > eval.log
 
 学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
 -- | -- | -- | --
