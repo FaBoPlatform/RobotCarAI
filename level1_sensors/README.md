@@ -8,12 +8,13 @@
 #### 3つの距離センサーから値を取得し、ロボットカーが走行可能な進行方向をニューラルネットワークモデルを用いて予測する
 
 【画像】
+![](./document/robotcar.jpg)
+必要になるもの
 * Raspberry Pi3
 * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
 * Fabo #902 Kerberos ver 1.0.0
-* Lidar Lite v3
+* LidarLite v3
 * USB電源
-![](./document/robotcar.jpg)
 
 <hr>
 
