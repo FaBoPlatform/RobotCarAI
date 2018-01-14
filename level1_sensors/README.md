@@ -18,7 +18,7 @@
 <a name='0'>
 
 【目次】
-* [Hardware] [距離センサーLidar Lite v3について](#1)
+* [Hardware] [距離センサーLidarLite v3について](#1)
   * 取得できる距離、値、誤差、測定周期
 * [Neural Networks] [学習データのフォーマットについて](#2)
   * クラス分類
@@ -42,7 +42,7 @@
 
 <a name='1'>
 
-## [Hardware] 距離センサーLidar Lite v3について
+## [Hardware] 距離センサーLidarLite v3について
 CLASS1 LASERで距離を計測する機器。
 #### 取得できる距離、値、誤差、測定周期
   * 測定可能距離は40m
@@ -82,13 +82,13 @@ n_classes = 4 # クラス分類の総数
 ########################################
 # ラベル番号をone_hot_valueに変換する
 ########################################
-def toONEHOT(int_label):
+def get_one_hot_value(int_label):
     one_hot_value = np.zeros((1,n_classes))
     one_hot_value[np.arange(1),np.array([int_label])] = 1
     return one_hot_value
 
 for i in range(n_classes):
-    one_hot_value = toONEHOT(i)
+    one_hot_value = get_one_hot_value(i)
     print("label:{} one_hot_value:{}".format(i,one_hot_value))
 ```
 > label:0 one_hot_value:[[ 1.  0.  0.  0.]]<br>
@@ -310,19 +310,14 @@ placeholder_input_data = tf.placeholder('float', [None, DATA_COLS], name='input_
 <hr>
 
 placeholderの行数をNoneとすることで、1つの値を予測するためであっても予測にかけるデータは配列に入れる必要が生じますが([[左センサー値,前センサー値,右センサー値]])、学習時のミニバッチサイズと予測時のデータ件数は異なるため、入力変数に使うplaceholderの行数はNoneとすることで、モデルで可変行数の入力値を扱えるようにします。<br>
-予測コード：[./lib/ai.py](./lib/ai.py)
+予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
 ```python
-    def get_prediction(self,sensors,score=0):
-        '''
-        AI予測を実行する
-        args:
-            sensors: [左センサー値,前センサー値,右センサー値]
-            score: 予測結果に必要なスコア閾値。0.0-1.0
-        return:
-            prediction_index: 予測結果のクラス番号
-        '''
+        # センサー値をランダムな0-1000の範囲で作成する
+        # sensors = [[LEFT45,FRONT,RIGHT45]]
+        sensors = np.array([np.random.randint(0,1000,3)])
 
-        _output_y,_score = self.sess.run([self.output_y,self.score],feed_dict={self.input_x:[sensors]})
+        # 予測を実行する
+        _output_y,_score = sess.run([output_y,score],feed_dict={input_x:sensors})
 ```
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -372,8 +367,6 @@ step pbファイル変換後
 ```
 prefix/step/step [<tf.Tensor 'prefix/step/step:0' shape=() dtype=int32>]
 ```
-prefix/はpb読み込み時に追加した接頭辞
-
 
 neural_network_model/Variable_1 pbファイル変換前
 ```
@@ -408,7 +401,20 @@ neural_network_model/Variable_1 pbファイル変換後
 prefix/neural_network_model/Variable_1 [<tf.Tensor 'prefix/neural_network_model/Variable_1:0' shape=(3, 11) dtype=float32>]
 prefix/neural_network_model/Variable_1/read [<tf.Tensor 'prefix/neural_network_model/Variable_1/read:0' shape=(3, 11) dtype=float32>]
 ```
-prefix/はpb読み込み時に追加した接頭辞
+
+prefix/はpb読み込み時に追加した接頭辞<br>
+学習コード：[./MLP/run_ai.py](./MLP/run_ai.py)
+```python
+    with tf.Graph().as_default() as graph:
+        tf.import_graph_def(
+            graph_def, 
+            input_map=None, 
+            return_elements=None, 
+            name="prefix", 
+            op_dict=None, 
+            producer_op_list=None
+        )
+```
 
 <hr>
 
@@ -572,7 +578,60 @@ pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```
 as_text=Trueにすると、テキストファイルで保存することが出来ます。
 
+<a name="6-4">
 #### pbファイルを読み込む
+予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
+```python
+def load_graph(frozen_graph_filename):
+    # We load the protobuf file from the disk and parse it to retrieve the 
+    # unserialized graph_def
+    with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
+        graph_def = tf.GraphDef()
+        graph_def.ParseFromString(f.read())
+
+    # Then, we can use again a convenient built-in function to import a graph_def into the 
+    # current default Graph
+    with tf.Graph().as_default() as graph:
+        tf.import_graph_def(
+            graph_def, 
+            input_map=None, 
+            return_elements=None, 
+            name="prefix", 
+            op_dict=None, 
+            producer_op_list=None
+        )
+    return graph
+
+graph = load_graph(MODEL_DIR+"/"+FROZEN_MODEL_NAME)
+...
+with tf.Session(graph=graph) as sess:
+```
+モデルを読み込む際にname="prefix"でモデル毎にprefix名を付けておくと、複数のモデルを使う場合に区別しやすくなります。<br>
+読み込んだモデル(graph)はtf.Session()の引数に渡します。<br>
+<hr>
+
+予測実行で使う変数はオペレーション名から取得します。<br>
+予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
+```python
+input_x = graph.get_tensor_by_name('prefix/queue/dequeue_op:0')
+output_y = graph.get_tensor_by_name('prefix/neural_network_model/output_y:0')
+score = graph.get_tensor_by_name('prefix/neural_network_model/score:0')
+step = graph.get_tensor_by_name('prefix/step/step:0')
+```
+<hr>
+
+これで予測実行まで出来るようになります。<br>
+予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
+```python
+with tf.Session(graph=graph) as sess:
+...
+        # センサー値をランダムな0-1000の範囲で作成する
+        # sensors = [[LEFT45,FRONT,RIGHT45]]
+        sensors = np.array([np.random.randint(0,1000,3)])
+
+        # 予測を実行する
+        _output_y,_score = sess.run([output_y,score],feed_dict={input_x:sensors})
+``` 
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -580,12 +639,115 @@ as_text=Trueにすると、テキストファイルで保存することが出�
 <a name='7'>
 
 ## [Python/TensorFlow] 予測を実行
+[pbファイルを読み込む](#6-4)で予測実行までを見てみました。
+* pbファイルのパス
+* モデルの読み込み
+* オペレーションの変数取得
+* 読み込んだモデルでセッションを開始
+* 入力値作成
+* 予測実行
+
+最後に、予測結果から最も確率の高いものは何なのか？を知る必要があります。<br>
+予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
+```python
+        # 予測を実行する
+        _output_y,_score = sess.run([output_y,score],feed_dict={input_x:sensors})
+        # 予測結果から最も大きな値の配列番号を取得する
+        max_value = np.argmax(_output_y[0]) # max_value: 0:STOP,1:LEFT,2:FORWARD,3:RIGHT
+        # そのスコアを取得する
+        max_score = _score[0][max_value]
+        print("max_value:{} score:{} input:{}".format(max_value,max_score,sensors))
+```
+max_valueが0:STOP,1:LEFT,2:FORWARD,3:RIGHTを示す予測結果となります。<br>
+max_scoreはその点数で、1.0に近い方が強く結果を示していることになります。<br>
+
+<hr>
+
+#### 近接センサーから値を取得して予測を実行する
+実行環境向けにモデルを別の場所にコピーします。<br>
+> mkdir ./model/<br>
+> cp ./MLP/model/car_model.pb ./model/<br>
+
+近接センサー値の取得方法はクラス化して簡単に取得できるように書いてあります。<br>
+また、TensorFlow部分もクラス化してあります。<br>
+近接センサー用ライブラリ：[./fabo_lib/kerberos.py](./fabo_lib/kerberos.py)<br>
+AIライブラリ：[./lib/ai.py](./lib/ai.py)<br>
+予測実行コード：[./run_ai.py](./run_ai.py)<br>
+```python
+from fab_lib import Kerberos
+...
+    # 近接センサー準備
+    kerberos = Kerberos()
+    # Lidar取得間隔(秒)
+    LIDAR_INTERVAL = 0.05
+...
+            ########################################
+            # 近接センサー値を取得する
+            ########################################
+            distance1,distance2,distance3 = kerberos.get_distance()
+            sensors = [distance1,distance2,distance3]
+```
+このコードを実行するには、Fabo #902 Kerberos基板とLidarLite v3が必要になります。
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='8'>
 
 ## [Python/TensorFlow] 予測精度を評価
+入力値はfor文で生成可能で、対応する正解ラベルはIF文で求めることが出来るため、網羅的に予測を実行し、IF文の結果と比較することで精度を評価してみることにします。<br>
+
+一度に200件の入力データを作成し、予測にかけます。1件ずつ予測するよりも速く予測出来ます。<br>
+予測実行コード：[./run_ai_eval.py](./run_ai_eval.py)
+```python
+    # 評価する距離範囲
+    MIN_RANGE = 0
+    MAX_RANGE = 200
+    try:
+        learned_step = ai.get_learned_step()
+        print("learned_step:{}".format(learned_step))
+
+        ########################################
+        # 近接センサー値を生成する
+        ########################################
+        for distance1 in range(MIN_RANGE,MAX_RANGE):
+            for distance2 in range(MIN_RANGE,MAX_RANGE):
+                sensors=[]
+                for distance3 in range(MIN_RANGE,MAX_RANGE):
+                    sensors.append([distance1,distance2,distance3])
+                sensors=np.array(sensors)
+
+                ########################################
+                # AI予測結果を取得する
+                ########################################
+                # 今回の予測結果を取得する
+                ai_values = ai.get_predictions(sensors,SCORE)
+```
+ジェネレータは一気に複数行を計算出来ないので、予測と一件ずつ比較します。<br>
+予測実行コード：[./run_ai_eval.py](./run_ai_eval.py)
+```python
+                n_rows = len(sensors)
+                # 予測結果のスコアが低かった回数をカウントする
+                for i in range(n_rows):
+                    counter +=1
+                    if ai_values[i] == ai.get_other_label():
+                        bad_score_counter += 1
+
+                    ########################################
+                    # IF結果を取得する
+                    ########################################
+                    # 今回の結果を取得する
+                    generator_result = generator.get_label(sensors[i])
+                    if_value = np.argmax(generator_result)
+
+                    # 予測結果とジェネレータ結果が異なった回数をカウントする
+                    if not if_value == ai_values[i]:
+                        miss_counter += 1
+                        # 不一致の予測結果をコンソールに表示する
+                        print_log(sensors[i],ai,ai_values[i],if_value,counter,miss_counter,bad_score_counter)
+```
+学習範囲を0-200で行っているので、精度はそれなりによくなりますが、800万件の予測を実行するのでJetson TX2で15分程度の時間がかかります。<br>
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -603,7 +765,7 @@ as_text=Trueにすると、テキストファイルで保存することが出�
 * ファイルについて
   * README.md このファイル
   * run_ai_eval.py 予測精度評価用コード
-  * run_ai.py センサー値を取得して予測を実行するコード。Fabo基板、LidarLite V3が必要。
+  * run_ai.py センサー値を取得して予測を実行するコード。Fabo基板、LidarLite v3が必要。
   * MLP/train_model.py 学習実行コード
     * MLP/log/にTensorboard用のログファイルが出力される
     * MLP/model/にcheckpointファイルが出力される

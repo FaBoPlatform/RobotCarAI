@@ -75,10 +75,11 @@ with tf.Session(graph=graph) as sess:
 
         # 予測を実行する
         _output_y,_score = sess.run([output_y,score],feed_dict={input_x:sensors})
-        # max_value = [[N]] # N = 0:STOP,1:LEFT,2:FORWARD,3:RIGHT
-        max_value = np.argmax(_output_y) # max_value
-        
-        print("max_value:{} score:{} input:{}".format(max_value,_score[0][max_value],sensors))
+        # 予測結果から最も大きな値の配列番号を取得する
+        max_value = np.argmax(_output_y[0]) # max_value: 0:STOP,1:LEFT,2:FORWARD,3:RIGHT
+        # そのスコアを取得する
+        max_score = _score[0][max_value]
+        print("max_value:{} score:{} input:{}".format(max_value,max_score,sensors))
 
 print("total_time: %.8f, total_clock: %.8f" % (time.time()-total_start_time,time.clock()-total_start_clock))
 
