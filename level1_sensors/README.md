@@ -402,7 +402,7 @@ prefix/neural_network_model/Variable_1 [<tf.Tensor 'prefix/neural_network_model/
 prefix/neural_network_model/Variable_1/read [<tf.Tensor 'prefix/neural_network_model/Variable_1/read:0' shape=(3, 11) dtype=float32>]
 ```
 
-prefix/はpb読み込み時に追加した接頭辞<br>
+prefixはpb読み込み時に追加した接頭辞<br>
 学習コード：[./MLP/run_ai.py](./MLP/run_ai.py)
 ```python
     with tf.Graph().as_default() as graph:
@@ -488,8 +488,10 @@ with tf.variable_scope("queue"):
 ```
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```python
-OUTPUT_NODE_NAMES="queue/dequeue_op,...
+OUTPUT_NODE_NAMES="queue/dequeue_op,neural_network_model/output_y,neural_network_model/score,step/step"
 ```
+ここで名付けたdequeue_opは、予測実行時にdequeue_op:0をセンサー値入力用に使います。dequeue_op:1は正解ラベル用になりますが、予測に使うことはありません。
+
 <hr>
 
 OP名が分からない時は、表示されるOP名から推測してください。<br>
