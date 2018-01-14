@@ -18,7 +18,7 @@ class AI():
     learned_step = None # モデルの学習ステップ数
     OTHER_LABEL = 100
 
-    def __init__(self):
+    def __init__(self,frozen_model_name=None):
         # グラフ初期化
         tf.reset_default_graph()
 
@@ -30,11 +30,14 @@ class AI():
         カレントディレクトリが別の場所からの実行でも問題ないように、
         ディレクトリパスはこのファイルと同じディレクトリとして取得する
         '''
-        FROZEN_MODEL_NAME="car_model.pb"
         MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../model"
-
+        if frozen_model_name is None:
+            frozen_model_path=MODEL_DIR+"/car_model.pb"
+        else:
+            frozen_model_path=MODEL_DIR+"/"+frozen_model_name
+            
         # AIモデル読み込み
-        self.graph = self.load_graph(MODEL_DIR+"/"+FROZEN_MODEL_NAME)
+        self.graph = self.load_graph(frozen_model_path)
         #self.graph_def = self.graph.as_graph_def()
         # AI入出力ノード取得
         self.input_x = self.graph.get_tensor_by_name('prefix/queue/dequeue_op:0')

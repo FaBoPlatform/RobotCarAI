@@ -1,8 +1,8 @@
 # coding: utf-8
 # センサー値を取得し、予測を実行する
 # ジェネレータの結果と比較し、精度を評価する
-# 学習範囲内で評価する
-# python run_ai_eval.py > eval.log
+# 学習範囲外で評価する
+# python run_ai_eval_400.py > eval_400.log
 
 import time
 import logging
@@ -76,7 +76,7 @@ def main():
     予測を実行する
     '''
     # AI準備
-    ai = AI()
+    ai = AI("car_model_10M")
     # スコア閾値。予測結果がこれより低いスコアの時はその他と見なす。
     SCORE = 0.6
 
@@ -91,7 +91,7 @@ def main():
     miss_counter = 0
     # 評価する距離範囲
     MIN_RANGE = 0
-    MAX_RANGE = 200
+    MAX_RANGE = 400
     try:
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
@@ -103,7 +103,9 @@ def main():
             for distance2 in range(MIN_RANGE,MAX_RANGE):
                 sensors=[]
                 for distance3 in range(MIN_RANGE,MAX_RANGE):
-                    sensors.append([distance1,distance2,distance3])
+                    # 学習範囲内のデータはこの検証から省く
+                    if not (distance1 < 200 and distance2 < 200 and distance3 < 200):
+                        sensors.append([distance1,distance2,distance3])
                 sensors=np.array(sensors)
                     
                 ########################################
