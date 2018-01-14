@@ -641,10 +641,10 @@ with tf.Session(graph=graph) as sess:
 <a name='7'>
 
 ## [Python/TensorFlow] 予測を実行
-[pbファイルを読み込む](#6-4)で予測実行までを見てみました。
-* pbファイルのパス
+![](./document/prediction-design1.png)
+[pbファイルを読み込む](#6-4)で予測実行までを見ました。
 * モデルの読み込み
-* オペレーションの変数取得
+* 入出力オペレーションの変数取得
 * 読み込んだモデルでセッションを開始
 * 入力値作成
 * 予測実行
@@ -666,7 +666,12 @@ max_scoreはその点数で、1.0に近い方が強く結果を示している�
 <hr>
 
 #### 距離センサーから値を取得して予測を実行する
-実行環境向けにモデルを別の場所にコピーします。<br>
+入力値を実際の距離センサーから取得して予測を実行します。<br>
+予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)<br>
+```python
+        sensors = np.array([np.random.randint(0,1000,3)])
+```
+この部分をセンサー値に書き換えればいいのですが、これまでの./MLP/ディレクトリは学習用としておいて、作成したモデル(pbファイル)は実行環境向けに場所にコピーします。<br>
 > mkdir ./model/<br>
 > cp ./MLP/model/car_model.pb ./model/<br>
 
@@ -689,6 +694,8 @@ from fab_lib import Kerberos
             distance1,distance2,distance3 = kerberos.get_distance()
             sensors = [distance1,distance2,distance3]
 ```
+>python run_ai.py<br>
+
 このコードを実行するには、Fabo #902 Kerberos基板とLidarLite v3が必要になります。
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -757,11 +764,17 @@ from fab_lib import Kerberos
 10M | 0.999633875 | 2929 | 2890
 50M | 0.99979775 | 1618 | 1176
 
-学習範囲外の精度の評価は件数が多いためかなり時間がかかります。<br>
-> python ./run_ai_eval_400.py > eval_400.log
+学習範囲外(0-399)の精度の評価はデータ件数が5600万件とかなり多いためかなり時間がかかります。<br>
+> time python ./run_ai_eval_400.py > eval_400.log<br>
+> real	81m45.326s<br>
+> user	81m41.752s<br>
+> sys	1m3.296s<br>
 
 学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
 -- | -- | -- | --
+10M | - | - | -
+50M | 0.9193687857142857 | 4515348 | 40832
+
 
 
 [<ページTOP>](#top)　[<目次>](#0)
