@@ -74,7 +74,6 @@ Balancap SSD-Tensorflow：[https://github.com/balancap/SSD-Tensorflow](https://g
 #### インストール
 インストール先や学習コード生成に必要な情報はスクリプト設定ファイルで用意しました。環境に合わせて修正してください。<br>
 /notebooks/github/以下にSSD-Tensorflowをgit cloneします。<br>
-道路標識の学習データは/notebooks/roadsign_data/以下に置きます。<br>
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
 ```bash
 # Balancap SSD-Tensorflowのディレクトリ
@@ -84,8 +83,8 @@ SSD_TENSORFLOW_DIR=$GIT_DIR/SSD-Tensorflow
 # データ名
 MY_TRAIN=roadsign
 # 学習データディレクトリ
-VOC_DATASET_DIR=/notebooks/roadsign_data/PascalVOC
-TF_DATASET_DIR=/notebooks/roadsign_data/tfrecords
+VOC_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/PascalVOC
+TF_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/tfrecords
 
 # 道路標識の学習データで使うラベル
 # LABELS[0]はbackground(その他)用に空けておく
@@ -104,10 +103,10 @@ LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 
 Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install_balancap_ssd-tensorflow.sh](./install_scripts/install_balancap_ssd-tensorflow.sh)<br>
 バグ修正スクリプト：[./install_scripts/setup_bugfix.sh](./install_scripts/setup_bugfix.sh)<br>
-> cd install_scripts/<br>
-> chmod 755 *.sh<br>
-> ./install_balancap_ssd-tensorflow.sh<br>
-> ./setup_bugfix.sh<br>
+> chmod 755 ./install_scripts/*.sh<br>
+> ./install_scripts/install_balancap_ssd-tensorflow.sh<br>
+> ./install_scripts/setup_bugfix.sh<br>
+
 <hr>
 
 #### demo実行
@@ -149,8 +148,8 @@ Balancap SSD-Tensorflowの学習コードは、元の学習コードをコピー
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
 ```bash
 # 学習データディレクトリ
-VOC_DATASET_DIR=/notebooks/roadsign_data/PascalVOC
-TF_DATASET_DIR=/notebooks/roadsign_data/tfrecords
+VOC_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/PascalVOC
+TF_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/tfrecords
 
 # 道路標識の学習データで使うラベル
 # LABELS[0]はbackground(その他)用に空けておく
@@ -204,6 +203,8 @@ WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.p
             retval, cv_bgr = vid.read()
 ```
 このコードはSSD-Tensorflow/notebooks/ssd_webcam_streaming.pyにコピーして使います。<br>
+> cp ./notebooks/* /notebooks/github/SSD-Tensorflow/notebooks/<br>
+
 USBカメラであれば、Jetson TX2の場合はcv2.VideoCapture(1)となります。<br>
 UDPストリーミングで動画が送られている場合は、vid = cv2.VideoCapture('udp://localhost:8090')のようにUDPポートを指定して受信します。<br>
 USBカメラが未接続だったり、ストリーミングが開始されていない時は映像取得に失敗します。
