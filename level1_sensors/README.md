@@ -330,8 +330,8 @@ placeholderの行数をNoneとすることで、1つの値を予測するため�
 
 ## [Python/TensorFlow] 学習と保存
 #### 学習実行
-> cd ./MLP/<br>
-> python train_model.py<br>
+> `cd ./MLP/`<br>
+> `python train_model.py`<br>
 
 学習はTARGET_STEPまで学習を行います。<br>
 学習コード：[./MLP/train_model.py](./MLP/train_model.py)
@@ -472,8 +472,8 @@ checkpointから復元した再学習可能なフルモデルデータでも予�
 <hr>
 
 #### pbファイルに保存
-> cd ./MLP/<br>
-> python freeze_graph.py<br>
+> `cd ./MLP/`<br>
+> `python freeze_graph.py`<br>
 
 ./MLP/model/car_model.pb ファイルが作成されます。<br>
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
@@ -676,8 +676,8 @@ max_scoreはその点数で、1.0に近い方が強く結果を示している�
         sensors = np.array([np.random.randint(0,1000,3)])
 ```
 この部分をセンサー値に書き換えればいいのですが、これまでの./MLP/ディレクトリは学習用としておいて、作成したモデル(pbファイル)は実行環境向けに場所にコピーします。<br>
-> mkdir ./model/<br>
-> cp ./MLP/model/car_model.pb ./model/<br>
+> `mkdir ./model/`<br>
+> `cp ./MLP/model/car_model.pb ./model/`<br>
 
 距離センサー値の取得方法はクラス化して簡単に取得できるように書いてあります。<br>
 また、TensorFlow部分もクラス化してあります。<br>
@@ -698,7 +698,7 @@ from fab_lib import Kerberos
             distance1,distance2,distance3 = kerberos.get_distance()
             sensors = [distance1,distance2,distance3]
 ```
->python run_ai.py<br>
+> `python run_ai.py`<br>
 
 このコードを実行するには、Fabo #902 Kerberos基板とLidarLite v3が必要になります。
 
@@ -770,7 +770,7 @@ from fab_lib import Kerberos
     ai = AI("car_model.pb")
 ```
 
-> time python ./run_ai_eval.py > eval.log<br>
+> `time python ./run_ai_eval.py > eval.log`<br>
 > real	11m12.715s<br>
 > user	11m11.452s<br>
 > sys	0m5.844s<br>
@@ -789,7 +789,7 @@ from fab_lib import Kerberos
 <hr>
 
 学習範囲外(0-399から学習範囲を除外)の精度の評価はデータ件数が5600万件と多いためJetson TX2ではかなり時間がかかります。<br>
-> time python ./run_ai_eval_400.py > eval_400.log<br>
+> `time python ./run_ai_eval_400.py > eval_400.log`<br>
 > real    77m28.863s<br>
 > user    77m24.504s<br>
 > sys     0m33.284s<br>
