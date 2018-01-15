@@ -3,7 +3,7 @@
 ########################################
 # Balancap SSDではTF-Recordsデータに変化する必要がある
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $SCRIPT_DIR/../script_define.sh
+source $SCRIPT_DIR/../script_define.conf
 
 
 ####################

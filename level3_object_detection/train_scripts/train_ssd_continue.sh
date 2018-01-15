@@ -4,7 +4,7 @@
 # VGGアーキテクチャに基づいて新しいSSDモデルを構築する
 # データは/notebooks/data/tfrecords/roadsign_train_000.tfrecord
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $SCRIPT_DIR/../script_define.sh
+source $SCRIPT_DIR/../script_define.conf
 
 
 ####################
