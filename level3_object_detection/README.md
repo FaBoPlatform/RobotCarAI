@@ -129,6 +129,7 @@ LabelImg インストールスクリプト：[./install_scripts/install_labelimg
 GUIツールなので画面のある開発環境で学習データを作成してください。<br>
 labelImgで作成したラベルは画像ファイルと同じディレクトリに作成されます。<br>
 Balancap SSD-Tensorflowでは、TF-Recordへのコンバート時は画像ファイルをJPEGImagesに、ラベルファイルをAnnotationsに分けておく必要があります。<br>
+
 画像データ:[./roadsign_data/PascalVOC/JPEGImages/](./roadsign_data/PascalVOC/JPEGImages)<br>
 ラベルデータ:[./roadsign_data/PascalVOC/Annotations/](./roadsign_data/PascalVOC/Annotations/)<br>
 
