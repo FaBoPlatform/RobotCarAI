@@ -131,7 +131,7 @@ import platform
 vid = None
 if platform.machine() == 'aarch64':
     vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
-    vid = cv2.VideoCapture('udp://localhost:8090')
+    #vid = cv2.VideoCapture('udp://localhost:8090')
 elif platform.machine() == 'armv7l': # armv7l
     vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
 else: # amd64
