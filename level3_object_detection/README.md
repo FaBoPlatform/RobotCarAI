@@ -103,9 +103,9 @@ LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 
 Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install_balancap_ssd-tensorflow.sh](./install_scripts/install_balancap_ssd-tensorflow.sh)<br>
 バグ修正スクリプト：[./install_scripts/setup_bugfix.sh](./install_scripts/setup_bugfix.sh)<br>
-> chmod 755 ./install_scripts/*.sh<br>
-> ./install_scripts/install_balancap_ssd-tensorflow.sh<br>
-> ./install_scripts/setup_bugfix.sh<br>
+> `chmod 755 ./install_scripts/*.sh`<br>
+> `./install_scripts/install_balancap_ssd-tensorflow.sh`<br>
+> `./install_scripts/setup_bugfix.sh`<br>
 
 <hr>
 
@@ -122,8 +122,7 @@ SSD-Tensorflowで扱うことの出来るデータフォーマットはPascalVOC
 学習データはGUIツールのLabelImgを使って作成します。<br>
 LabelImg：[https://github.com/tzutalin/labelImg](https://github.com/tzutalin/labelImg)<br>
 LabelImg インストールスクリプト：[./install_scripts/install_labelimg.sh](./install_scripts/install_labelimg.sh)<br>
-> cd install_scripts/<br>
-> ./install_labelimg.sh<br>
+> `./install_scripts/install_labelimg.sh`<br>
 
 ![labelImg.png](./document/labelImg.png)
 
@@ -165,10 +164,10 @@ LABELS[4]=speed_30
 スクリプト作成コード：[./train_scripts/setup_mytrain.sh](./train_scripts/setup_mytrain.sh)<br>
 データ変換コード：[./train_scripts/convert_PascalVOC_to_TF-Records.sh](./train_scripts/convert_PascalVOC_to_TF-Records.sh)<br>
 学習実行コード：[./train_scripts/train_ssh.sh](./train_scripts/train_ssh.sh)<br>
-> chmod 755 ./train_scripts/*<br>
-> ./train_scripts/setup_mytrain.sh<br>
-> ./train_scripts/convert_PascalVOC_to_TF-Records.sh<br>
-> ./train_scripts/train_ssh.sh<br>
+> `chmod 755 ./train_scripts/*`<br>
+> `./train_scripts/setup_mytrain.sh`<br>
+> `./train_scripts/convert_PascalVOC_to_TF-Records.sh`<br>
+> `./train_scripts/train_ssh.sh`<br>
 
 学習はGPUを搭載した学習環境でおこないます。<br>
 一定時間毎にcheckpointが保存されるので、適当なところでCtrl_cで学習を停止してください。<br>
@@ -180,16 +179,16 @@ LABELS[4]=speed_30
 LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 ```
 学習再開クリプト：[./train_scripts/train_ssd_continue.sh](./train_scripts/train_ssd_continue.sh)<br>
->./train_scripts/train_ssd_continue.sh<br>
+> `./train_scripts/train_ssd_continue.sh`<br>
 
 <hr>
 
 Balancap SSD-Tensorflowではjpegしか扱えないため、pngで画像を用意した場合は変換が必要になります。  
 
-> apt-get install imagemagick<br>
-> # png to jpg<br>
+> `apt-get install imagemagick`<br>
+> `# png to jpg`<br>
 > `for i in *.png ; do convert "$i" "${i%.*}.jpg" ; done`<br>
-> # replace xml<br>
+> `# replace xml`<br>
 > `find ./ -name "*.xml" | xargs sed -i 's/\.png/.jpg/g'`<br>
 
 <hr>
@@ -203,7 +202,7 @@ WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.p
             retval, cv_bgr = vid.read()
 ```
 このコードはSSD-Tensorflow/notebooks/ssd_webcam_streaming.pyにコピーして使います。<br>
-> cp ./notebooks/* /notebooks/github/SSD-Tensorflow/notebooks/<br>
+> `cp ./notebooks/* /notebooks/github/SSD-Tensorflow/notebooks/`<br>
 
 USBカメラであれば、Jetson TX2の場合はcv2.VideoCapture(1)となります。<br>
 UDPストリーミングで動画が送られている場合は、vid = cv2.VideoCapture('udp://localhost:8090')のようにUDPポートを指定して受信します。<br>
@@ -215,7 +214,7 @@ USBカメラが未接続だったり、ストリーミングが開始されて�
 > `ffmpeg -thread_queue_size 1024 -r 30 -video_size 160x120 -input_format yuyv422 -i /dev/video0 -pix_fmt yuv422p -threads 4 -f mpegts udp://192.168.0.77:8090`<br>
 
 受信側確認コマンド(受信を確認したらffplayを終了してください。)<br>
-> ffplay udp://localhost:8090<br>
+> `ffplay udp://localhost:8090`<br>
 
 <hr>
 
