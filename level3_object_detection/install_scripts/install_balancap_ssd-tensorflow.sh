@@ -1,8 +1,8 @@
 ########################################
 # Balancap SSD-Tensorflow インストール
 ########################################
-GIT_DIR=/notebooks/github
-SSD_TENSORFLOW_DIR=$GIT_DIR/SSD-Tensorflow
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $SCRIPT_DIR/../script_define.sh
 
 
 ####################

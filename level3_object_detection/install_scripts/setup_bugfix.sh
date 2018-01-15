@@ -1,7 +1,8 @@
 ########################################
 # Bug fix
 ########################################
-SSD_TENSORFLOW_DIR=/notebooks/github/SSD-Tensorflow
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $SCRIPT_DIR/../script_define.sh
 
 
 ####################

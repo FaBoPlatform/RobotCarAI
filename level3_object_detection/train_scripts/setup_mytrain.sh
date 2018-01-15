@@ -1,13 +1,8 @@
 ########################################
 # Setup mytrain
 ########################################
-MY_TRAIN=roadsign
-SSD_TENSORFLOW_DIR=/notebooks/github/SSD-Tensorflow
-DATASET_DIR=/notebooks/roadsign_data/PascalVOC
-LABELS[1]=stop
-LABELS[2]=speed_10
-LABELS[3]=speed_20
-LABELS[4]=speed_30
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $SCRIPT_DIR/../script_define.sh
 
 
 ####################
@@ -76,8 +71,8 @@ sed -i 's/FILE_PATTERN = '\''voc_2012_%s_\*\.tfrecord'\''/FILE_PATTERN = '\'''$M
 TOTAL_OBJECTS=0
 for i in "${!LABELS[@]}"
 do
-    LABEL_OBJECTS[$i]=`find $DATASET_DIR/Annotations/ -type f -name "*.xml" | xargs grep "<name>${LABELS[$i]}</name>" 2> /dev/null | wc -l`
-    LABEL_IMAGES[$i]=`find $DATASET_DIR/Annotations/ -type f -name "*.xml" | xargs grep -c "<name>${LABELS[$i]}</name>" 2> /dev/null | grep -v ".xml:0" | wc -l`
+    LABEL_OBJECTS[$i]=`find $VOC_DATASET_DIR/Annotations/ -type f -name "*.xml" | xargs grep "<name>${LABELS[$i]}</name>" 2> /dev/null | wc -l`
+    LABEL_IMAGES[$i]=`find $VOC_DATASET_DIR/Annotations/ -type f -name "*.xml" | xargs grep -c "<name>${LABELS[$i]}</name>" 2> /dev/null | grep -v ".xml:0" | wc -l`
     TOTAL_OBJECTS=$(( $TOTAL_OBJECTS + ${LABEL_OBJECTS[$i]} ))
 done
 echo "total objects:"$TOTAL_OBJECTS
