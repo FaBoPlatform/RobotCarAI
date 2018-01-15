@@ -208,7 +208,7 @@ try:
             break
 
         # 予測実行
-        rclasses, rscores, rbboxes =  process_image(cv_bgr)
+        rclasses, rscores, rbboxes = process_image(cv_bgr)
         # 枠を描く
         write_bboxes(cv_bgr, rclasses, rscores, rbboxes)
         # avi動画に保存する

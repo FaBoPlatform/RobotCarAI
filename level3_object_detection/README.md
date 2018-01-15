@@ -220,11 +220,11 @@ USBカメラが未接続だったり、ストリーミングが開始されて�
 <hr>
 
 #### 検出実行
-物体検出はOpenCVで読み込んだ画像データを関数すことで得られます。<br>
+物体検出はOpenCVで読み込んだ画像データを用意されている関数に渡すことで得られます。<br>
 WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.py](./notebooks/ssd_webcam_streaming.py)
 ```python
         # 予測実行
-        rclasses, rscores, rbboxes =  process_image(cv_bgr)
+        rclasses, rscores, rbboxes = process_image(cv_bgr)
 ```
 分類結果、スコア、物体の領域が得られるので、例えばそれを画像に描画して動画に保存することが出来ます。<br>
 ロボットカーの場合は描画や動画への保存は不要ですが、停止を検出したら数秒止まる、速度を検出したら速度を変更する、等の処理を行うことになります。
