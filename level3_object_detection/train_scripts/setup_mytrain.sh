@@ -175,7 +175,7 @@ sed -i 's/^from datasets\.pascalvoc_common import VOC_LABELS/from datasets.'$PAS
 
 # before: filename = directory + DIRECTORY_IMAGES + name + '.jpg'
 # after:  filename = directory + '/' + DIRECTORY_IMAGES + name + '.jpg'
-sed -i 's/filename = directory + DIRECTORY_IMAGES + name + '\''\.jpg'\''/filename = directory + '\''/'\'' + DIRECTORY_IMAGES + name + '\''.jpg'\''/g' $SSD_TENSORFLOW_DIR/datasets/pascalvoc_${MY_TRAIN}_to_tfrecords.py
+sed -i 's/filename = directory + DIRECTORY_IMAGES + name + '\''\.jpg'\''/filename = directory + '\''\/'\'' + DIRECTORY_IMAGES + name + '\''.jpg'\''/g' $SSD_TENSORFLOW_DIR/datasets/pascalvoc_${MY_TRAIN}_to_tfrecords.py
 
 
 ####################
