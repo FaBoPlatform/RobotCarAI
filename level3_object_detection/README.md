@@ -33,8 +33,8 @@
   * カメラ映像の読み込み
   * 検出実行
   * 動画に保存
-* [ディレクトリとファイルについて]
-* [開発/学習/実行環境について]
+* [ディレクトリとファイルについて](#3)
+* [開発/学習/実行環境について](#4)
 <hr>
 
 <a name='1'>
@@ -248,5 +248,38 @@ out = cv2.VideoWriter('../output/output.avi', int(fourcc), 2.1, (int(vidw), int(
 
 <hr>
 
+<a name='3'>
 
+## [ディレクトリとファイルについて]
+* ディレクトリについて
+  * documment/ ドキュメント関連
+  * install_scripts/ インストールスクリプト
+  * notebooks/ サンプルコード
+  * roadsign_data/ 道路標識データ
+  * train_scripts/ 学習関連スクリプト
+* ファイルについて
+  * README.md このファイル
+  * scritp_define.conf ディレクトリパス等設定ファイル
+  * install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト
+  * install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト
+  * install_scripts/install_labelimg.sh LabelImg インストールスクリプト
+  * notebooks/ssd_webcam_streaming.ipynb Webcamストリーミング動画解析サンプルJupyter notebooks
+  * notebooks/ssd_webcam_streaming.py Webcamストリーミング動画解析サンプルコード(Jupyterだと動作不安定なのでpythonコードで用意)
+  * train_scripts/setup_mytrain.sh 学習コード生成スクリプト
+  * train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト
+  * train_scripts/train_ssd.sh 学習実行スクリプト
+  * train_scripts/train_ssd_continue.sh 学習再開スクリプト
 
+[<ページTOP>](#top)　[<目次>](#0)
+
+<hr>
+
+<a name='4'>
+
+## [開発/学習/実行環境について]
+* 開発環境
+ラベル作成はGUIツールを使うため、画面のある環境が必要です。
+
+[<ページTOP>](#top)　[<目次>](#0)
+
+<hr>

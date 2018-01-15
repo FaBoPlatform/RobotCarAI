@@ -173,6 +173,10 @@ cp $SSD_TENSORFLOW_DIR/datasets/pascalvoc_to_tfrecords.py $SSD_TENSORFLOW_DIR/da
 
 sed -i 's/^from datasets\.pascalvoc_common import VOC_LABELS/from datasets.'$PASCALVOC_LABEL' import VOC_LABELS/g' $SSD_TENSORFLOW_DIR/datasets/pascalvoc_${MY_TRAIN}_to_tfrecords.py
 
+# before: filename = directory + DIRECTORY_IMAGES + name + '.jpg'
+# after:  filename = directory + '/' + DIRECTORY_IMAGES + name + '.jpg'
+sed -i 's/filename = directory + DIRECTORY_IMAGES + name + '\''.jpg'\''/filename = directory + '\''/'\'' + DIRECTORY_IMAGES + name + '\''.jpg'\''/g' $SSD_TENSORFLOW_DIR/datasets/pascalvoc_${MY_TRAIN}_to_tfrecords.py
+
 
 ####################
 # edit train code
