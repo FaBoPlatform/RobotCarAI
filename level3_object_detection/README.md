@@ -164,11 +164,11 @@ LABELS[4]=speed_30
 スクリプトコードを作成し、PascalVOCデータをTF-Recordsに変換して学習を実行します。<br>
 スクリプト作成コード：[./train_scripts/setup_mytrain.sh](./train_scripts/setup_mytrain.sh)<br>
 データ変換コード：[./train_scripts/convert_PascalVOC_to_TF-Records.sh](./train_scripts/convert_PascalVOC_to_TF-Records.sh)<br>
-学習実行コード：[./train_scripts/train_ssh.sh](./train_scripts/train_ssh.sh)<br>
+学習実行コード：[./train_scripts/train_ssd.sh](./train_scripts/train_ssd.sh)<br>
 > `chmod 755 ./train_scripts/*`<br>
 > `./train_scripts/setup_mytrain.sh`<br>
 > `./train_scripts/convert_PascalVOC_to_TF-Records.sh`<br>
-> `./train_scripts/train_ssh.sh`<br>
+> `./train_scripts/train_ssd.sh`<br>
 
 学習はGPUを搭載した学習環境でおこないます。<br>
 一定時間毎にcheckpointが保存されるので、適当なところでCtrl_cで学習を停止してください。<br>
