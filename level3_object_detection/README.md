@@ -96,7 +96,7 @@ LABELS[4]=speed_30
 
 # 新規VGG16 checkpoint
 CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/checkpoints/vgg_16.ckpt
-# 学習済みcheckpoint
+# 学習を再開するcheckpoint
 LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 ```
 <hr>
@@ -163,8 +163,8 @@ LABELS[4]=speed_30
 
 スクリプトコードを作成し、PascalVOCデータをTF-Recordsに変換して学習を実行します。<br>
 スクリプト作成コード：[./train_scripts/setup_mytrain.sh](./train_scripts/setup_mytrain.sh)<br>
-データ変換コード：[./train_scripts/convert_PascalVOC_to_TF-Records.sh](./train_scripts/convert_PascalVOC_to_TF-Records.sh)
-学習実行コード：[./train_scripts/train_ssh.sh](./train_scripts/train_ssh.sh)
+データ変換コード：[./train_scripts/convert_PascalVOC_to_TF-Records.sh](./train_scripts/convert_PascalVOC_to_TF-Records.sh)<br>
+学習実行コード：[./train_scripts/train_ssh.sh](./train_scripts/train_ssh.sh)<br>
 > chmod 755 ./train_scripts/*<br>
 > ./train_scripts/setup_mytrain.sh<br>
 > ./train_scripts/convert_PascalVOC_to_TF-Records.sh<br>
@@ -180,7 +180,7 @@ LABELS[4]=speed_30
 LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 ```
 学習再開クリプト：[./train_scripts/train_ssd_continue.sh](./train_scripts/train_ssd_continue.sh)<br>
->./train_scripts/train_ssd_continue.sh
+>./train_scripts/train_ssd_continue.sh<br>
 
 <hr>
 
