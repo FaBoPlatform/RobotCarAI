@@ -56,6 +56,9 @@ def main():
     '''
     メイン処理を行う部分
     '''
+    global stop_thread_running
+    global main_thread_running
+
     # CAR準備
     STOP=0
     LEFT=1
