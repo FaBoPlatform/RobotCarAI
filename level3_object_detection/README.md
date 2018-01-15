@@ -10,7 +10,7 @@
 【画像】
 ![](./document/jetson_tx2-stop.png)<br>
 
-【動画】
+【動画】<br>
 止まれを検出する動画：[./document/stop.avi](./document/stop.avi)<br>
 走行しながら道路標識を検出する動画：[./document/course160x120.avi](./document/course160x120.avi)<br>
 
@@ -102,12 +102,13 @@ LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 ```
 <hr>
 
-Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install_balancap_ssd-tensorflow.sh](./install_scripts/install_balancap_ssd-tensorflow.sh)
-バグ修正スクリプト：[./install_scripts/setup_bugfix.sh](./install_scripts/setup_bugfix.sh)
+Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install_balancap_ssd-tensorflow.sh](./install_scripts/install_balancap_ssd-tensorflow.sh)<br>
+バグ修正スクリプト：[./install_scripts/setup_bugfix.sh](./install_scripts/setup_bugfix.sh)<br>
 > cd install_scripts/<br>
 > chmod 755 *.sh<br>
 > ./install_balancap_ssd-tensorflow.sh<br>
 > ./setup_bugfix.sh<br>
+<hr>
 
 #### demo実行
 jupyterでSSD-Tensorflow/notebooks/ssd_notebook.ipynb を開いて実行します。
@@ -120,8 +121,8 @@ SSD-Tensorflowで扱うことの出来るデータフォーマットはPascalVOC
 
 #### 学習データを作成する
 学習データはGUIツールのLabelImgを使って作成します。<br>
-LabelImg：[https://github.com/tzutalin/labelImg](https://github.com/tzutalin/labelImg)
-LabelImg インストールスクリプト：[./install_scripts/install_labelimg.sh](./install_scripts/install_labelimg.sh)
+LabelImg：[https://github.com/tzutalin/labelImg](https://github.com/tzutalin/labelImg)<br>
+LabelImg インストールスクリプト：[./install_scripts/install_labelimg.sh](./install_scripts/install_labelimg.sh)<br>
 > cd install_scripts/<br>
 > ./install_labelimg.sh<br>
 
