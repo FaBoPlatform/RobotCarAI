@@ -286,6 +286,6 @@ out = cv2.VideoWriter('../output/output.avi', int(fourcc), 2.1, (int(vidw), int(
 * 実行環境
   * 実行環境はUSBカメラが使える環境が必要です。
   * クラウドで実行する場合は、PCかRaspberryPi3等にUSBカメラを付けてFFMPEGを使ってカメラ映像をクラウド実行環境にUDP Streaming配信する必要があります。
-  * USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの使い方を調べてください。
+  * USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの公式ドキュメントを参考にしてください。
 
 [<ページTOP>](#top)　[<目次>](#0)
