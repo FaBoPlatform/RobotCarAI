@@ -147,9 +147,25 @@ Balancap SSD-Tensorflowの学習コードは、元の学習コードをコピー
 * ラベル
 
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
+```bash
+# 学習データディレクトリ
+VOC_DATASET_DIR=/notebooks/roadsign_data/PascalVOC
+TF_DATASET_DIR=/notebooks/roadsign_data/tfrecords
+
+# 道路標識の学習データで使うラベル
+# LABELS[0]はbackground(その他)用に空けておく
+# 学習データのラベルを増やす時はここにも追加する
+LABELS[1]=stop
+LABELS[2]=speed_10
+LABELS[3]=speed_20
+LABELS[4]=speed_30
+```
 <hr>
 
 スクリプトコードを作成し、PascalVOCデータをTF-Recordsに変換して学習を実行します。<br>
+スクリプト作成コード：[./train_scripts/setup_mytrain.sh](./train_scripts/setup_mytrain.sh)<br>
+データ変換コード：[./train_scripts/convert_PascalVOC_to_TF-Records.sh](./train_scripts/convert_PascalVOC_to_TF-Records.sh)
+学習実行コード：[./train_scripts/train_ssh.sh](./train_scripts/train_ssh.sh)
 > chmod 755 ./train_scripts/*<br>
 > ./train_scripts/setup_mytrain.sh<br>
 > ./train_scripts/convert_PascalVOC_to_TF-Records.sh<br>
@@ -164,6 +180,7 @@ Balancap SSD-Tensorflowの学習コードは、元の学習コードをコピー
 # 学習済みcheckpoint
 LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 ```
+学習再開クリプト：[./train_scripts/train_ssd_continue.sh](./train_scripts/train_ssd_continue.sh)<br>
 >./train_scripts/train_ssd_continue.sh
 
 <hr>
