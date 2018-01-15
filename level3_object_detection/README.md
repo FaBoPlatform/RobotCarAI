@@ -7,8 +7,9 @@
 【目標】
 #### カメラ映像を取得し、道路標識を検出する
 
-【画像】
+【画像】<br>
 ![](./document/jetson_tx2-stop.png)<br>
+![](./document/course.jpg)<br>
 
 【動画】<br>
 止まれを検出する動画：[./document/stop.avi](./document/stop.avi)<br>
