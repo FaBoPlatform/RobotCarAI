@@ -24,7 +24,7 @@
   * [Python] [Selective Search]
   * [Neural Networks] [SSD: Single Shot MultiBox Detection]
   * [Python/TensorFlow] [TensorFlow Object Detection API]
-* [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflow](#2)
+* [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflowを使う](#2)
   * インストール
   * demo実行
   * 扱える学習データフォーマット
@@ -67,8 +67,8 @@ TensorFlow公式で用意されている物体検出APIです。<br>
 
 <a name='2'>
 
-## [Python/OpenCV/TensorFlow] Balancap SSD-Tensorflow
-TensorFlowを使った物体検出として、Balancap SSD-Tensorflowを用いて道路標識を学習し、Jetson TX2で実行してみます。
+## [Python/OpenCV/TensorFlow] Balancap SSD-Tensorflowを使う
+TensorFlowを使った物体検出として、Balancap SSD-Tensorflowを使って道路標識を学習し、Jetson TX2で実行してみます。
 Balancap SSD-Tensorflow：[https://github.com/balancap/SSD-Tensorflow](https://github.com/balancap/SSD-Tensorflow)
 
 #### インストール
