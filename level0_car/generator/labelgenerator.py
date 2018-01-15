@@ -9,11 +9,11 @@ class LabelGenerator():
             one hot valueのラベル
         '''
 
-        if sensors[0] < 50: # 前方に空きが無い
+        if sensors[0] < 10: # 前方に空きが無い
             return [1,0,0,0] # STOP
-        elif sensors[1] < 50: # 左に空きが無い
+        elif sensors[1] < 10: # 左に空きが無い
             return [0,0,0,1] # RIGHT
-        elif sensors[2] < 50: # 右に空きが無い
+        elif sensors[2] < 10: # 右に空きが無い
             return [0,1,0,0] # LEFT
         else: # 全方向に空きがある
             return [0,0,1,0] # FOWARD
