@@ -98,8 +98,8 @@ def main():
             # IF結果を取得する
             ########################################
             # 今回の結果を取得する
-            w = generator.get_label(sensors)
-            ai_value = np.argmax(w[0:4])
+            generator_result = generator.get_label(sensors)
+            ai_value = np.argmax(generator_result[0:4])
 
             ########################################
             # 速度調整を行う

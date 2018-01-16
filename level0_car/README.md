@@ -228,8 +228,8 @@ from generator import SimpleLabelGenerator as LabelGenerator
             # IF結果を取得する
             ########################################
             # 今回の結果を取得する
-            w = generator.get_label(sensors)
-            ai_value = np.argmax(w[0:4])
+            generator_result = generator.get_label(sensors)
+            ai_value = np.argmax(generator_result[0:4])
 ```
 level0の簡単なIF文での判定を使っていますが、level1では学習データ用にもう少し考慮したIF文を用意しています。<br>
 level0でもimportを変えることで動作の違いを確認出来ます。<br>
@@ -413,6 +413,8 @@ try:
         time.sleep(0.1)
 ```
 ロボットカー起動時にこのプログラムを自動実行するように設定すれば、ロボットカーだけで動作するようになるため、デモ等でネットワークやパソコンが不要になります。
+
+> `python start_button.py`<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
