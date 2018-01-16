@@ -55,6 +55,8 @@ CLASS1 LASERで距離を計測する機器。
 
 仕様書：[https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf](https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf)
 
+ここはlevel0と同じ内容になります。
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -124,6 +126,7 @@ CSVデータを人力で用意していってもよいのですが、IF文で書
 <a name='3-1'>
 
 #### 簡単なIF文での判定
+level0で作ったSimpleLabelGenerator。
 ```python
 # coding: utf-8
 import numpy as np
@@ -144,7 +147,7 @@ class SimpleLabelGenerator():
 
 generator = SimpleLabelGenerator()
 n_rows = 10 # 作成するデータ件数
-sensors = np.random.randint(0,200,[n_rows,3]) # 範囲0-200の値で3つの値を持つ配列をミニバッチ個作る
+sensors = np.random.randint(0,200,[n_rows,3]) # 範囲0-200の値で3つの値を持つ配列をn_rows個作る
 print("--- sensors ---\n{}".format(sensors))
 csvdata=[]
 for i in range(n_rows):
@@ -180,7 +183,7 @@ print("--- batch data ---\n{}".format(csvdata))
 <hr>
 
 #### 車両旋回性能
-[簡単なIF文での判定](#3-1)のラベルジェネレータはlevel0_carで実際に使っていますが、車両の旋回性能に合わせたカスタマイズがあってもよいかもしれません。そこで、車両がどのように旋回するのかを考慮してみます。<br>
+[簡単なIF文での判定](#3-1)のラベルジェネレータはlevel0で実際に使っていますが、車両の旋回性能に合わせたカスタマイズがあってもよいかもしれません。そこで、車両がどのように旋回するのかを考慮してみます。<br>
 (実際のところ、定常円を描けなかったり左右で旋回半径が異なったりする車両の足回りでは計算通りの旋回にならないので走行具合をみて調整が必要になります。)<br>
 <hr>
 
@@ -786,6 +789,7 @@ from fab_lib import Kerberos
 70M | 0.99999925 | 6 | 2
 80M | 0.999999625 | 3 | 2
 90M | 0.99999925 | 6 | 1
+100M | 0.999999625 | 3 | 0
 
 <hr>
 
@@ -806,6 +810,7 @@ from fab_lib import Kerberos
 70M | 0.9267239285714286 | 4103460 | 31735
 80M | 0.9253654285714286 | 4179536 | 31836
 90M | 0.9089407857142857 | 5099316 | 45796
+100M | 0.907304625 | 5190941 | 47454
 
 <hr>
 
@@ -831,7 +836,6 @@ Neural Netwoksを使った学習では、学習の止め時も考えるポイン
   * lib/ 予測関連
   * MLP/ 学習とpbファイル作成関連
   * model/ 学習済みモデル置き場
-  * test/ Fabo基板動作確認関連
 * ファイルについて
   * README.md このファイル
   * run_ai_eval.py 学習範囲内の予測精度評価用コード
