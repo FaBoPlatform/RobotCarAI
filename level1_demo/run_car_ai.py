@@ -101,7 +101,7 @@ def main():
             # AI予測結果を取得する
             ########################################
             # 今回の予測結果を取得する
-            ai_value = ai.get_prediction(sensors,score)
+            ai_value = ai.get_prediction(sensors,SCORE)
 
             print("ai_value:{} {}".format(ai_value,sensors))
             # 予測結果のスコアが低い時は何もしない
