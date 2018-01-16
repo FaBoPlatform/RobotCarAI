@@ -392,7 +392,7 @@ if __name__ == '__main__':
 #### 開始ボタンを追加する
 パソコンが無くてもロボットカーを開始出来るように開始ボタンを追加します。<br>
 
-ロボットカー開始コード：[./start_button.py](./start_button.py)
+開始ボタンコード：[./start_button.py](./start_button.py)
 ```python
 from lib import SPI
 # 開始ボタンのSPI接続コネクタ番号
