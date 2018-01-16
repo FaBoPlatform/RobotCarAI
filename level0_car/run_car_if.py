@@ -99,7 +99,7 @@ def main():
             ########################################
             # 今回の結果を取得する
             generator_result = generator.get_label(sensors)
-            ai_value = np.argmax(generator_result[0:4])
+            ai_value = np.argmax(generator_result)
 
             ########################################
             # 速度調整を行う

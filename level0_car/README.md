@@ -229,7 +229,7 @@ from generator import SimpleLabelGenerator as LabelGenerator
             ########################################
             # 今回の結果を取得する
             generator_result = generator.get_label(sensors)
-            ai_value = np.argmax(generator_result[0:4])
+            ai_value = np.argmax(generator_result)
 ```
 level0の簡単なIF文での判定を使っていますが、level1では学習データ用にもう少し考慮したIF文を用意しています。<br>
 level0でもimportを変えることで動作の違いを確認出来ます。<br>
