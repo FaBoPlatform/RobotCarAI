@@ -682,13 +682,13 @@ max_scoreはその点数で、1.0に近い方が強く結果を示している�
 > `mkdir ./model/`<br>
 > `cp ./MLP/model/car_model.pb ./model/`<br>
 
-距離センサー値の取得方法はクラス化して簡単に取得できるように書いてあります。<br>
-また、TensorFlow部分もクラス化してあります。<br>
-距離センサー用ライブラリ：[./fabo_lib/kerberos.py](./fabo_lib/kerberos.py)<br>
+距離センサー値の取得方法はlevel0と同じになります。<br>
+TensorFlow部分はAIクラスとして書いてあります。<br>
+距離センサー用ライブラリ：[./fabolib/kerberos.py](./fabolib/kerberos.py)<br>
 AIライブラリ：[./lib/ai.py](./lib/ai.py)<br>
 予測実行コード：[./run_ai.py](./run_ai.py)<br>
 ```python
-from fab_lib import Kerberos
+from fabolib import Kerberos
 ...
     # 距離センサー準備
     kerberos = Kerberos()
