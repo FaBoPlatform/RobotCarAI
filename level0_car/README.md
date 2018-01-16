@@ -164,8 +164,7 @@ try:
 ```
 ハンドル制御は45-135度の角度で指定します。<br>
 0-180度まで動作するサーボを使っていますが、真ん中の90度の位置でロボットカーを組み立てる必要があります。<br>
-値が範囲から外れるとパーツに負荷がかかるため、可動範囲の確認が重要になります。<br>
-真ん中の位置が多少ずれていたりするので、最適な値への調整が必要になります。<br>
+ここは車両に合わせて微調整が必要になります。<br>
 
 車両自走コード：[./run_car_if.py](./run_car_if.py)<br>
 ```python
@@ -231,8 +230,7 @@ from generator import SimpleLabelGenerator as LabelGenerator
             generator_result = generator.get_label(sensors)
             ai_value = np.argmax(generator_result)
 ```
-level0の簡単なIF文での判定を使っていますが、level1では学習データ用にもう少し考慮したIF文を用意しています。<br>
-level0でもimportを変えることで動作の違いを確認出来ます。<br>
+簡単なIF文を判定に使っていますが、level1のIF文も使うことが出来ます。<br>
 ```python
 #from generator import SimpleLabelGenerator as LabelGenerator
 from generator import LabelGenerator
