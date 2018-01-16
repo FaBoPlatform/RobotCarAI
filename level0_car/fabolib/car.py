@@ -15,11 +15,6 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 class Car():
-    STOP=0
-    LEFT=1
-    FORWARD=2
-    RIGHT=3
-
 
     motor = None # モーター制御クラスを保持する
     handle = None # ハンドル制御クラスを保持する

@@ -31,7 +31,7 @@ main_thread_running = True
 stop_thread_running = True
 
 
-def do_force_stop_button():
+def do_stop_button():
     '''
     停止ボタンの値を取得し続ける関数
     '''
@@ -91,11 +91,9 @@ def main():
             ########################################
             # 近接センサー値を取得する
             ########################################
-            '''
-            速度、角度制御を入れるので距離はここで取る
-            '''
             distance1,distance2,distance3 = kerberos.get_distance()
             sensors = [distance1,distance2,distance3]
+
             ########################################
             # IF結果を取得する
             ########################################
@@ -277,6 +275,6 @@ def main():
 
 if __name__ == '__main__':
     # 停止ボタンの状態を監視するスレッドを起動する
-    t = threading.Thread(target=do_force_stop_button,args=())
+    t = threading.Thread(target=do_stop_button,args=())
     t.start()
     main()

@@ -103,33 +103,33 @@ class Servo():
         if speed is None:
             speed = self.conf.SERVO_SPEED
         try:
-            START_ANALOG = self.get_analog()
-            START_ANGLE = self.analog_to_angle(START_ANALOG)
-            print("servo set_angle:{}({}) -> {}({}) speed:{}".format(START_ANGLE,START_ANALOG,angle,target_analog,speed))
-            if START_ANALOG == target_analog:
+            start_analog = self.get_analog()
+            start_angle = self.analog_to_angle(start_analog)
+            print("servo set_angle:{}({}) -> {}({}) speed:{}".format(start_angle,start_analog,angle,target_analog,speed))
+            if start_analog == target_analog:
                 return
             if speed == 0:
                 self.set_analog(target_analog)
                 return
 
-            if START_ANALOG >= target_analog:
-                STEP=-1
-            if START_ANALOG <= target_analog:
-                STEP=+1
+            if start_analog >= target_analog:
+                step=-1
+            if start_analog <= target_analog:
+                step=+1
 
-            ANALOG = START_ANALOG
+            analog = start_analog
             while True:
-                ANALOG+=STEP
-                self.set_analog(ANALOG)
+                analog+=step
+                self.set_analog(analog)
                 time.sleep(1.0/(speed*10.0))
-                if ANALOG == target_analog:
-                    NOW_ANALOG = self.get_analog()
-                    NOW_ANGLE = self.analog_to_angle(NOW_ANALOG)
-                    if not ANALOG == NOW_ANALOG:
-                        msg = 'Servo angle error. Couldn\'t move '+str(START_ANGLE)+" to "+str(angle)+". Now "+str(NOW_ANGLE)+"."
+                if analog == target_analog:
+                    now_analog = self.get_analog()
+                    now_angle = self.analog_to_angle(now_analog)
+                    if not analog == now_analog:
+                        msg = 'Servo angle error. Couldn\'t move '+str(start_angle)+" to "+str(angle)+". Now "+str(now_angle)+"."
                         raise ServoAngleError(Exception(msg))
                     else:
-                        print("Servo angle ok. start:{} target:{} now:{}".format(START_ANGLE,angle,NOW_ANGLE))
+                        print("Servo angle ok. start:{} target:{} now:{}".format(start_angle,angle,now_angle))
                     break
             return
         except:
