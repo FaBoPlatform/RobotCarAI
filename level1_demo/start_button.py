@@ -18,7 +18,7 @@ spi = SPI()
 
 proc = None
 try:
-    cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_car_if.py"
+    cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_car_ai.py"
     while True:
         data = spi.readadc(START_BUTTON_SPI_PIN) # data: 0-1023
         if data >= 1000:
