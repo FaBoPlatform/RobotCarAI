@@ -5,7 +5,7 @@
 <hr>
 
 【目標】
-#### 3つの距離センサーから値を取得し、ロボットカーを自走させる
+#### 3つの距離センサーから値を取得し、IF文で進行方向を判断してロボットカーを自走させる
 
 【画像】
 ![](./document/robotcar.jpg)
@@ -182,8 +182,10 @@ try:
 距離センサーにはLidarLite v3を使います。<br>
 今回3つの距離センサーを使うのですが、全てのセンサーは通電時に同じ物理アドレスとなっていますので、それぞれのアドレスを変更する必要があります。<br>
 このアドレス変更を自動的に行うために、Fabo #902 Kerberos基板を使ってアドレス変更を行ったうえで取得しています。<br>
+クラス化して簡単に使えるようにしてあります。<br>
 
-：[./test/fabolib_kerberos_test.py](./test/fabolib_kerberos_test.py)<br>
+距離センサー用ライブラリ：[./fabolib/kerberos.py](./fabo_lib/kerberos.py)<br>
+距離取得確認コード：[./test/fabolib_kerberos_test.py](./test/fabolib_kerberos_test.py)<br>
 ```python
 from fabolib import Kerberos
 kerberos = Kerberos()
@@ -216,6 +218,9 @@ try:
 #### 進行方向を判断する
 車両自走コード：[./run_car_if.py](./run_car_if.py)<br>
 ```python
+from generator import SimpleLabelGenerator as LabelGenerator
+#from generator import LabelGenerator
+...
     # IF準備 (学習ラベル ジェネレータ)
     generator = LabelGenerator()
 ...
@@ -225,6 +230,12 @@ try:
             # 今回の結果を取得する
             w = generator.get_label(sensors)
             ai_value = np.argmax(w[0:4])
+```
+level0の簡単なIF文での判定を使っていますが、level1では学習データ用にもう少し考慮したIF文を用意しています。<br>
+level0でもimportを変えることで動作の違いを確認出来ます。<br>
+```python
+#from generator import SimpleLabelGenerator as LabelGenerator
+from generator import LabelGenerator
 ```
 <hr>
 
