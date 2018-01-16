@@ -127,22 +127,22 @@ CSVデータを人力で用意していってもよいのですが、IF文で書
 ```python
 # coding: utf-8
 import numpy as np
-class LabelGenerator():
+class SimpleLabelGenerator():
     def get_label(self,sensors):
         '''
         sensors: [左センサー値,前センサー値,右センサー値]
         '''
 
-        if sensors[0] < 20: # 前方に空きが無い
+        if sensors[1] < 20: # 前方に空きが無い
             return [1,0,0,0] # STOP
-        elif sensors[1] < 20: # 左に空きが無い
+        elif sensors[0] < 20: # 左に空きが無い
             return [0,0,0,1] # RIGHT
         elif sensors[2] < 20: # 右に空きが無い
             return [0,1,0,0] # LEFT
         else: # 全方向に空きがある
             return [0,0,1,0] # FOWARD
 
-generator = LabelGenerator()
+generator = SimpleLabelGenerator()
 n_rows = 10 # 作成するデータ件数
 sensors = np.random.randint(0,200,[n_rows,3]) # 範囲0-200の値で3つの値を持つ配列をミニバッチ個作る
 print("--- sensors ---\n{}".format(sensors))
