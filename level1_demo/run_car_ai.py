@@ -88,6 +88,9 @@ def main():
     LIDAR_INTERVAL = 0.05
 
     try:
+        learned_step = ai.get_learned_step()
+        print("learned_step:{}".format(learned_step))
+
         while main_thread_running:
             if not stop_thread_running: break # 強制停止ならループを抜ける
 
