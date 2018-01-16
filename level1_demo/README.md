@@ -83,6 +83,9 @@ from lib import AI
     cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_car_ai.py"
 ```
 
+あとはlevel0同様に開始ボタンコードを実行します。<br>
+> `python start_button.py`<br>
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
