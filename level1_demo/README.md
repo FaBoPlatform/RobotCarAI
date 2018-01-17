@@ -7,10 +7,13 @@
 【目標】
 #### 3つの距離センサーから値を取得し、Neaural Networksで進行方向を判断してロボットカーを自走させる
 
-【画像】
-![](./document/robotcar.jpg)
+【画像】<br>
+![](./document/robotcar.jpg)<br>
 実行環境の構成
 * Fabo TYPE1 ロボットカー
+
+【動画】<br>
+走行デモ動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
 
 <hr>
 
