@@ -12,8 +12,8 @@
 ![](./document/course.jpg)<br>
 
 【動画】<br>
-止まれを検出する動画：[./document/stop.avi](./document/stop.avi)<br>
-走行しながら道路標識を検出する動画：[./document/course160x120.avi](./document/course160x120.avi)<br>
+止まれを検出する動画：[./document/stop.mp4](./document/stop.mp4)<br>
+走行しながら道路標識を検出する動画：[./document/course160x120.mp4](./document/course160x120.mp4)<br>
 
 <hr>
 
