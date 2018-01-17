@@ -8,5 +8,5 @@ source $SCRIPT_DIR/../script_define.conf
 ####################
 # Copy notebooks/ to Balancap SSD-TensorFlow
 ####################
-cp -f notebooks/* SSD_TENSORFLOW_DIR/notebooks/
+cp -f $SCRIPT_DIR/../notebooks/* $SSD_TENSORFLOW_DIR/notebooks/
 
