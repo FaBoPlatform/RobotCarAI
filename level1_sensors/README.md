@@ -930,6 +930,14 @@ accuracy:0.9999989975323005 total:7980307 miss:8 bad score:3 result:FORWARD [199
 accuracy:0.9999988722521013 total:7980507 miss:9 bad score:3 result:FORWARD [199 102 106] - ng generator:LEFT
 accuracy:0.999998875 total:8000000 miss:9 bad score:3
 main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_150M.log 
+learned_step:150000000
+accuracy:0.9999985371583716 total:683601 miss:1 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.9999970751724552 total:683801 miss:2 bad score:0 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.999999624065191 total:7980107 miss:3 bad score:0 result:FORWARD [199 100 106] - ng generator:LEFT
+accuracy:0.9999994987661502 total:7980307 miss:4 bad score:0 result:FORWARD [199 101 106] - ng generator:LEFT
+accuracy:0.9999995 total:8000000 miss:4 bad score:0
+main end
 ```
 この学習では、これ以上続けても学習成果は上がりそうにありません。<br>
 Neural Netwoksを使った学習では、学習の止め時も考えるポイントになります。<br>
