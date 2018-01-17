@@ -55,7 +55,7 @@ CLASS1 LASERで距離を計測する機器。
 
 仕様書：[https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf](https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf)
 
-ここはlevel0と同じ内容になります。
+ここはlevel1_carと同じ内容になります。
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -126,7 +126,7 @@ CSVデータを人力で用意していってもよいのですが、IF文で書
 <a name='3-1'>
 
 #### 簡単なIF文での判定
-level0で作ったSimpleLabelGenerator。
+level_carで作ったSimpleLabelGenerator。
 ```python
 # coding: utf-8
 import numpy as np
@@ -183,7 +183,7 @@ print("--- batch data ---\n{}".format(csvdata))
 <hr>
 
 #### 車両旋回性能
-[簡単なIF文での判定](#3-1)のラベルジェネレータはlevel0で実際に使っていますが、車両の旋回性能に合わせたカスタマイズがあってもよいかもしれません。そこで、車両がどのように旋回するのかを考慮してみます。<br>
+[簡単なIF文での判定](#3-1)のラベルジェネレータはlevel1_carで実際に使っていますが、車両の旋回性能に合わせたカスタマイズがあってもよいかもしれません。そこで、車両がどのように旋回するのかを考慮してみます。<br>
 (実際のところ、定常円を描けなかったり左右で旋回半径が異なったりする車両の足回りでは計算通りの旋回にならないので走行具合をみて調整が必要になります。)<br>
 <hr>
 
@@ -682,7 +682,7 @@ max_scoreはその点数で、1.0に近い方が強く結果を示している�
 > `mkdir ./model/`<br>
 > `cp ./MLP/model/car_model.pb ./model/`<br>
 
-距離センサー値の取得方法はlevel0と同じになります。<br>
+距離センサー値の取得方法はlevel_carと同じになります。<br>
 TensorFlow部分はAIクラスとして書いてあります。<br>
 距離センサー用ライブラリ：[./fabolib/kerberos.py](./fabolib/kerberos.py)<br>
 AIライブラリ：[./lib/ai.py](./lib/ai.py)<br>

@@ -1,7 +1,7 @@
 <a name='top'>
 
 【タイトル】
-# レベル0：Fabo TYPE1 ロボットカー制御
+# レベル1：Fabo TYPE1 ロボットカー制御
 <hr>
 
 【目標】
@@ -58,7 +58,7 @@ CLASS1 LASERで距離を計測する機器。
 ## [Python] 簡単なIF文での判定を作る
 #### 簡単なIF文での判定
 3センサー値を入力に、STOP,LEFT,FOWARD,RIGHTを識別出来るように値を返すIF文を作ります。<br>
-0:STOP,1:LEFT,2:FOWARD,3:RIGHTと定義しますが、level1のNeural Networksのone hot valueの値に合わせておくために、<br>
+0:STOP,1:LEFT,2:FOWARD,3:RIGHTと定義しますが、level1_sensorsのNeural Networksのone hot valueの値に合わせておくために、<br>
 [1,0,0,0]:STOP,[0,1,0,0]:LEFT,[0,0,1,0]:FOWARD,[0,0,0,1]:RIGHTとして値を返しておきます。<br>
 0-3の値としては配列の最大値のindex番号となるため、numpyで取得することが出来ます。<br>
 ```python
@@ -230,7 +230,7 @@ from generator import SimpleLabelGenerator as LabelGenerator
             generator_result = generator.get_label(sensors)
             ai_value = np.argmax(generator_result)
 ```
-簡単なIF文を判定に使っていますが、level1のIF文も使うことが出来ます。<br>
+簡単なIF文を判定に使っていますが、level1_sensorsのIF文も使うことが出来ます。<br>
 ```python
 #from generator import SimpleLabelGenerator as LabelGenerator
 from generator import LabelGenerator

@@ -3,7 +3,7 @@
 RobotCar AI Playground.
 
 ## Level
-* [Level 0: Fabo TYPE1 ロボットカー制御](https://github.com/FaBoPlatform/RobotCarAI/level0_car/)
+* [Level 1: Fabo TYPE1 ロボットカー制御](https://github.com/FaBoPlatform/RobotCarAI/level1_car/)
 * [Level 1: 距離センサーの値をニューラルネットワークで使う](https://github.com/FaBoPlatform/RobotCarAI/level1_sensors/)
 * [Level 1: ロボットカー走行デモ](https://github.com/FaBoPlatform/RobotCarAI/level0_car/)
 * [Level 2: レーン検出](https://github.com/FaBoPlatform/RobotCarAI/level2_lane_detection/)
