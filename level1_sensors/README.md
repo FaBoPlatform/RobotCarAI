@@ -939,6 +939,8 @@ accuracy:0.9999994987661502 total:7980307 miss:4 bad score:0 result:FORWARD [199
 accuracy:0.9999995 total:8000000 miss:4 bad score:0
 main end
 ```
+<hr>
+
 この学習では、これ以上続けても学習成果は上がりそうにありません。<br>
 Neural Netwoksを使った学習では、学習の止め時も考えるポイントになります。<br>
 
