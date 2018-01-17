@@ -778,6 +778,8 @@ from fabolib import Kerberos
 > user	11m11.452s<br>
 > sys	0m5.844s<br>
 
+*学習範囲(0-199)*
+
 学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
 -- | -- | -- | --
 10M | 0.999633875 | 2929 | 2890
@@ -785,11 +787,6 @@ from fabolib import Kerberos
 30M | 0.999986 | 112 | 102
 40M | 0.999991875 | 65 | 51
 50M | 0.99979775 | 1618 | 1176
-60M | 0.999956625 | 347 | 344
-70M | 0.99999925 | 6 | 2
-80M | 0.999999625 | 3 | 2
-90M | 0.99999925 | 6 | 1
-100M | 0.999999625 | 3 | 0
 
 <hr>
 
@@ -799,6 +796,8 @@ from fabolib import Kerberos
 > user    77m24.504s<br>
 > sys     0m33.284s<br>
 
+*学習範囲外(0-399から学習範囲を除外)*
+
 学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
 -- | -- | -- | --
 10M | 0.91746125 | 4622170 | 116278
@@ -806,21 +805,133 @@ from fabolib import Kerberos
 30M | 0.9085851071428571 | 5119234 | 74547
 40M | 0.9152485535714285 | 4746081 | 30425
 50M | 0.9193687857142857 | 4515348 | 40832
+
+<hr>
+
+この評価結果はとても興味深いことを示しています。<br>
+50Mステップまでで見てみると、20Mステップは学習範囲内のデータで精度がよくなっていますが、学習範囲外では50Mステップより精度が悪いことが分かります。<br>
+学習時に記録したTensorBoardのlossの値も見てみます。<br>
+![](./document/tensorboard1.png)
+
+学習ステップを重ねることで、lossが減ってきているように見えるので、トータル的には学習ステップを重ねれば精度が上がるのではないかと思われます。<br>
+
+もう少し学習を進めてみます。<br>
+
+*学習範囲(0-199)*
+
+学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
+-- | -- | -- | --
+60M | 0.999956625 | 347 | 344
+70M | 0.99999925 | 6 | 2
+80M | 0.999999625 | 3 | 2
+90M | 0.99999925 | 6 | 1
+100M | 0.999999625 | 3 | 0
+110M | 0.999999625 | 3 | 1
+120M | 0.9999995 | 4 | 2
+130M | 0.99999925 | 6 | 2
+140M | 0.999998875 | 9 | 3
+150M | 0.9999995 | 4 | 0
+
+<hr>
+
+*学習範囲外(0-399から学習範囲を除外)*
+
+学習ステップ数 | 精度 | 不一致件数 | 低スコア件数
+-- | -- | -- | --
 60M | 0.9232642142857143 | 4297204 | 42645
 70M | 0.9267239285714286 | 4103460 | 31735
 80M | 0.9253654285714286 | 4179536 | 31836
 90M | 0.9089407857142857 | 5099316 | 45796
 100M | 0.907304625 | 5190941 | 47454
+110M | 0.913579625 | 4839541 | 40684
+120M | 0.9103865714285714 | 5018352 | 39680
+130M | 0.9080933928571429 | 5146770 | 43341
+140M | 0.9049904107142858 | 5320537 | 44950
 
 <hr>
 
-この評価結果はとても興味深いことを示しています。<br>
-学習途中に学習範囲内のデータで精度がよくなるモデルが現れることがありますが、それは学習範囲外でも同様に精度がよいとは限らないことを示しています。<br>
-学習時に記録したTensorBoardのlossの値も見てみます。<br>
-![](./document/tensorboard1.png)
 ![](./document/tensorboard2.png)
+![](./document/tensorboard3.png)
 
-学習ステップを重ねることで、lossが減ってきているように見えるので、トータル的には学習ステップを重ねれば精度が上がるのではないかと思われます。<br>
+<hr>
+
+70Mステップで学習範囲内の精度と学習範囲外の精度の両方が頭打ちになり、その後は学習範囲外で2%程の精度差が出ています。<br>
+学習範囲内での誤判定箇所を見てみると、大体同じデータを間違えているようです。<br>
+```
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_70M.log 
+learned_step:70000000
+accuracy:0.9999984462809404 total:643617 miss:1 bad score:0 result:STOP [16 18 16] - ng generator:FORWARD
+accuracy:0.9999970743167432 total:683601 miss:2 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.9999956114815346 total:683602 miss:3 bad score:0 result:FORWARD [17 18  1] - ng generator:LEFT
+accuracy:0.9999941503449102 total:683801 miss:4 bad score:0 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.9999926900691666 total:684001 miss:5 bad score:1 result:BAD SCORE [17 20  0] - ng generator:LEFT
+accuracy:0.9999912283010096 total:684018 miss:6 bad score:2 result:BAD SCORE [17 20 17] - ng generator:RIGHT
+accuracy:0.99999925 total:8000000 miss:6 bad score:2
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_80M.log 
+learned_step:80000000
+accuracy:0.9999984462809404 total:643617 miss:1 bad score:1 result:BAD SCORE [16 18 16] - ng generator:FORWARD
+accuracy:0.9999970743167432 total:683601 miss:2 bad score:1 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.999999624065191 total:7980107 miss:3 bad score:2 result:BAD SCORE [199 100 106] - ng generator:LEFT
+accuracy:0.999999625 total:8000000 miss:3 bad score:2
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_90M.log 
+learned_step:90000000
+accuracy:0.9999984462809404 total:643617 miss:1 bad score:0 result:STOP [16 18 16] - ng generator:FORWARD
+accuracy:0.9999970743167432 total:683601 miss:2 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.9999956127586828 total:683801 miss:3 bad score:0 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.9999994987535253 total:7980106 miss:4 bad score:1 result:BAD SCORE [199 100 105] - ng generator:LEFT
+accuracy:0.9999993734419852 total:7980107 miss:5 bad score:1 result:FORWARD [199 100 106] - ng generator:LEFT
+accuracy:0.9999992481492254 total:7980307 miss:6 bad score:1 result:FORWARD [199 101 106] - ng generator:LEFT
+accuracy:0.99999925 total:8000000 miss:6 bad score:1
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_100M.log 
+learned_step:100000000
+accuracy:0.9999984462809404 total:643617 miss:1 bad score:0 result:STOP [16 18 16] - ng generator:FORWARD
+accuracy:0.9999970743167432 total:683601 miss:2 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.999999624065191 total:7980107 miss:3 bad score:0 result:FORWARD [199 100 106] - ng generator:LEFT
+accuracy:0.999999625 total:8000000 miss:3 bad score:0
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_110M.log 
+learned_step:110000000
+accuracy:0.9999985371583716 total:683601 miss:1 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.999997074321023 total:683602 miss:2 bad score:1 result:BAD SCORE [17 18  1] - ng generator:LEFT
+accuracy:0.9999956127586828 total:683801 miss:3 bad score:1 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.999999625 total:8000000 miss:3 bad score:1
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_120M.log 
+learned_step:120000000
+accuracy:0.9999985371583716 total:683601 miss:1 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.999997074321023 total:683602 miss:2 bad score:1 result:BAD SCORE [17 18  1] - ng generator:LEFT
+accuracy:0.9999956127586828 total:683801 miss:3 bad score:1 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.9999994987535882 total:7980107 miss:4 bad score:2 result:BAD SCORE [199 100 106] - ng generator:LEFT
+accuracy:0.9999995 total:8000000 miss:4 bad score:2
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_130M.log 
+learned_step:130000000
+accuracy:0.9999985371583716 total:683601 miss:1 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.999997074321023 total:683602 miss:2 bad score:1 result:BAD SCORE [17 18  1] - ng generator:LEFT
+accuracy:0.9999956127586828 total:683801 miss:3 bad score:1 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.999999069853967 total:4300400 miss:4 bad score:2 result:BAD SCORE [107 101 199] - ng generator:FORWARD
+accuracy:0.9999993734419852 total:7980107 miss:5 bad score:2 result:FORWARD [199 100 106] - ng generator:LEFT
+accuracy:0.9999992481492254 total:7980307 miss:6 bad score:2 result:FORWARD [199 101 106] - ng generator:LEFT
+accuracy:0.99999925 total:8000000 miss:6 bad score:2
+main end
+ubuntu@tegra-ubuntu:~/notebooks/github/RobotCarAI/level1_sensors$ cat eval_140M.log 
+learned_step:140000000
+accuracy:0.9999985371583716 total:683601 miss:1 bad score:0 result:FORWARD [17 18  0] - ng generator:LEFT
+accuracy:0.999997074321023 total:683602 miss:2 bad score:1 result:BAD SCORE [17 18  1] - ng generator:LEFT
+accuracy:0.9999956127586828 total:683801 miss:3 bad score:1 result:FORWARD [17 19  0] - ng generator:LEFT
+accuracy:0.9999941520553333 total:684001 miss:4 bad score:2 result:BAD SCORE [17 20  0] - ng generator:LEFT
+accuracy:0.9999993703014254 total:7940307 miss:5 bad score:3 result:BAD SCORE [198 101 106] - ng generator:LEFT
+accuracy:0.999999248130288 total:7980106 miss:6 bad score:3 result:FORWARD [199 100 105] - ng generator:LEFT
+accuracy:0.9999991228187792 total:7980107 miss:7 bad score:3 result:FORWARD [199 100 106] - ng generator:LEFT
+accuracy:0.9999989975323005 total:7980307 miss:8 bad score:3 result:FORWARD [199 101 106] - ng generator:LEFT
+accuracy:0.9999988722521013 total:7980507 miss:9 bad score:3 result:FORWARD [199 102 106] - ng generator:LEFT
+accuracy:0.999998875 total:8000000 miss:9 bad score:3
+main end
+```
+この学習では、これ以上続けても学習成果は上がりそうにありません。<br>
 Neural Netwoksを使った学習では、学習の止め時も考えるポイントになります。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
