@@ -107,6 +107,7 @@ Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/i
 > `chmod 755 ./install_scripts/*.sh`<br>
 > `./install_scripts/install_balancap_ssd-tensorflow.sh`<br>
 > `./install_scripts/setup_bugfix.sh`<br>
+> `./install_scripts/copy_notebooks.sh`<br>
 
 <hr>
 
