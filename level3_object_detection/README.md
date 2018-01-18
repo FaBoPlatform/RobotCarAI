@@ -173,7 +173,7 @@ LABELS[4]=speed_30
 > `./train_scripts/freeze_graph.sh`<br>
 
 学習はGPUを搭載した学習環境でおこないます。<br>
-一定時間毎にcheckpointが保存されるので、適当なところでCtrl_cで学習を停止してください。<br>
+一定時間毎にcheckpointが保存されるので、適当なところでCtrl_z; kill %%で学習を停止してください。<br>
 
 途中のチェックポイントから学習を再開する際は、スクリプト設定ファイルのLEARNED_CHECKPOINT_PATHに再開するチェックポイントを指定して学習を再開します。<br>
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
