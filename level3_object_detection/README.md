@@ -76,18 +76,19 @@ Balancap SSD-Tensorflow：[https://github.com/balancap/SSD-Tensorflow](https://g
 
 #### インストール
 インストール先や学習コード生成に必要な情報はスクリプト設定ファイルで用意しました。環境に合わせて修正してください。<br>
-/notebooks/github/以下にSSD-Tensorflowをgit cloneします。<br>
+特に、Jetson TX2では/home/ubuntu/notebooks/github/...と直します。<br>
+
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
 ```bash
 # Balancap SSD-Tensorflowのディレクトリ
-GIT_DIR=/notebooks/github
+GIT_DIR=/home/ubuntu/notebooks/github
 SSD_TENSORFLOW_DIR=$GIT_DIR/SSD-Tensorflow
 
 # データ名
 MY_TRAIN=roadsign
 # 学習データディレクトリ
-VOC_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/PascalVOC
-TF_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/tfrecords
+VOC_DATASET_DIR=/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/PascalVOC
+TF_DATASET_DIR=/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/tfrecords
 
 # 道路標識の学習データで使うラベル
 # LABELS[0]はbackground(その他)用に空けておく
@@ -100,12 +101,11 @@ LABELS[4]=speed_30
 # 新規VGG16 checkpoint
 CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/checkpoints/vgg_16.ckpt
 # 学習を再開するcheckpoint
-LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
+LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-7352
 ```
 <hr>
 
 Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install.sh](./install_scripts/install.sh)<br>
-バグ修正スクリプト：[./install_scripts/setup_bugfix.sh](./install_scripts/setup_bugfix.sh)<br>
 > `chmod 755 ./install_scripts/*.sh`<br>
 > `./install_scripts/install.sh`<br>
 
@@ -224,7 +224,7 @@ pbファイルを読み込んで実行します。<br>
 ```
 
 カメラ映像の読み込み<br>
-WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.py](./copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.py)
+WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/run_streaming.py](./copy_to_SSD-Tensorflow/run_streaming.py)
 ```python
     vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
 ...
@@ -251,11 +251,10 @@ Jetson TX2で受信する場合は、内部IPアドレスとポート番号だ�
 <hr>
 
 #### ストリーミング解析実行
-物体検出はOpenCVで読み込んだ画像データを用意されている関数に渡すことで得られます。<br>
-WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.py](./notebooks/ssd_webcam_streaming.py)
+ストリーミング時はUDPポートを読み込みに指定します。
+WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/run_streaming.py](./copy_to_SSD-Tensorflow/run_streaming.py)
 ```python
-        # 予測実行
-        rclasses, rscores, rbboxes = process_image(cv_bgr)
+    vid = cv2.VideoCapture('udp://localhost:8090') # UDP Streaming
 ```
 分類結果、スコア、物体の領域が得られるので、例えばそれを画像に描画して動画に保存することが出来ます。<br>
 ロボットカーの場合は描画や動画への保存は不要ですが、停止を検出したら数秒止まる、速度を検出したら速度を変更する、等の処理を行うことになります。
@@ -263,19 +262,24 @@ WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.p
 
 #### 動画に保存
 予測結果を画像に描画して動画で保存します。ここでは結果を見たいだけなので、保存する動画のFPSは適当に処理性能くらいにしておきます。<br>
-WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.py](./notebooks/ssd_webcam_streaming.py)<br>
+Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等で落ちやすいです。<br>
+
+Jetson TX2では、pbファイル化して検出に不要なオペレーションをそぎ落としてメモリ消費量を抑えることで、SSDの結果を動画に保存することが出来ます。<br>
+
+WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/run_streaming.py](./copy_to_SSD-Tensorflow/run_streaming.py)
 ```python
 # FPSは処理速度を実際の見てから考慮する
-#out = cv2.VideoWriter('../output/output.avi', int(fourcc), fps, (int(vidw), int(vidh)))
-out = cv2.VideoWriter('../output/output.avi', int(fourcc), 2.1, (int(vidw), int(vidh)))
+#out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), fps, (int(vidw), int(vidh)))
+out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(vidh)))
     ...
-        # 予測実行
-        rclasses, rscores, rbboxes =  process_image(cv_bgr)
-        # 枠を描く
-        write_bboxes(cv_bgr, rclasses, rscores, rbboxes)
-        # avi動画に保存する
-        out.write(cv_bgr)
+            # 予測実行
+            rclasses, rscores, rbboxes = process_image(sess,cv_bgr)
+            # 枠を描く
+            write_bboxes(cv_bgr, rclasses, rscores, rbboxes)
+            # avi動画に保存する
+            out.write(cv_bgr)
 ```
+動画はavi形式で/notebooks/github/SSD-Tensorflow/demo_images/output.aviに保存されます。
 
 [<ページTOP>](#top)　[<目次>](#0)
 
@@ -303,8 +307,7 @@ out = cv2.VideoWriter('../output/output.avi', int(fourcc), 2.1, (int(vidw), int(
   * copy_to_SSD-Tensorflow/freeze_graph.py モデル凍結コード
   * copy_to_SSD-Tensorflow/run_ssd.py 検出実行コード
   * copy_to_SSD-Tensorflow/model/ssd_roadsign.pb 学習済みモデル
-  * copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.ipynb Webcamストリーミング動画解析サンプルJupyter notebooks
-  * copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.py Webcamストリーミング動画解析サンプルコード(Jupyterだと動作不安定なのでpythonコードで用意)
+  * copy_to_SSD-Tensorflow/run_streaming.py Webcamストリーミング動画解析コード
   * train_scripts/setup_mytrain.sh 学習コード生成スクリプト
   * train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト
   * train_scripts/train_ssd.sh 学習実行スクリプト
