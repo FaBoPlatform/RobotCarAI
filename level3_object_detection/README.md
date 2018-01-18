@@ -31,8 +31,10 @@
   * 扱える学習データフォーマット
   * 学習データを作成する
   * 学習コードの作成と学習実行
-  * カメラ映像の読み込み
   * 検出実行
+  * カメラ映像の読み込み
+  * ストリーミング配信
+  * ストリーミング解析実行
   * 動画に保存
 * [ディレクトリとファイルについて](#3)
 * [開発/学習/実行環境について](#4)
@@ -102,12 +104,10 @@ LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
 ```
 <hr>
 
-Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install_balancap_ssd-tensorflow.sh](./install_scripts/install_balancap_ssd-tensorflow.sh)<br>
+Balancap SSD-Tensorflow インストールスクリプト：[./install_scripts/install.sh](./install_scripts/install.sh)<br>
 バグ修正スクリプト：[./install_scripts/setup_bugfix.sh](./install_scripts/setup_bugfix.sh)<br>
 > `chmod 755 ./install_scripts/*.sh`<br>
-> `./install_scripts/install_balancap_ssd-tensorflow.sh`<br>
-> `./install_scripts/setup_bugfix.sh`<br>
-> `./install_scripts/copy_notebooks.sh`<br>
+> `./install_scripts/install.sh`<br>
 
 <hr>
 
@@ -170,6 +170,7 @@ LABELS[4]=speed_30
 > `./train_scripts/setup_mytrain.sh`<br>
 > `./train_scripts/convert_PascalVOC_to_TF-Records.sh`<br>
 > `./train_scripts/train_ssd.sh`<br>
+> `./train_scripts/freeze_graph.sh`<br>
 
 学習はGPUを搭載した学習環境でおこないます。<br>
 一定時間毎にcheckpointが保存されるので、適当なところでCtrl_cで学習を停止してください。<br>
@@ -195,32 +196,61 @@ Balancap SSD-Tensorflowではjpegしか扱えないため、pngで画像を用�
 
 <hr>
 
+#### 検出実行
+pbファイルを読み込んで実行します。<br>
+
+検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)
+> `cd /notebooks/github/SSD-Tensorflow/`<br>
+> `python run_ssd.py`<br>
+
+検出結果は層毎に出てくるため、SSDNetクラスを使って集計を行います。<br>
+検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)<br>
+```python
+        # 予測実行
+        rclasses, rscores, rbboxes =  process_image(sess,cv_bgr)
+```python
+
+/notebooks/github/SSD-Tensorflow/demo_images/以下に検出元画像と検出結果画像があります。
+
+<hr>
+
 #### カメラ映像の読み込み
-カメラ映像はOpenCVを使って読み込みます。<br>
-WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.py](./notebooks/ssd_webcam_streaming.py)
+画像の時と同じで、カメラ映像の時も1フレームを1画像として読み込みます。<br>
+
+画像の読み込み<br>
+検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)<br>
+```python
+        cv_bgr = cv2.imread(DEMO_DIR+"/" + file_name)
+```
+
+カメラ映像の読み込み<br>
+WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.py](./copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.py)
 ```python
     vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
 ...
             retval, cv_bgr = vid.read()
 ```
-このコードはSSD-Tensorflow/notebooks/ssd_webcam_streaming.pyにコピーして使います。<br>
-> `cp ./notebooks/* /notebooks/github/SSD-Tensorflow/notebooks/`<br>
+Jetson TX2の場合は/dev/video1がUSBカメラデバイスなので、cv2.VideoCapture(1)となります。<br>
+Raspberry Pi3やPCでは/dev/video0がUSBカメラデバイスなので、cv2.VideoCapture(0)となります。<br>
 
-USBカメラであれば、Jetson TX2の場合はcv2.VideoCapture(1)となります。<br>
 UDPストリーミングで動画が送られている場合は、vid = cv2.VideoCapture('udp://localhost:8090')のようにUDPポートを指定して受信します。<br>
 USBカメラが未接続だったり、ストリーミングが開始されていない時は映像取得に失敗します。
 <hr>
 
-##### FFMPEG UDP Streamingを使う場合。  
+#### ストリーミング配信
+##### FFMPEG UDP Streamingを使う場合
 送信側コマンド(192.168.0.77は受信側アドレス)<br>
 > `ffmpeg -thread_queue_size 1024 -r 30 -video_size 160x120 -input_format yuyv422 -i /dev/video0 -pix_fmt yuv422p -threads 4 -f mpegts udp://192.168.0.77:8090`<br>
 
-受信側確認コマンド(受信を確認したらffplayを終了してください。)<br>
+受信側確認コマンド(動画プレイヤーが立ち上がるので、画面のあるPCで確認する場合になります)
 > `ffplay udp://localhost:8090`<br>
+
+AWSで受信する場合は、UDPポートで受信出来るようにするために、外部IPアドレスを持ち、セキュリティグループにUDPポート番号を設定必要があります。<br>
+Jetson TX2で受信する場合は、内部IPアドレスとポート番号だけで受信出来ます。
 
 <hr>
 
-#### 検出実行
+#### ストリーミング解析実行
 物体検出はOpenCVで読み込んだ画像データを用意されている関数に渡すことで得られます。<br>
 WebCamストリーミング解析コード：[./notebooks/ssd_webcam_streaming.py](./notebooks/ssd_webcam_streaming.py)
 ```python
@@ -257,21 +287,29 @@ out = cv2.VideoWriter('../output/output.avi', int(fourcc), 2.1, (int(vidw), int(
 * ディレクトリについて
   * documment/ ドキュメント関連
   * install_scripts/ インストールスクリプト
-  * notebooks/ サンプルコード
+  * copy_to_SSD-Tensorflow/ Balancap SSD-Tensorflowにコピーするファイル
   * roadsign_data/ 道路標識データ
   * train_scripts/ 学習関連スクリプト
 * ファイルについて
   * README.md このファイル
   * scritp_define.conf ディレクトリパス等設定ファイル
-  * install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト
-  * install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト
+  * install_scripts/install.sh インストールスクリプト
+    * install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト
+    * install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト
+    * install_scripts/copy_to.sh ファイルコピースクリプト
+    * install_scripts/patch_to.sh ファイル修正スクリプト
   * install_scripts/install_labelimg.sh LabelImg インストールスクリプト
-  * notebooks/ssd_webcam_streaming.ipynb Webcamストリーミング動画解析サンプルJupyter notebooks
-  * notebooks/ssd_webcam_streaming.py Webcamストリーミング動画解析サンプルコード(Jupyterだと動作不安定なのでpythonコードで用意)
+  * copy_to_SSD-Tensorflow/add_input_x.py 学習済みcheckpointに入力名を追加するコード
+  * copy_to_SSD-Tensorflow/freeze_graph.py モデル凍結コード
+  * copy_to_SSD-Tensorflow/run_ssd.py 検出実行コード
+  * copy_to_SSD-Tensorflow/model/ssd_roadsign.pb 学習済みモデル
+  * copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.ipynb Webcamストリーミング動画解析サンプルJupyter notebooks
+  * copy_to_SSD-Tensorflow/notebooks/ssd_webcam_streaming.py Webcamストリーミング動画解析サンプルコード(Jupyterだと動作不安定なのでpythonコードで用意)
   * train_scripts/setup_mytrain.sh 学習コード生成スクリプト
   * train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト
   * train_scripts/train_ssd.sh 学習実行スクリプト
   * train_scripts/train_ssd_continue.sh 学習再開スクリプト
+  * train_scripts/freeze_graph.sh モデル凍結スクリプト
 
 [<ページTOP>](#top)　[<目次>](#0)
 
