@@ -38,7 +38,7 @@ checkpoint = tf.train.get_checkpoint_state(MODEL_DIR)
 if checkpoint:
     # checkpointファイルから最後に保存したモデルへのパスを取得する
     ckpt_filename = checkpoint.model_checkpoint_path
-    print("load {0}".format(last_model))
+    print("load {0}".format(ckpt_filename))
 else:
     #ckpt_filename = '../checkpoints/ssd_300_vgg.ckpt'
     #ckpt_filename = '../checkpoints/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt'
