@@ -136,7 +136,6 @@ Balancap SSD-Tensorflowでは、TF-Recordへのコンバート時は画像ファ
 ラベルデータ:[./roadsign_data/PascalVOC/Annotations/](./roadsign_data/PascalVOC/Annotations/)<br>
 
 学習データを作ったら、学習用コードの作成、データの変換、学習、となります。<br>
-学習データとなるroadsign_dataのラベル作成が途中までしか進んでいないので、全ての画像のラベルを作成して学習すると認識率が向上するかもしれません。
 <hr>
 
 #### 学習コードの作成と実行
