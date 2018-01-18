@@ -150,7 +150,7 @@ with tf.Session(config=config,graph=graph) as sess:
         if not file_name.endswith(".jpg"):
             continue
         start_time,clock_time = time.time(),time.clock()
-        cv_bgr = cv2.imread(path + image_name)
+        cv_bgr = cv2.imread(DEMO_DIR+"/" + file_name)
         # 予測実行
         rclasses, rscores, rbboxes =  process_image(sess,cv_bgr)
         print("time:%.8f clock:%.8f" % (time.time() - start_time,time.clock() - clock_time))
