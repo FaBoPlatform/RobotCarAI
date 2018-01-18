@@ -6,10 +6,6 @@ source $SCRIPT_DIR/../script_define.conf
 
 
 ####################
-OUTPUT_DIR=$SCRIPT_DIR/../model
-
-
-####################
 # train
 ####################
 cd $SSD_TENSORFLOW_DIR

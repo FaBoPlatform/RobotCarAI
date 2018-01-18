@@ -5,7 +5,7 @@ import os
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
 
-MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/output"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 FROZEN_MODEL_NAME="ssd_roadsign.pb"
 # 非常に粗いconv10_2とconv11_2を削ってもよい
 OUTPUT_NODE_NAMES="""input_x,

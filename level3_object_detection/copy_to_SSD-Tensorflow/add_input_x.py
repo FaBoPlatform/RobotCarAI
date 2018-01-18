@@ -1,6 +1,7 @@
 # coding: utf-8
-# 学習したSSDモデルにinput_xを追加する
+# 学習したSSDモデルにinput_xを追加して、./model/以下に保存する
 
+import os
 import tensorflow as tf
 slim = tf.contrib.slim
 
@@ -10,6 +11,8 @@ sys.path.append('../')
 from nets import ssd_vgg_300
 from preprocessing import ssd_vgg_preprocessing
 
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/output"
+OUTPUT_MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
 # TensorFlow session: grow memory when needed. TF, DO NOT USE ALL MY GPU MEMORY!!!
 gpu_options = tf.GPUOptions(allow_growth=True)
 config = tf.ConfigProto(log_device_placement=False, gpu_options=gpu_options)
@@ -31,9 +34,16 @@ with slim.arg_scope(ssd_net.arg_scope(data_format=data_format)):
     predictions, localizations, _, _ = ssd_net.net(image_4d, is_training=False, reuse=reuse)
 
 # Restore SSD model.
-#ckpt_filename = '../checkpoints/ssd_300_vgg.ckpt'
-#ckpt_filename = '../checkpoints/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt'
-ckpt_filename = './output/model.ckpt-7352'
+checkpoint = tf.train.get_checkpoint_state(MODEL_DIR)
+if checkpoint:
+    # checkpointファイルから最後に保存したモデルへのパスを取得する
+    ckpt_filename = checkpoint.model_checkpoint_path
+    print("load {0}".format(last_model))
+else:
+    #ckpt_filename = '../checkpoints/ssd_300_vgg.ckpt'
+    #ckpt_filename = '../checkpoints/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt'
+    ckpt_filename = './output/model.ckpt-7352'
+
 isess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 saver.restore(isess, ckpt_filename)
@@ -55,6 +65,5 @@ graph = tf.get_default_graph()
 graph_def = graph.as_graph_def()
 # print operations
 print_graph_operations(graph)
-MODEL_DIR="./output"
-saver.save(isess, MODEL_DIR + '/model.ckpt')
+saver.save(isess, OUTPUT_MODEL_DIR + '/model.ckpt')
 
