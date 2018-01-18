@@ -6,7 +6,9 @@ source $SCRIPT_DIR/../script_define.conf
 
 
 ####################
-# train
+# input_x追加
 ####################
 cd $SSD_TENSORFLOW_DIR
+python add_input_x.py
+
 python freeze_graph.py
