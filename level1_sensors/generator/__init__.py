@@ -1,0 +1,2 @@
+from .labelgenerator import LabelGenerator
+
