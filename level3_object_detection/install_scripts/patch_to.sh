@@ -10,4 +10,4 @@ source $SCRIPT_DIR/../script_define.conf
 ####################
 patch -u $SSD_TENSORFLOW_DIR/preprocessing/ssd_vgg_preprocessing.py <  $SCRIPT_DIR/../patch_to_SSD-Tensorflow/ssd_vgg_preprocessing.patch
 
-patch -u $SSD_TENSORFLOW_DIR/net/ssd_vgg_300.py <  $SCRIPT_DIR/../patch_to_SSD-Tensorflow/ssd_vgg_300.patch
+patch -u $SSD_TENSORFLOW_DIR/nets/ssd_vgg_300.py <  $SCRIPT_DIR/../patch_to_SSD-Tensorflow/ssd_vgg_300.patch
