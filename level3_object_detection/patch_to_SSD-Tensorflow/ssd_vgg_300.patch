@@ -1,0 +1,37 @@
+--- a/notebooks/github/SSD-Tensorflow/nets/ssd_vgg_300.py	2018-01-15 13:21:05.859427935 +0900
++++ b/notebooks/github/SSD-Tensorflow/nets/ssd_vgg_300.py	2018-01-18 15:09:56.619560505 +0900
+@@ -418,14 +418,14 @@
+                            scope='conv_loc')
+     loc_pred = custom_layers.channel_to_last(loc_pred)
+     loc_pred = tf.reshape(loc_pred,
+-                          tensor_shape(loc_pred, 4)[:-1]+[num_anchors, 4])
++                          tensor_shape(loc_pred, 4)[:-1]+[num_anchors, 4], name="loc_pred")
+     # Class prediction.
+     num_cls_pred = num_anchors * num_classes
+     cls_pred = slim.conv2d(net, num_cls_pred, [3, 3], activation_fn=None,
+                            scope='conv_cls')
+     cls_pred = custom_layers.channel_to_last(cls_pred)
+     cls_pred = tf.reshape(cls_pred,
+-                          tensor_shape(cls_pred, 4)[:-1]+[num_anchors, num_classes])
++                          tensor_shape(cls_pred, 4)[:-1]+[num_anchors, num_classes], name="log_pred")
+     return cls_pred, loc_pred
+ 
+ 
+@@ -507,6 +507,7 @@
+         predictions = []
+         logits = []
+         localisations = []
++
+         for i, layer in enumerate(feat_layers):
+             with tf.variable_scope(layer + '_box'):
+                 p, l = ssd_multibox_layer(end_points[layer],
+@@ -514,7 +515,9 @@
+                                           anchor_sizes[i],
+                                           anchor_ratios[i],
+                                           normalizations[i])
+-            predictions.append(prediction_fn(p))
++            #predictions.append(prediction_fn(p))
++            with tf.variable_scope(layer + "_cls_pred"):
++                predictions.append(tf.contrib.slim.softmax(p))
+             logits.append(p)
+             localisations.append(l)

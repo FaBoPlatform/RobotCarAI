@@ -228,3 +228,21 @@ if [ ! -e $SSD_TENSORFLOW_DIR/checkpoints/vgg_16.ckpt ]; then
      tar fxv vgg_16_2016_08_28.tar.gz
 fi
 
+
+####################
+# edit nets/ssd_vgg_300.py
+####################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before: num_classes=21,
+# after:  num_classes=5,
+# before: no_annotation_label=21,
+# after:  no_annotation_label=5,
+
+sed -i 's/num_classes=[0-9]\+,/num_classes='$NUM_CLASSES',/g' $SSD_TENSORFLOW_DIR/nets/ssd_vgg_300.py
+sed -i 's/no_annotation_label=[0-9]\+,/no_annotation_label='$NUM_CLASSES',/g' $SSD_TENSORFLOW_DIR/nets/ssd_vgg_300.py
