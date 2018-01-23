@@ -179,7 +179,7 @@ LABELS[4]=speed_30
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
 ```bash
 # 学習済みcheckpoint
-LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-4870
+LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-7352
 ```
 学習再開クリプト：[./train_scripts/train_ssd_continue.sh](./train_scripts/train_ssd_continue.sh)<br>
 > `./train_scripts/train_ssd_continue.sh`<br>
@@ -199,16 +199,51 @@ Balancap SSD-Tensorflowではjpegしか扱えないため、pngで画像を用�
 #### 検出実行
 pbファイルを読み込んで実行します。<br>
 
-検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)
-> `cd /notebooks/github/SSD-Tensorflow/`<br>
-> `python run_ssd.py`<br>
-
 検出結果は層毎に出てくるため、SSDNetクラスを使って集計を行います。<br>
 検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)<br>
 ```python
         # 予測実行
         rclasses, rscores, rbboxes =  process_image(sess,cv_bgr)
 ```python
+
+検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)
+> `cd /notebooks/github/SSD-Tensorflow/`<br>
+> `python run_ssd.py`<br>
+
+Jetson TX2<br>
+> time:19.86998034 clock:18.56985800
+> time:1.03599119 clock:0.93754800
+> time:1.04325247 clock:0.87934800
+> time:1.03981328 clock:0.94516900
+> time:1.04054499 clock:0.94298500
+> time:0.78034067 clock:0.67906600
+> time:0.78434491 clock:0.73667700
+> time:0.78234601 clock:0.72538500
+> time:0.78174305 clock:0.72879300
+> time:0.78478503 clock:0.73397900
+> time:0.78188086 clock:0.72555700
+> time:0.78177857 clock:0.73014300
+> time:0.78230286 clock:0.72738200
+> end
+
+Raspberry Pi3<br>
+> time:120.14480400 clock:55.83521200
+> time:16.20854115 clock:52.09492600
+> time:14.21805596 clock:51.28959800
+> time:15.57702303 clock:51.27450300
+> time:15.50608397 clock:51.43209300
+> time:13.86155987 clock:47.86049200
+> time:12.60688901 clock:47.83934000
+> time:12.60392714 clock:48.27811200
+> time:12.68156099 clock:47.87609600
+> time:12.59844589 clock:48.02762300
+> time:12.67574501 clock:48.29297900
+> time:12.60959601 clock:47.78995400
+> time:12.69101310 clock:48.27239100
+> end
+
+最初の1回目はJITになっているのか遅いです。<br>
+2回目以降はJetson TX2とRaspberry Pi3では物体検出の実行速度に15倍以上の差があります。<br>
 
 /notebooks/github/SSD-Tensorflow/demo_images/以下に検出元画像と検出結果画像があります。
 

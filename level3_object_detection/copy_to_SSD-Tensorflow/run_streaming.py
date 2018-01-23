@@ -180,19 +180,19 @@ if cv_version[0] == '2':
     # OpenCV 2.4
     vidw = vid.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
     vidh = vid.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
-    #fps = vid.get(cv2.cv.CV_CAP_PROP_FPS)
-    #vidw = vid.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, image_width)
-    #vidh = vid.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, image_height)
     fps = vid.get(cv2.cv.CV_CAP_PROP_FPS)
+    #vid.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, image_width)
+    #vid.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, image_height)
+    #vid.set(cv2.cv.CV_CAP_PROP_FPS, fps)
     fourcc = cv2.cv.CV_FOURCC('m', 'p', '4', 'v')
 else:
     # OpenCV 3.1
     vidw = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
     vidh = vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    #fps = vid.get(cv2.CAP_PROP_FPS)
-    #vidw = vid.set(cv2.CAP_PROP_FRAME_WIDTH, image_width)
-    #vidh = vid.set(cv2.CAP_PROP_FRAME_HEIGHT, image_height)
     fps = vid.get(cv2.CAP_PROP_FPS)
+    #vid.set(cv2.CAP_PROP_FRAME_WIDTH, image_width)
+    #vid.set(cv2.CAP_PROP_FRAME_HEIGHT, image_height)
+    #vid.set(cv2.CAP_PROP_FPS, fps)
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 
 # FPSは処理速度を実際の見てから考慮する
