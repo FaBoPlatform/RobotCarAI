@@ -15,7 +15,7 @@
 出力動画：[./document/result_output1_v10_20180129.mp4](./document/result_output1_v10_20180129.mp4)<br>
 
 【参考】<br>
-Programmatic lane finding:[https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)
+Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)
 <hr>
 
 <a name='0'>
@@ -51,8 +51,8 @@ Programmatic lane finding:[https://github.com/BillZito/lane-detection](https://g
 ## Region Of Interest
 Region Of Interst(ROI)は、画像内で必要になる領域が含まれている部分を抽出します。<br>
 次に行うInverse Perspective Mappingと同じ座標とするので、直線が映っている画像で範囲を考えます。<br>
-![](./document/frame_86.jpg)<br>
-![](./document/result_frame_86_before_roi_sample.jpg)<br>
+![](./document/frame_86.jpg)
+![](./document/result_frame_86_before_roi_sample.jpg)
 ![](./document/result_frame_86_after_roi_sample.jpg)<br>
 <hr>
 
@@ -67,7 +67,7 @@ Region Of Interst(ROI)は、画像内で必要になる領域が含まれてい�
 ```
 一般的な車載カメラの場合はこういう範囲でいいのですが、ロボットカーのカメラは取り付け位置が低く、視野角が狭いため、この範囲だと白線が入らないケースが多くあります。<br>
 そこで、ここでは画面範囲よりも広く範囲を取るようにします。<br>
-![](./document/result_frame_86_before_roi.jpg)<br>
+![](./document/result_frame_86_before_roi.jpg)
 ![](./document/result_frame_86_after_roi.jpg)<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
@@ -111,7 +111,7 @@ def filter_region(cv_bgr, vertices):
 
 ## [Python/OpenCV] Inverse Perspective Mapping
 Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼ばれる真上から見た画像に変換することが出来ます。<br>
-![](./document/result_frame_86_before_ipm_sample.jpg)<br>
+![](./document/result_frame_86_before_ipm_sample.jpg)
 ![](./document/result_frame_86_after_ipm_sample.jpg)<br>
 <hr>
 
@@ -125,7 +125,7 @@ ROIの時と同じで、直線に沿って領域が見えるように探しま�
                                          bottom_width_rate=1.0,bottom_height_position=0.9)
 ```
 ROIの時と同じで、白線が映りやすいように画面範囲よりも広く範囲を取るようにします。<br>
-![](./document/result_frame_86_before_ipm.jpg)<br>
+![](./document/result_frame_86_before_ipm.jpg)
 ![](./document/result_frame_86_after_ipm.jpg)<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
@@ -485,7 +485,7 @@ plt.imshow(cv_rgb_ellipse)
 plt.show()
 ```
 ![](./document/cv2_ellipse.png)<br>
-そこで描画はfillPolyで行うようにしています。<br>
+そこで弧の描画はfillPolyで行うようにしています。<br>
 ソースコード：[./lib/curve.py](./lib/curve.py)<br>
 ```python
     pts_ellipse = np.array(pts_center[:,int(pts_center.shape[1]/2):,:]).astype(int)
