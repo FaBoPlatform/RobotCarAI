@@ -110,7 +110,7 @@ def filter_region(cv_bgr, vertices):
 <a name='2'>
 
 ## [Python/OpenCV] Inverse Perspective Mapping
-Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼ばれ、真上から見た画像に変換します。<br>
+Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼ばれる真上から見た画像に変換することが出来ます。<br>
 ![](./document/result_frame_86_before_ipm_sample.jpg)<br>
 ![](./document/result_frame_86_after_ipm_sample.jpg)<br>
 <hr>
