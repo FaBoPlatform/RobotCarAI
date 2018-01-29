@@ -52,13 +52,13 @@ Programmatic lane finding:[https://github.com/BillZito/lane-detection](https://g
 Region Of Interst(ROI)は、画像内で必要になる領域が含まれている部分を抽出します。<br>
 次に行うInverse Perspective Mappingと同じ座標とするので、直線が映っている画像で範囲を考えます。<br>
 ![](./document/frame_86.jpg)<br>
-![](./document/result_frame_86_check_roi_sample.jpg)<br>
+![](./document/result_frame_86_before_roi_sample.jpg)<br>
 ![](./document/result_frame_86_after_roi_sample.jpg)<br>
 <hr>
 
 #### [Python/OpenCV] 座標を探す
 座標は直線に沿って領域が見えるように探します。<br>
-![](./document/result_frame_86_check_roi.jpg)<br>
+![](./document/result_frame_86_before_roi_sample.jpg)<br>
 ソースコード：[./find_roi_ipm_vertices.py](./find_roi_ipm_vertices.py)<br>
 ```python
         roi_vertices = calc_roi_vertices(cv_bgr,
@@ -117,7 +117,7 @@ Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼�
 
 #### [Python/OpenCV] 座標を探す
 ROIの時と同じで、直線に沿って領域が見えるように探します。<br>
-![](./document/result_frame_86_check_roi.jpg)<br>
+![](./document/result_frame_86_before_ipm_sample.jpg)<br>
 ソースコード：[./find_roi_ipm_vertices.py](./find_roi_ipm_vertices.py)<br>
 ```python
         ipm_vertices = calc_ipm_vertices(cv_bgr,
@@ -125,8 +125,8 @@ ROIの時と同じで、直線に沿って領域が見えるように探しま�
                                          bottom_width_rate=1.0,bottom_height_position=0.9)
 ```
 ROIの時と同じで、白線が映りやすいように画面範囲よりも広く範囲を取るようにします。<br>
-![](./document/result_frame_86_before_roi.jpg)<br>
-![](./document/result_frame_86_after_roi.jpg)<br>
+![](./document/result_frame_86_before_ipm.jpg)<br>
+![](./document/result_frame_86_after_ipm.jpg)<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
         roi_vertices = calc_roi_vertices(cv_bgr,
