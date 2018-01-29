@@ -309,7 +309,7 @@ sliding windowはhistogramの左右それぞれの最大値となるx座標か�
 <a name='6'>
 
 ## [Python/OpenCV] Sliding Windows
-sliding windowsは左右のライン候補となるピクセル座標を求めるために、小さな枠をY軸方向にスライドしながら探していきます。<br>
+sliding windowsは左右のライン候補となるピクセル座標を求めるために、適当なサイズの枠をY軸方向にスライドしながら探していきます。<br>
 開始位置のY座標は画像下から、X座標はhistogramの左右それぞれの最大値となるx座標から開始することにします。<br>
 ウインドウの幅や高さは、白線の幅、カーブへの追従具合、ノイズの拾いやすさとのバランスで決めることになります。<br>
 ![](./document/result_frame_276_sliding_windows.jpg)<br>
@@ -484,7 +484,7 @@ plt.title("ellipse")
 plt.imshow(cv_rgb_ellipse)
 plt.show()
 ```
-![](./document/cv2_ellipse.jpg)<br>
+![](./document/cv2_ellipse.png)<br>
 そこで描画はfillPolyで行うようにしています。<br>
 ソースコード：[./lib/curve.py](./lib/curve.py)<br>
 ```python
