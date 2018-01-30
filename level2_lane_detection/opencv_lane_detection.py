@@ -232,8 +232,8 @@ def main():
                 ''''
                 実測値 メートル座標系における計算
                 '''
-                # ピクセルをメートルに変換
-                X_METER=1
+                # IPM変換後のx,yをピクセルからメートルに変換
+                X_METER=3
                 Y_METER=1.5
                 ym_per_pix = Y_METER/rows
                 xm_per_pix = X_METER/cols
@@ -370,6 +370,54 @@ def main():
                     strings +=["center:"+str(round(-1*meters_from_center*100,2))+"cm left"]
                     colors += [(0,0,255)]
                 ty = draw_text(cv_rgb_row1,strings,colors,tx=tx,ty=ty)
+
+                ####################
+                # cv_rgb_row1に矢印を描く
+                ####################
+                arrow_x = int(cv_rgb_row1.shape[1]/2-35)
+                arrow_y = int(cv_rgb_row1.shape[0]/2-35)
+                handle_angle = np.abs(tilt1_deg)
+                strings = [str(round(handle_angle,2))+"deg"]
+                if tilt1_deg < 0:
+                    arrow_type = 1
+                    if meters_from_center >= 0:
+                        if np.abs(meters_from_center)*100 > 10:
+                            # 右カーブで中央より左にいるので、ハンドル角を多く取る
+                            strings = [str(round(handle_angle,2))+"deg x 1.5"]
+                    else:
+                        if np.abs(meters_from_center)*100 > 10:
+                            # 右カーブで中央より右にいるのでハンドル角を少なく取る
+                            strings = [str(round(handle_angle,2))+"deg x 0.5"]
+                    ratio = 10*handle_angle/100
+                    if ratio > 1.0:
+                        ratio = 1.0
+                    arrow_color=(255-(255*ratio),255-(255*ratio),255)
+                    text_color=(0,0,255)
+
+                else:
+                    arrow_type = 3
+                    if meters_from_center >= 0:
+                        if np.abs(meters_from_center)*100 > 10:
+                            # 左カーブで中央より左にいるので、ハンドル角を少なく取る
+                            strings = [str(round(handle_angle,2))+"deg x 0.5"]
+                    else:
+                        if np.abs(meters_from_center)*100 < 10:
+                            # 左カーブで中央より右にいるのでハンドル角を多く取る
+                            strings = [str(round(handle_angle,2))+"deg x 1.5"]
+                    ratio = 10*handle_angle/100
+                    if ratio > 1.0:
+                        ratio = 1.0
+                    arrow_color=(255,255-(255*ratio),255-(255*ratio))
+                    text_color=(255,0,0)
+
+                draw_arrow(cv_rgb_row1,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
+                
+                colors = [text_color]
+                draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-10)
+                if np.abs(angle2_deg) > np.abs(angle1_deg):
+                    strings = ["slow down"]
+                    colors = [(0,0,255)]
+                    draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-30)
 
             ########################################
             # cv_bgr_white に文字を描く

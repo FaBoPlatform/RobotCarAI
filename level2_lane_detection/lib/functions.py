@@ -394,6 +394,36 @@ def draw_road_area(cols, rows, pts_left, pts_right):
     return cv_rgb_road
 
 
+def draw_arrow(cv_rgb, x, y, color, size=1, arrow_type=1, lineType=1):
+    '''
+    矢印を描画する
+    args:
+        cv_rgb: OpenCV RGB画像データ
+        x: 左上x座標
+        y: 左上y座標
+        color: 色
+        size: 矢印のサイズ
+        arrowTyep: 矢印の上下左右向き。1:右、2:上、3:左、4:下
+        lineType: ラインタイプ
+    return:
+        cv_rgb_arrow: OpenCV RGB画像データ
+    '''
+    # 矢印の基本座標
+    if arrow_type == 1:
+        pts_arrow = np.array([[0,10],[20,10],[20,0],[35,15],[20,30],[20,20],[0,20],[0,10]])
+    elif arrow_type == 2:
+        pts_arrow = np.array([[0,15],[10,15],[10,35],[20,35],[20,15],[30,15],[15,0],[0,15]])
+    elif arrow_type == 3:
+        pts_arrow = np.array([[35,10],[15,10],[15,0],[0,15],[15,30],[15,20],[35,20],[35,10]])
+    elif arrow_type == 4:
+        pts_arrow = np.array([[10,0],[10,20],[0,20],[15,35],[30,20],[20,20],[20,0],[10,0]])
+    pts_arrow = (pts_arrow * size + [[x,y]]).astype(int)
+    # 座標に囲まれた領域を描画
+    cv2.fillPoly(cv_rgb, [pts_arrow], color,lineType)
+    #cv2.polylines(cv_rgb, [pts_arrow], False, (255,255,255),lineType)
+
+    return
+
 def reverse_ipm(cv_bgr,ipm_vertices):
     '''
     IPM逆変換を行う

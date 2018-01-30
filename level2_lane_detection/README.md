@@ -12,7 +12,7 @@
 
 【動画】<br>
 入力動画：[./demo_lane/input1.mp4](./demo_lane/input1.mp4)<br>
-出力動画：[./document/result_output1_v10_20180129.mp4](./document/result_output1_v10_20180129.mp4)<br>
+出力動画：[./document/result_output1.mp4](./document/result_output1_v10_20180129.mp4)<br>
 
 【参考】<br>
 Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)
@@ -487,15 +487,15 @@ def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
 ## [Python/OpenCV] ピクセル座標と実座標
 描画時はピクセル座標になりますが、数値として出す際は実際の空間での座標系で計算する必要があります。<br>
 実座標ではx方向への1ピクセル分とy方向への1ピクセル分は異なる長さになります。そのため、ピクセル座標を実座標に変換して計算することになります。<br>
-IPM変換後の画像の縦と横のメートルを設定します。<br>
-
+IPM変換後の画像(黒い部分も含めて)の縦と横のメートルを設定します。<br>
+![](./document/result_frame_86_ipm.jpg)<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
                 ''''
                 実測値 メートル座標系における計算
                 '''
                 # ピクセルをメートルに変換
-                X_METER=1
+                X_METER=3
                 Y_METER=1.5
                 ym_per_pix = Y_METER/rows
                 xm_per_pix = X_METER/cols
