@@ -53,14 +53,14 @@ Region Of Interst(ROI)は、画像内で必要になる領域が含まれてい�
 次に行うInverse Perspective Mappingと同じ座標とするので、直線が映っている画像で範囲を考えます。<br>
 ![](./document/frame_86.jpg)
 ![](./document/result_frame_86_before_roi.jpg)
-![](./document/result_frame_86_after_roi.jpg)<br>
+![](./document/result_frame_86_after_roi.jpg)
 ![](./document/result_frame_86_roi.jpg)<br>
 <hr>
 
 #### [Python/OpenCV] 座標を探す
 座標は直線に沿って領域が見えるように探します。<br>
 ![](./document/result_frame_86_before_roi_sample.jpg)
-![](./document/result_frame_86_after_roi_sample.jpg)<br>
+![](./document/result_frame_86_after_roi_sample.jpg)
 ![](./document/result_frame_86_roi_sample.jpg)<br>
 ソースコード：[./to_region_of_interest.py](./to_region_of_interest.py)<br>
 ```python
@@ -601,6 +601,7 @@ plt.show()
   * to_region_of_interest.py ROI座標確認コード
   * to_inverse_perspective_mapping.py IPM座標確認コード
   * to_white.py 白色フィルタ確認コード
+
 [<ページTOP>](#top)　[<目次>](#0)
 
 
