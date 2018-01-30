@@ -13,6 +13,10 @@
 【動画】<br>
 入力動画：[./demo_lane/input1.mp4](./demo_lane/input1.mp4)<br>
 出力動画：[./document/result_output1.mp4](./document/result_output1.mp4)<br>
+<video controls autoplay poster="./document/frame_276.jpg" width="480" height="600">
+<source src="./document/result_output1.mp4">
+<p>動画を再生するには、videoタグをサポートしたブラウザが必要です。</p>
+</video>
 
 【参考】<br>
 Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)

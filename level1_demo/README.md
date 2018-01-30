@@ -14,6 +14,10 @@
 
 【動画】<br>
 走行デモ動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
+<video controls autoplay poster="./document/robotcar.jpg" width="480" height="270">
+<source src="./document/demo1.mp4">
+<p>動画を再生するには、videoタグをサポートしたブラウザが必要です。</p>
+</video>
 
 <hr>
 
