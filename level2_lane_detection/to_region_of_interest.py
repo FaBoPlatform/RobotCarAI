@@ -1,4 +1,6 @@
 # coding: utf-8
+# Region Of Interestを確認する
+#%matplotlib inline
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
@@ -7,8 +9,6 @@ import os
 import sys
 import math
 from lib import *
-
-%matplotlib inline
 
 def main():
     FILE_DIR = './test_images'

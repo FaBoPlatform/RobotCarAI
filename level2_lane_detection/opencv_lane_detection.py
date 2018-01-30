@@ -1,9 +1,7 @@
 # coding: utf-8
 # OpenCV レーン検出
 # 参考：https://github.com/BillZito/lane-detection
-
-
-%matplotlib inline
+#%matplotlib inline
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
