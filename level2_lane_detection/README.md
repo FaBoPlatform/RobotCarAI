@@ -52,25 +52,32 @@ Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://
 Region Of Interst(ROI)は、画像内で必要になる領域が含まれている部分を抽出します。<br>
 次に行うInverse Perspective Mappingと同じ座標とするので、直線が映っている画像で範囲を考えます。<br>
 ![](./document/frame_86.jpg)
-![](./document/result_frame_86_before_roi_sample.jpg)
-![](./document/result_frame_86_after_roi_sample.jpg)<br>
+![](./document/result_frame_86_before_roi.jpg)
+![](./document/result_frame_86_after_roi.jpg)<br>
+![](./document/result_frame_86_roi.jpg)<br>
 <hr>
 
 #### [Python/OpenCV] 座標を探す
 座標は直線に沿って領域が見えるように探します。<br>
-![](./document/result_frame_86_before_roi_sample.jpg)<br>
-ソースコード：[./find_roi_ipm_vertices.py](./find_roi_ipm_vertices.py)<br>
+![](./document/result_frame_86_before_roi_sample.jpg)
+![](./document/result_frame_86_after_roi_sample.jpg)<br>
+![](./document/result_frame_86_roi_sample.jpg)<br>
+ソースコード：[./to_region_of_interest.py](./to_region_of_interest.py)<br>
 ```python
+        # sample
         roi_vertices = calc_roi_vertices(cv_bgr,
-                                         top_width_rate=0.4,top_height_position=0.15,
-                                         bottom_width_rate=1.0,bottom_height_position=0.9)
+                                         top_width_rate=0.3,top_height_position=0.15,
+                                         bottom_width_rate=0.8,bottom_height_position=0.9)
 ```
-一般的な車載カメラの場合はこういう範囲でいいのですが、ロボットカーのカメラは取り付け位置が低く、視野角が狭いため、この範囲だと白線が入らないケースが多くあります。<br>
+次に示すのは極端な例ですが、ロボットカーのカメラ画像だと、範囲内に白線が入らないケースがあります。<br>
+![](./document/result_capture-2_before_ipm_sample.jpg)
+
 そこで、ここでは画面範囲よりも広く範囲を取るようにします。<br>
 ![](./document/result_frame_86_before_roi.jpg)
 ![](./document/result_frame_86_after_roi.jpg)<br>
-ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
+ソースコード：[./to_region_of_interest.py](./to_region_of_interest.py)<br>
 ```python
+        # robocar camera demo_lane
         roi_vertices = calc_roi_vertices(cv_bgr,
                                          top_width_rate=0.9,top_height_position=0.15,
                                          bottom_width_rate=2.0,bottom_height_position=1)
@@ -79,19 +86,17 @@ Region Of Interst(ROI)は、画像内で必要になる領域が含まれてい�
 
 #### 処理
 座標からポリゴン領域でマスク用イメージを作成し、入力画像からその範囲だけを抜き取ります。<br>
-ソースコード：[./lib/image_filter.py](./lib/image_filter.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
-def filter_region(cv_bgr, vertices):
+def to_roi(cv_bgr, vertices):
     """
     Region Of Interest
-    Create the mask using the vertices and apply it to the input image
-    関心領域
     頂点座標でmaskを作り、入力画像に適用する
     args:
         cv_bgr: OpenCV BGR画像データ
         vertices: 領域の頂点座標
     return:
-        cv_bgr: 領域外を黒くしたOpenCV BGR画像データ
+        cv_bgr_result: 領域外を黒くしたOpenCV BGR画像データ
     """
     mask = np.zeros_like(cv_bgr)
     if len(mask.shape)==2:
@@ -102,7 +107,7 @@ def filter_region(cv_bgr, vertices):
 ```
 
 #### 考察
-エッジ検出する際は、ROIを先には使わない。マスクされた境界部分がエッジとして強く出てしまうため。<br>
+エッジ検出する際は、先にROIを使わない方がよい。マスクされた境界部分がエッジとして強く出てしまうため。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -111,25 +116,19 @@ def filter_region(cv_bgr, vertices):
 
 ## [Python/OpenCV] Inverse Perspective Mapping
 Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼ばれる真上から見た画像に変換することが出来ます。<br>
-![](./document/result_frame_86_before_ipm_sample.jpg)
-![](./document/result_frame_86_after_ipm_sample.jpg)<br>
+![](./document/result_frame_86_before_ipm.jpg)
+![](./document/result_frame_86_after_ipm.jpg)<br>
 <hr>
 
 #### [Python/OpenCV] 座標を探す
-ROIの時と同じで、直線に沿って領域が見えるように探します。<br>
-![](./document/result_frame_86_before_ipm_sample.jpg)<br>
-ソースコード：[./find_roi_ipm_vertices.py](./find_roi_ipm_vertices.py)<br>
-```python
-        ipm_vertices = calc_ipm_vertices(cv_bgr,
-                                         top_width_rate=0.4,top_height_position=0.15,
-                                         bottom_width_rate=1.0,bottom_height_position=0.9)
-```
-ROIの時と同じで、白線が映りやすいように画面範囲よりも広く範囲を取るようにします。<br>
+IPMの座標は、道路の直線に沿うように座標を探します。<br>
+ROIと同じ座標になりますが、変換をかけるため、ROIのmask用座標配列順とは異なる配列になります。<br>
 ![](./document/result_frame_86_before_ipm.jpg)
 ![](./document/result_frame_86_after_ipm.jpg)<br>
-ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
+ソースコード：[./to_inverse_perspective_mapping.py](./to_inverse_perspective_mapping.py)<br>
 ```python
-        roi_vertices = calc_roi_vertices(cv_bgr,
+        # robocar camera demo_lane
+        ipm_vertices = calc_ipm_vertices(cv_bgr,
                                          top_width_rate=0.9,top_height_position=0.15,
                                          bottom_width_rate=2.0,bottom_height_position=1)
 ```
@@ -137,9 +136,9 @@ ROIの時と同じで、白線が映りやすいように画面範囲よりも�
 
 #### [Python/OpenCV] 処理
 ソース座標とディストネーション座標から変換行列を作成し、変換します。<br>
-ソースコード：[./lib/image_filter.py](./lib/image_filter.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
-def inverse_perspective(cv_bgr,ipm_vertices):
+def to_ipm(cv_bgr,ipm_vertices):
     '''
     Inverse Perspective Mapping
     TopViewに画像を変換する
@@ -168,9 +167,17 @@ def inverse_perspective(cv_bgr,ipm_vertices):
 
 #### [Python/OpenCV] 逆変換
 IPMはソース座標とディストネーション座標を逆にすることで、元の座標系に戻すことが可能です。<br>
-ソースコード：[./lib/image_filter.py](./lib/image_filter.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
 def reverse_ipm(cv_bgr,ipm_vertices):
+    '''
+    IPM逆変換を行う
+    args:
+        cv_bgr: OpenCV BGR画像データ
+        ipm_vertices: 変換時に使ったIPM座標
+    return:
+        cv_bgr_ipm_reverse: OpenCV BGR画像データ
+    '''
     rows, cols = cv_bgr.shape[:2]
 
     offset = cols*.25
@@ -183,12 +190,12 @@ def reverse_ipm(cv_bgr,ipm_vertices):
     cv_bgr_ipm_reverse = cv2.warpPerspective(cv_bgr, matrix, (cols,rows))
     return cv_bgr_ipm_reverse
 ```
-ただし、IPM変換時に範囲外となった画像データは残っていませんので黒くなります。<br>
+IPM変換時に範囲外となった画像データは残っていませんので黒くなります。<br>
 
 <hr>
 
 #### 考察
-IPMは必須となる処理です。<br>
+ROIは使わないこともありますが、IPMは必須となる処理です。<br>
 この変換により、直線の割り出しが簡単になります。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -205,7 +212,7 @@ IPMは必須となる処理です。<br>
 
 #### [Python/OpenCV] 処理
 フィルタ範囲が狭いと白線を十分に検出出来ません。そこでフィルタ範囲を広げると今度はカーペットの色まで拾ってしまうので、これも失敗に繋がります。<br>
-ソースコード：[./lib/image_filter.py](./lib/image_filter.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
 def to_white(cv_bgr):
     '''
@@ -213,7 +220,7 @@ def to_white(cv_bgr):
     args:
         cv_bgr: OpenCV BGR画像データ
     return:
-        cv_bgr_filtered: OpenCV BGR画像データ
+        cv_bgr_result: OpenCV BGR画像データ
     '''
     print("to_white()")
     t0 = time.time()
@@ -237,12 +244,12 @@ def to_white(cv_bgr):
     img_mask = cv2.bitwise_or(img_mask, white3_mask)
     img_mask = cv2.bitwise_or(img_mask, white4_mask)
     # フレーム画像とマスク画像の共通の領域を抽出する
-    cv_bgr_filtered = cv2.bitwise_and(cv_bgr,cv_bgr,mask=img_mask)
+    cv_bgr_result = cv2.bitwise_and(cv_bgr,cv_bgr,mask=img_mask)
     t1 = time.time()
     dt_cv = t1-t0
     print("Conversion took {:.5} seconds".format(dt_cv))
 
-    return cv_bgr_filtered
+    return cv_bgr_result
 ```
 <hr>
 
@@ -262,7 +269,7 @@ def to_white(cv_bgr):
 2値化する際はガウスぼかしをセットで実施して境界線の弱い部分を消しておきます。<br>
 カーペット部分を少しでも消したいため、グレースケール化した際に薄く残っている部分を削除しています。<br>
 
-ソースコード：[./lib/image_filter.py](./lib/image_filter.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
 def to_bin(cv_bgr):
     '''
@@ -277,11 +284,17 @@ def to_bin(cv_bgr):
     # ガウスぼかしで境界線の弱い部分を消す
     cv_gauss = cv2.GaussianBlur(cv_bgr,(5,5),0) # サイズは奇数
     cv_gray = cv2.cvtColor(cv_gauss, cv2.COLOR_BGR2GRAY)
+    #plt.title('gray')
+    #plt.imshow(cv_gray)
+    #plt.show()
 
     # 色の薄い部分を削除する
     ret, mask = cv2.threshold(cv_gray, 20, 255, cv2.THRESH_BINARY)
     mask = cv2.bitwise_and(cv_gray,cv_gray,mask=mask)
     cv_gray = cv2.bitwise_and(cv_gray,cv_gray,mask=mask)
+    #plt.title('gray')
+    #plt.imshow(cv_gray)
+    #plt.show()
 
     # 入力画像，閾値，maxVal，閾値処理手法
     ret,cv_bin = cv2.threshold(cv_gray,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU);
@@ -300,6 +313,12 @@ def to_bin(cv_bgr):
 sliding windowを始めるにあたって、最初のwindowの開始x座標を決める必要があります。<br>
 そこで、2値化した画像下半分の各x座標上にあるピクセル数をカウントしたものをhistogramとします。<br>
 sliding windowはhistogramの左右それぞれの最大値となるx座標から開始することにします。<br>
+
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
+```python
+    # 画面下半分のピクセル数をカウントする
+    histogram = np.sum(cv_bin[int(rows/2):,:], axis=0)
+```
 ![](./document/result_frame_276_histogram.jpg)<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -312,6 +331,22 @@ sliding windowはhistogramの左右それぞれの最大値となるx座標か�
 sliding windowsは左右のライン候補となるピクセル座標を求めるために、適当なサイズの枠をY軸方向にスライドしながら探していきます。<br>
 開始位置のY座標は画像下から、X座標はhistogramの左右それぞれの最大値となるx座標から開始することにします。<br>
 ウインドウの幅や高さは、白線の幅、カーブへの追従具合、ノイズの拾いやすさとのバランスで決めることになります。<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
+```python
+def sliding_windows(cv_bin):
+    '''
+    sliding windowを行い、左右レーンを構成するピクセル座標を求める
+    args:
+        cv_bin: 2値化したレーン画像のOpenCV grayscale画像データ
+    returns:
+        cv_rgb_sliding_windows: sliding window処理のOpenCV RGB画像データ
+        histogram: 入力画像の下半分の列毎のピクセル総数の配列(1,col)
+        left_x: 左レーンを構成するピクセルのx座標群
+        left_y: 左レーンを構成するピクセルのy座標群
+        right_x: 右レーンを構成するピクセルのx座標群
+        right_y: 右レーンを構成するピクセルのy座標群
+    '''
+```
 ![](./document/result_frame_276_sliding_windows.jpg)<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -324,7 +359,7 @@ sliding windowsは左右のライン候補となるピクセル座標を求め�
 sliding windowsによって左右白線のピクセル座標を得たら、それぞれにpolynormal fitを適用して二次多項式の定数を求めます。<br>
 ![](./document/result_frame_276_bin_road.jpg)<br>
 
-ソースコード：[./lib/curve.py](./lib/curve.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
 def polynormal_fit(pts_y,pts_x):
     '''
@@ -342,21 +377,30 @@ def polynormal_fit(pts_y,pts_x):
 左右二次多項式の定数から中央線の二次多項式の定数を求めます。<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
+                # 左右センターの二次多項式と座標を求める
+                left_polyfit_const, right_polyfit_const, center_polyfit_const, \
+                    pts_left, pts_right, pts_center = calc_lr_curve_lane(left_x,left_y,right_x,right_y,plot_y)
+```
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
+```python
+def calc_lr_curve_lane(left_x,left_y,right_x,right_y,plot_y):
+...
     # 左右の二次多項式を求める
     left_polyfit_const = polynormal_fit(left_y,left_x)
     right_polyfit_const = polynormal_fit(right_y,right_x)
     # センターの二次多項式を求める
     center_polyfit_const = [(left_polyfit_const[0]+right_polyfit_const[0])/2,(left_polyfit_const[1]+right_polyfit_const[1])/2,(left_polyfit_const[2]+right_polyfit_const[2])/2]
 ```
-
 Y軸に等間隔な座標を生成し、左右中央の曲線上の座標を求めます。<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
             # 等間隔なy座標を生成する
             plot_y = np.linspace(0, rows-1, rows)
 ```
-ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
+def calc_lr_curve_lane(left_x,left_y,right_x,right_y,plot_y):
+...
     # y軸に対する左右の二次多項式上のx座標を求める
     left_plot_x = left_polyfit_const[0]*plot_y**2 + left_polyfit_const[1]*plot_y + left_polyfit_const[2]
     right_plot_x = right_polyfit_const[0]*plot_y**2 + right_polyfit_const[1]*plot_y + right_polyfit_const[2]
@@ -372,6 +416,7 @@ Y軸に等間隔な座標を生成し、左右中央の曲線上の座標を求�
     pts_right = np.int32(np.array([np.flipud(np.transpose(np.vstack([right_plot_x, plot_y])))]))
     pts_center = np.int32(np.array([np.transpose(np.vstack([center_plot_x, plot_y]))]))
 
+    return left_polyfit_const, right_polyfit_const, center_polyfit_const, pts_left, pts_right, pts_center
 ```
 [<ページTOP>](#top)　[<目次>](#0)
 
@@ -384,6 +429,52 @@ Y軸に等間隔な座標を生成し、左右中央の曲線上の座標を求�
 弧の角度はカーブの急さを表し、奥のカーブが急な時、減速する判断に用いることが出来ます。<br>
 傾き角度は垂直方向と中央線の傾き角度を表し、手前のtilt1が中央線との現在の角度差になります。<br>
 手前の傾き角度となるtilt1の値と、奥のカーブ角度となるangle2の値が重要になります。<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
+```python
+def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
+    '''
+    曲線を計算する
+    args:
+        curve_y0: 曲線上y座標
+        curve_y1: 曲線下y座標
+        curve_ployfit_const: 曲線の定数
+    returns:
+        x: 円の中心x座標
+        y: 円の中心y座標
+        r: 円の半径r (曲率半径r)
+        rotate_deg: 弧の回転角度
+        angle_deg: 弧の描画角度
+        curve_tilt_deg: y軸との傾き角度
+    '''
+    # 中間点における曲率半径Rを求める
+    curve_y = curve_y1-curve_y0
+    curve_r = calc_curvature_radius(curve_polyfit_const,curve_y)
+
+    # x座標を求める
+    curve_x0 = curve_polyfit_const[0]*curve_y0**2 + curve_polyfit_const[1]*curve_y0 + curve_polyfit_const[2]
+    curve_x1 = curve_polyfit_const[0]*curve_y1**2 + curve_polyfit_const[1]*curve_y1 + curve_polyfit_const[2]
+
+    # 2点と半径と曲線の定数から円の中心座標を求める
+    py = curve_y1
+    px = curve_x1
+    qy = curve_y0
+    qx = curve_x0
+    r = curve_r
+    x,y = calc_circle_center_point(px,py,qx,qy,r,curve_polyfit_const[0])
+
+    # 弧の描画角度を求める
+    rotate_deg, angle_deg = calc_ellipse_angle(py,px,qy,qx,r,x,y,curve_polyfit_const[0])
+    print("py={},px={},qy={},qx={},x={},y={},r={}".format(py,px,qy,qx,x,y,r))
+    print("rotate_deg={} angle_deg={}".format(rotate_deg,angle_deg))
+
+    # 垂直方向との傾き角を求める
+    # プラスなら左カーブ、マイナスなら右カーブ
+    curve_tilt_rad = math.atan((px-qx)/(py-qy))
+    curve_tilt_deg = math.degrees(curve_tilt_rad)
+    print("curve_tilt_deg={}".format(curve_tilt_deg))
+
+    return x,y,r,rotate_deg,angle_deg,curve_tilt_deg
+```
 ![](./document/result_frame_276_ellipse.jpg)<br>
 ![](./document/result_frame_276_tilt.jpg)<br>
 
@@ -400,19 +491,19 @@ IPM変換後の画像の縦と横のメートルを設定します。<br>
 
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
-            ''''
-            実測値 メートル座標系における計算
-            '''
-            # ピクセルをメートルに変換
-            x_meter=1
-            y_meter=1.5
-            ym_per_pix = y_meter/rows
-            xm_per_pix = x_meter/cols
-            # 等間隔なy座標を生成する
-            plot_ym = np.linspace(0, rows-1, rows)*ym_per_pix
-            # 左右センターの二次多項式と座標を求める
-            left_polyfit_const, right_polyfit_const, center_polyfit_const, \
-                _pts_left, _pts_right, _pts_center = calc_lr_curve_lane(left_x*xm_per_pix,left_y*ym_per_pix,right_x*xm_per_pix,right_y*ym_per_pix,plot_ym)
+                ''''
+                実測値 メートル座標系における計算
+                '''
+                # ピクセルをメートルに変換
+                X_METER=1
+                Y_METER=1.5
+                ym_per_pix = Y_METER/rows
+                xm_per_pix = X_METER/cols
+                # 等間隔なy座標を生成する
+                plot_ym = np.linspace(0, rows-1, rows)*ym_per_pix
+                # 左右センターの二次多項式と座標を求める
+                left_polyfit_const, right_polyfit_const, center_polyfit_const, \
+                    _pts_left, _pts_right, _pts_center = calc_lr_curve_lane(left_x*xm_per_pix,left_y*ym_per_pix,right_x*xm_per_pix,right_y*ym_per_pix,plot_ym)
 ```
 [<ページTOP>](#top)　[<目次>](#0)
 
@@ -426,11 +517,11 @@ IPM変換後の画像の縦と横のメートルを設定します。<br>
 
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
-            # 中央線までの距離を計算する
-            # 最も下の位置で計算する
-            bottom_y = np.max(plot_ym)
-            bottom_x = center_polyfit_const[0]*bottom_y**2 + center_polyfit_const[1]*bottom_y + center_polyfit_const[2]
-            meters_from_center = bottom_x - (cols/2)*xm_per_pix
+                # 中央線までの距離を計算する
+                # 最も下の位置で計算する
+                bottom_y = np.max(plot_ym)
+                bottom_x = center_polyfit_const[0]*bottom_y**2 + center_polyfit_const[1]*bottom_y + center_polyfit_const[2]
+                meters_from_center = bottom_x - (cols/2)*xm_per_pix
 ```
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -486,7 +577,7 @@ plt.show()
 ```
 ![](./document/cv2_ellipse.png)<br>
 そこで弧の描画はfillPolyで行うようにしています。<br>
-ソースコード：[./lib/curve.py](./lib/curve.py)<br>
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
 ```python
     pts_ellipse = np.array(pts_center[:,int(pts_center.shape[1]/2):,:]).astype(int)
     pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
@@ -501,10 +592,15 @@ plt.show()
 ## [ディレクトリとファイルについて]
 * ディレクトリについて
   * documment/ ドキュメント関連
+  * demo_lane/ デモ用ディレクトリ
   * lib/ 関数ライブラリ
+  * test_images/ ROI,IPM,白色フィルタの確認用ディレクトリ
 * ファイルについて
   * README.md このファイル
-
+  * opencv_lane_detection.py レーン検出コード
+  * to_region_of_interest.py ROI座標確認コード
+  * to_inverse_perspective_mapping.py IPM座標確認コード
+  * to_white.py 白色フィルタ確認コード
 [<ページTOP>](#top)　[<目次>](#0)
 
 
