@@ -12,7 +12,7 @@
 
 【動画】<br>
 入力動画：[./demo_lane/input1.mp4](./demo_lane/input1.mp4)<br>
-出力動画：[./document/result_output1.mp4](./document/result_output1_v10_20180129.mp4)<br>
+出力動画：[./document/result_output1.mp4](./document/result_output1.mp4)<br>
 
 【参考】<br>
 Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)
