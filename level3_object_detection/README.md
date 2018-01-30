@@ -14,14 +14,6 @@
 【動画】<br>
 止まれを検出する動画：[./document/stop.mp4](./document/stop.mp4)<br>
 走行しながら道路標識を検出する動画：[./document/course160x120.mp4](./document/course160x120.mp4)<br>
-<video controls autoplay poster="./document/jetson_tx2-stop.png" width="160" height="120">
-<source src="./document/stop.mp4](./document/stop.mp4">
-<p>動画を再生するには、videoタグをサポートしたブラウザが必要です。</p>
-</video>
-<video controls poster="./document/course.jpg" width="160" height="120">
-<source src="./document/course160x120.mp4">
-<p>動画を再生するには、videoタグをサポートしたブラウザが必要です。</p>
-</video>
 
 <hr>
 
