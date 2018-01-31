@@ -17,6 +17,8 @@ def main():
     FILE_DIR = './demo_lane'
     FILENAME = 'input1.mp4'
     OUTPUT_DIR ='./output'
+    # 描画、画像保存するフレーム番号
+    TARGET_FRAME = 276
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
     X_METER=3
     Y_METER=1.5
@@ -71,8 +73,6 @@ def main():
     frame_count = 0
     start_time,clock_time = time.time(),time.clock()
 
-    # 描画、画像保存するフレーム番号
-    TARGET_FRAME = 276
     try:
         while True:
             # カメラ画像を取得する
