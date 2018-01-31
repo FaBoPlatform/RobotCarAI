@@ -17,6 +17,7 @@ def main():
     FILE_DIR = './demo_lane'
     FILENAME = 'input1.mp4'
     OUTPUT_DIR ='./output'
+    OUTPUT_FILENAME = 'result_output1.avi'
     # 描画、画像保存するフレーム番号
     TARGET_FRAME = 276
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
@@ -68,7 +69,7 @@ def main():
         lineType=cv2.LINE_AA
 
     print("vidw:{} vidh:{}".format(vidw,vidh))
-    out = cv2.VideoWriter(OUTPUT_DIR+'/result_output1.avi', int(fourcc), fps, (int(vidw)*3, int(vidh)*5))
+    out = cv2.VideoWriter(os.path.join(OUTPUT_DIR, OUTPUT_FILENAME), int(fourcc), fps, (int(vidw)*3, int(vidh)*5))
 
     frame_count = 0
     start_time,clock_time = time.time(),time.clock()
