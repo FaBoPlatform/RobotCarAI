@@ -204,7 +204,7 @@ pbファイルを読み込んで実行します。<br>
 ```python
         # 予測実行
         rclasses, rscores, rbboxes =  process_image(sess,cv_bgr)
-```python
+```
 
 検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)
 > `cd /notebooks/github/SSD-Tensorflow/`<br>
