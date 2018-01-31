@@ -237,8 +237,8 @@ def main():
                 実測値 メートル座標系における計算
                 '''
                 # ピクセルをメートルに変換
-                ym_per_pix = Y_METER/rows
-                xm_per_pix = X_METER/cols
+                ym_per_pix = 1.0*Y_METER/rows
+                xm_per_pix = 1.0*X_METER/cols
                 # 等間隔なy座標を生成する
                 plot_ym = np.linspace(0, rows-1, rows)*ym_per_pix
                 # 左右センターの二次多項式と座標を求める
