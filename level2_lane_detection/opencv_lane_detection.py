@@ -19,7 +19,7 @@ def main():
     OUTPUT_DIR ='./output'
     OUTPUT_FILENAME = 'result_output1.avi'
     # 描画、画像保存するフレーム番号
-    TARGET_FRAME = 276
+    TARGET_FRAME = -1
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
     X_METER=3
     Y_METER=1.5
