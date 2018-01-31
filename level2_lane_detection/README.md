@@ -491,12 +491,14 @@ IPM変換後の画像(黒い部分も含めて)の縦と横のメートルを設
 ![](./document/result_frame_86_ipm.jpg)<br>
 ソースコード：[./opencv_lane_detection.py](./opencv_lane_detection.py)<br>
 ```python
+    # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
+    X_METER=3
+    Y_METER=1.5
+...
                 ''''
                 実測値 メートル座標系における計算
                 '''
                 # ピクセルをメートルに変換
-                X_METER=3
-                Y_METER=1.5
                 ym_per_pix = Y_METER/rows
                 xm_per_pix = X_METER/cols
                 # 等間隔なy座標を生成する
