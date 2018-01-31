@@ -632,7 +632,7 @@ def sliding_windows(cv_bin):
     win_right_x = np.argmax(histogram[midpoint:]) + midpoint
 
     # window分割数を決める
-    nwindows = int(rows/10)
+    nwindows = int(rows/5)    
     # windowの高さを決める
     window_height = np.int(rows/nwindows)
     # 画像内のすべての非ゼロピクセルのxとyの位置を特定する
@@ -653,6 +653,7 @@ def sliding_windows(cv_bin):
     sliding windows
     window処理から、左右レーンとなるピクセルを取得する
     枠が被ってしまう場合、直前の領域の多い方を優先枠範囲に取る
+    空枠の時、片方が検出しているなら、そのx軸の移動範囲に追従する
     '''
     last_lots_point=0 # 0: left, 1: right
     for window in range(nwindows):
@@ -687,10 +688,14 @@ def sliding_windows(cv_bin):
         win_left_idx = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xleft_low) & (nonzerox < win_xleft_high)).nonzero()[0]
         win_right_idx = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xright_low) & (nonzerox < win_xright_high)).nonzero()[0]
 
-        # 枠内要素が多い方を優先とする
-        if len(win_left_idx) > len(win_right_idx):
+        # 枠内画素数をカウントする
+        win_num_lefts = len(win_left_idx)
+        win_num_rights = len(win_right_idx)
+        
+        # 次の開始位置は枠内要素が多い方を優先とする
+        if win_num_lefts > win_num_rights:
             last_lots_point=0
-        elif len(win_left_idx) < len(win_right_idx):
+        elif win_num_lefts < win_num_rights:
             last_lots_point=1
         else:
             # 要素数が同じ場合は直前の要素が多い方を優先として保持する
@@ -699,11 +704,20 @@ def sliding_windows(cv_bin):
         # window内レーンピクセルを左右レーンピクセルに追加する
         lane_left_idx.append(win_left_idx)
         lane_right_idx.append(win_right_idx)
+
         # window開始x座標を更新する
-        if len(win_left_idx) > minpix:
+        if win_num_lefts > minpix:
+            last_win_left_x = win_left_x
             win_left_x = np.int(np.mean(nonzerox[win_left_idx]))
-        if len(win_right_idx) > minpix:
+            # もし片方が空枠なら、次の開始位置を値のある枠と同じ量だけスライドする
+            if win_num_rights == 0:
+                win_right_x += win_left_x - last_win_left_x
+        if win_num_rights > minpix:
+            last_win_right_x = win_right_x
             win_right_x = np.int(np.mean(nonzerox[win_right_idx]))
+            # もし片方が空枠なら、次の開始位置を値のある枠と同じ量だけスライドする
+            if win_num_lefts == 0:
+                win_left_x += win_right_x - last_win_right_x
 
     # window毎の配列を結合する
     lane_left_idx = np.concatenate(lane_left_idx)
