@@ -21,7 +21,7 @@
 
 【目次】
 * [必要なコードとファイル](#1)
-* [Python] [level0の自走コードを元に修正する](#2)
+* [Python] [level1_carの自走コードを元に修正する](#2)
   * Neural Networksの判断処理を追加する
   * 開始ボタン
 * [ディレクトリとファイルについて](#3)
@@ -45,7 +45,7 @@
 
 <a name='2'>
 
-## [Python] level0の自走コードを元に修正する
+## [Python] level1_carの自走コードを元に修正する
 #### Neural Networksの判断処理を追加する
 AI判断を追加し、ジェネレータの判断は不要なのでコメントアウトしておきます。<br>
 
@@ -86,7 +86,7 @@ from lib import AI
     cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_car_ai.py"
 ```
 
-あとはlevel0同様に開始ボタンコードを実行します。<br>
+あとはlevel1_car同様に開始ボタンコードを実行します。<br>
 > `python start_button.py`<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
