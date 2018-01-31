@@ -36,10 +36,12 @@ def main():
         #vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
         vid = cv2.VideoCapture(os.path.join(FILE_DIR, FILENAME))
     elif platform.machine() == 'armv7l': # armv7l
-        vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
+        #vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
+        vid = cv2.VideoCapture(os.path.join(FILE_DIR, FILENAME))
     else: # amd64
         #vid = cv2.VideoCapture(0) # WebCam
-        vid = cv2.VideoCapture('udp://0084121c9205:8090') # GPU docker container id
+        #vid = cv2.VideoCapture('udp://0084121c9205:8090') # GPU docker container id
+        vid = cv2.VideoCapture(os.path.join(FILE_DIR, FILENAME))
 
     print(vid.isOpened())
     if not vid.isOpened():
