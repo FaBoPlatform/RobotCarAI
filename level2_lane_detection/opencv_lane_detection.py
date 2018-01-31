@@ -380,6 +380,7 @@ def main():
                 strings = [str(round(handle_angle,2))+"deg"]
                 if tilt1_deg < 0:
                     arrow_type = 1
+                    # ハンドル角の文字を用意する
                     if meters_from_center >= 0:
                         if np.abs(meters_from_center)*100 > 10:
                             # 右カーブで中央より左にいるので、ハンドル角を多く取る
@@ -392,10 +393,11 @@ def main():
                     if ratio > 1.0:
                         ratio = 1.0
                     arrow_color=(255-(255*ratio),255-(255*ratio),255)
-                    text_color=(0,0,255)
+                    arrow_text_color=(0,0,255)
 
                 else:
                     arrow_type = 3
+                    # ハンドル角の文字を用意する
                     if meters_from_center >= 0:
                         if np.abs(meters_from_center)*100 > 10:
                             # 左カーブで中央より左にいるので、ハンドル角を少なく取る
@@ -408,17 +410,29 @@ def main():
                     if ratio > 1.0:
                         ratio = 1.0
                     arrow_color=(255,255-(255*ratio),255-(255*ratio))
-                    text_color=(255,0,0)
+                    arrow_text_color=(255,0,0)
 
                 draw_arrow(cv_rgb_row1,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
                 
-                colors = [text_color]
+                colors = [arrow_text_color]
                 draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-10)
+                ####################
+                # 奥のカーブ角度が大きい時、slow downを表示する
+                ####################
                 if np.abs(angle2_deg) > np.abs(angle1_deg):
                     strings = ["slow down"]
                     colors = [(0,0,255)]
                     draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-30)
 
+                ####################
+                # カーブ方向に車体が大きく向いているとき、drift文字を表示する
+                ####################
+                if tilt1_deg * angle2_deg > 0: # drift条件
+                    if np.abs(tilt1_deg) > 4 and np.abs(angle2_deg) > 4: # driftっぽい角度
+                        strings = ["drift"]
+                        colors = [(0,0,0)]
+                        draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-50)
+                    
             ########################################
             # cv_bgr_white に文字を描く
             ########################################
