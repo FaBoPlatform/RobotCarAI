@@ -488,18 +488,7 @@ def main():
                 else:
                     strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg left"]
                     colors += [(255,0,0)]
-            ty = draw_text(cv_rgb_tilt,strings,colors)
-            ty += 20
-            strings = []
-            colors = []
-            if meters_from_center is not None:
-                if meters_from_center >= 0:
-                    strings += ["center:"+str(round(meters_from_center*100,2))+"cm right"]
-                    colors += [(0,255,0)]
-                else:
-                    strings +=["center:"+str(round(-1*meters_from_center*100,2))+"cm left"]
-                    colors += [(0,0,255)]
-                draw_text(cv_rgb_tilt,strings,colors,ty=ty)
+                draw_text(cv_rgb_tilt,strings,colors)
 
             ########################################
             # curve に文字を描く
