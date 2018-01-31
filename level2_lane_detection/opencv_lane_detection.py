@@ -17,6 +17,9 @@ def main():
     FILE_DIR = './demo_lane'
     FILENAME = 'input1.mp4'
     OUTPUT_DIR ='./output'
+    # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
+    X_METER=3
+    Y_METER=1.5
     mkdir(OUTPUT_DIR)
     print("OpenCV Version : %s " % cv2.__version__)
     print(FILE_DIR)
@@ -232,9 +235,7 @@ def main():
                 ''''
                 実測値 メートル座標系における計算
                 '''
-                # IPM変換後のx,yをピクセルからメートルに変換
-                X_METER=3
-                Y_METER=1.5
+                # ピクセルをメートルに変換
                 ym_per_pix = Y_METER/rows
                 xm_per_pix = X_METER/cols
                 # 等間隔なy座標を生成する
