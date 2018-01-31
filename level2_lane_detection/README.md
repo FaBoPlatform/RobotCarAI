@@ -40,6 +40,7 @@ Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://
 * [Python/OpenCV] [Sliding Windows](#6)
 * [Python/OpenCV] [ライン検出](#7)
 * [Python/OpenCV] [弧の角度と傾き角](#8)
+  * [Python/OpenCV] 円の中心座標の求め方
 * [Python/OpenCV] [ピクセル座標と実座標](#9)
 * [Python/OpenCV] [中央線までの距離](#10)
 * [Python/OpenCV] [描画](#11)
@@ -74,7 +75,8 @@ Region Of Interst(ROI)は、画像内で必要になる領域が含まれてい�
 
 そこで、ここでは画面範囲よりも広く範囲を取るようにします。<br>
 ![](./document/result_frame_86_before_roi.jpg)
-![](./document/result_frame_86_after_roi.jpg)<br>
+![](./document/result_frame_86_after_roi.jpg)
+![](./document/result_frame_86_roi.jpg)<br>
 ソースコード：[./to_region_of_interest.py](./to_region_of_interest.py)<br>
 ```python
         # robocar camera demo_lane
@@ -117,14 +119,16 @@ def to_roi(cv_bgr, vertices):
 ## [Python/OpenCV] Inverse Perspective Mapping
 Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼ばれる真上から見た画像に変換することが出来ます。<br>
 ![](./document/result_frame_86_before_ipm.jpg)
-![](./document/result_frame_86_after_ipm.jpg)<br>
+![](./document/result_frame_86_after_ipm.jpg)
+![](./document/result_frame_86_ipm.jpg)<br>
 <hr>
 
 #### [Python/OpenCV] 座標を探す
 IPMの座標は、道路の直線に沿うように座標を探します。<br>
 ROIと同じ座標になりますが、変換をかけるため、ROIのmask用座標配列順とは異なる配列になります。<br>
 ![](./document/result_frame_86_before_ipm.jpg)
-![](./document/result_frame_86_after_ipm.jpg)<br>
+![](./document/result_frame_86_after_ipm.jpg)
+![](./document/result_frame_86_ipm.jpg)<br>
 ソースコード：[./to_inverse_perspective_mapping.py](./to_inverse_perspective_mapping.py)<br>
 ```python
         # robocar camera demo_lane
@@ -132,6 +136,7 @@ ROIと同じ座標になりますが、変換をかけるため、ROIのmask用�
                                          top_width_rate=0.9,top_height_position=0.15,
                                          bottom_width_rate=2.0,bottom_height_position=1)
 ```
+実際のコードではROIで処理を行ってからIPM処理を行っていますが、ROIの効果が限定的なため、ROIは無くてもいいかもしれません。
 <hr>
 
 #### [Python/OpenCV] 処理
@@ -477,6 +482,64 @@ def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
 ```
 ![](./document/result_frame_276_ellipse.jpg)<br>
 ![](./document/result_frame_276_tilt.jpg)<br>
+
+#### 円の中心座標の求め方
+ソースコード：[./lib/functions.py](./lib/functions.py)<br>
+```python
+def calc_circle_center_point(px,py,qx,qy,r,const):
+    '''
+    2点と半径rから円の中心座標を求める
+    args:
+        py: 円上の点Pのy座標
+        px: 円上の点Pのx座標
+        qy: 円上の点Qのy座標
+        qx: 円上の点Qのx座標
+        r: 円の半径r
+        const: 候補2点の識別子
+    return:
+        x: 円の中心点x座標
+        y: 円の中心点y座標
+    '''
+    if const > 0:
+        x=((py - qy)*(np.sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx) - (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)) + (px**2 + py**2 - qx**2 - qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))/(2*(px - qx)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))
+        y=(np.sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(-px + qx)/2 + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)/2)/(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)
+    else:
+        x=(-(py - qy)*(np.sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx) + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)) + (px**2 + py**2 - qx**2 - qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))/(2*(px - qx)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))
+        y=(np.sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx)/2 + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)/2)/(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)
+
+    return x,y
+```
+この呪文は何でしょうか？<br>
+答えは次の連立方程式をx,yについて解いた物になります。<br>
+> (x-px)**2+(y-py)**2=r**2, (x-qx)**2+(y-qy)**2=r**2
+
+この式は人力で解くのは大変なので、sympyを使って解を取得します。<br>
+```python
+
+import sympy
+import time
+start_time = time.time()
+x=sympy.Symbol('x') # 変数xを出力時の文字'x'として用意する
+y=sympy.Symbol('y') # 変数yを出力時の文字'y'として用意する
+r=sympy.Symbol('r') # 変数rを出力時の文字'r'として用意する
+px=sympy.Symbol('px')
+py=sympy.Symbol('py')
+qx=sympy.Symbol('qx')
+qy=sympy.Symbol('qy')
+
+"""
+方程式: solve
+連立方程式 (x-px)**2+(y-py)**2=r**2, (x-qx)**2+(y-qy)**2=r**2 の解を求める
+"""
+b= sympy.solve ([(x-px)**2+(y-py)**2-r**2, (x-qx)**2+(y-qy)**2-r**2],[x,y])  # 連立方程式を解く
+print("time:{}".format(time.time() - start_time))
+print(b)
+```
+> `time:27.699626922607422`<br>
+> `[(((py - qy)*(sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx) - (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)) + (px**2 + py**2 - qx**2 - qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))/(2*(px - qx)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)), (sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(-px + qx)/2 + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)/2)/(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)), ((-(py - qy)*(sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx) + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)) + (px**2 + py**2 - qx**2 - qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))/(2*(px - qx)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)), (sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx)/2 + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)/2)/(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2))]`
+
+x,yの解は2つあるので、最初の2つの,までが一つ目の(x,y)の解、次に二つ目の(x,y)の解が続きます。<br>
+この式のsqrtをnp.sqrtに置換してx,yを求める式として利用しています。
 
 [<ページTOP>](#top)　[<目次>](#0)
 
