@@ -459,7 +459,7 @@ def draw_histogram(cols,rows,histogram,lineType):
     '''
     # ヒストグラムの最大値を画像高さ*0.9の値に変換する
     max_value = np.max(histogram)
-    np.putmask(histogram,histogram>=0,np.uint64(rows - rows*0.9*histogram/max_value))
+    np.putmask(histogram,histogram>=0,np.uint32(rows - rows*0.9*histogram/max_value))
     # ヒストグラムをx,y座標に変換する
     _x = np.arange(len(histogram))
     pts_histogram = np.transpose(np.vstack([_x, histogram]))
