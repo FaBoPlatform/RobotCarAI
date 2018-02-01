@@ -1,5 +1,5 @@
 # coding: utf-8
-# OpenCV レーン検出
+# OpenCV ライン検出
 # 参考：https://github.com/BillZito/lane-detection
 #%matplotlib inline
 import cv2
@@ -15,14 +15,14 @@ def main():
     np.set_printoptions(precision=5, suppress=True)  # suppress scientific float notation
 
     FILE_DIR = './demo_lane'
-    FILENAME = 'input1.mp4'
+    FILENAME = 'input2.mp4'
     OUTPUT_DIR ='./output'
-    OUTPUT_FILENAME = 'result_output1.avi'
+    OUTPUT_FILENAME = 'result_output2.avi'
     # 描画、画像保存するフレーム番号
     TARGET_FRAME = -1
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
-    X_METER=3
-    Y_METER=1.5
+    X_METER=1.5
+    Y_METER=1
     mkdir(OUTPUT_DIR)
     print("OpenCV Version : %s " % cv2.__version__)
     print(FILE_DIR)
@@ -109,7 +109,7 @@ def main():
             ########################################
             roi_vertices = calc_roi_vertices(cv_bgr,
                                              # robocar camera demo_lane
-                                             top_width_rate=0.9,top_height_position=0.15,
+                                             top_width_rate=0.80,top_height_position=0.65,
                                              bottom_width_rate=2.0,bottom_height_position=1)
 
             ########################################
@@ -117,7 +117,7 @@ def main():
             ########################################
             ipm_vertices = calc_ipm_vertices(cv_bgr,
                                              # robocar camera demo_lane
-                                             top_width_rate=0.9,top_height_position=0.15,
+                                             top_width_rate=0.80,top_height_position=0.65,
                                              bottom_width_rate=2.0,bottom_height_position=1)
 
             ########################################
@@ -195,8 +195,8 @@ def main():
             # レーンを検出する
             ########################################
             try:
-                # sliding windowsを行い、左右レーンを構成するピクセル座標を求める
-                cv_rgb_sliding_windows, histogram, left_x, left_y, right_x, right_y = sliding_windows(cv_bin)
+                # sliding windowsを行い、ラインを構成するピクセル座標を求める
+                cv_rgb_sliding_windows, histogram, line_x, line_y = sliding_windows(cv_bin)
                 is_sliding_window_success = True
 
                 '''
@@ -206,36 +206,27 @@ def main():
                 plot_y = np.linspace(0, rows-1, rows)
 
                 # 左右センターの二次多項式と座標を求める
-                left_polyfit_const, right_polyfit_const, center_polyfit_const, \
-                    pts_left, pts_right, pts_center = calc_lr_curve_lane(left_x,left_y,right_x,right_y,plot_y)
+                line_polyfit_const, pts_line = calc_line_curve(line_x,line_y,plot_y)
                 is_pixel_pts_success = True
 
                 # 弧と傾きを描画する
-                cv_rgb_ellipse,cv_rgb_tilt \
-                    = draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_center,center_polyfit_const)
+                cv_rgb_ellipse, cv_rgb_tilt \
+                    = draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const)
 
-                # 道路領域を描画する
-                cv_rgb_road = draw_road_area(cols,rows,pts_left,pts_right)
-
-                # 白線画像に道路領域を重ねる
-                cv_rgb_bin = to_layer(cv_rgb_bin,cv_rgb_road,overlay_alpha=0.75)
                 # 白線画像にレーンを描画する
-                cv2.polylines(cv_rgb_bin,[pts_left],False,(255,0,255))
-                cv2.polylines(cv_rgb_bin,[pts_right],False,(255,0,255))
-                cv2.polylines(cv_rgb_bin,[pts_center],False,(0,0,255))
+                cv2.polylines(cv_rgb_bin,[pts_line],False,(0,0,255))
                 if frame_count == TARGET_FRAME:
                     cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_bin_road.jpg",to_bgr(cv_rgb_bin))
                 # 白線道路領域をIPM逆変換する
                 cv_rgb_bin = reverse_ipm(cv_rgb_bin,ipm_vertices)
 
-                # 道路領域にレーンを描画する
-                cv2.polylines(cv_rgb_road,[pts_left],False,(255,0,255))
-                cv2.polylines(cv_rgb_road,[pts_right],False,(255,0,255))
-                cv2.polylines(cv_rgb_road,[pts_center],False,(0,0,255))
-                # 道路領域をIPM変換する
+                # 道路にラインを描画する
+                cv_rgb_road = new_rgb(rows,cols)
+                cv2.polylines(cv_rgb_road,[pts_line],False,(255,0,0))
+                # 道路をIPM変換する
                 cv_rgb_road = reverse_ipm(cv_rgb_road,ipm_vertices)
 
-                ''''
+                '''
                 実測値 メートル座標系における計算
                 '''
                 # ピクセルをメートルに変換
@@ -243,9 +234,9 @@ def main():
                 xm_per_pix = 1.0*X_METER/cols
                 # 等間隔なy座標を生成する
                 plot_ym = np.linspace(0, rows-1, rows)*ym_per_pix
-                # 左右センターの二次多項式と座標を求める
-                left_polyfit_const, right_polyfit_const, center_polyfit_const, \
-                    _pts_left, _pts_right, _pts_center = calc_lr_curve_lane(left_x*xm_per_pix,left_y*ym_per_pix,right_x*xm_per_pix,right_y*ym_per_pix,plot_ym)
+                # ラインの二次多項式と座標を求める
+                line_polyfit_const, \
+                    _pts_line = calc_line_curve(line_x*xm_per_pix,line_y*ym_per_pix,plot_ym)
                 is_meter_pts_success = True
                 ########################################
                 # 弧の座標と角度を求める
@@ -257,20 +248,20 @@ def main():
                 y1 = np.max(plot_ym)
                 curve1_x,curve1_y,curve1_r, \
                     rotate1_deg,angle1_deg, \
-                    tilt1_deg = calc_curve(y0,y1,center_polyfit_const)
+                    tilt1_deg = calc_curve(y0,y1,line_polyfit_const)
                 # 上半分を計算する
                 quarter_y = (np.max(plot_ym) - np.min(plot_ym))/4
                 y0 = np.min(plot_ym)
                 y1 = np.max(plot_ym) - 2*quarter_y
                 curve2_x,curve2_y,curve2_r, \
                     rotate2_deg,angle2_deg, \
-                    tilt2_deg = calc_curve(y0,y1,center_polyfit_const)
+                    tilt2_deg = calc_curve(y0,y1,line_polyfit_const)
                 is_meter_ellipse_success = True
 
                 # 中央線までの距離を計算する
                 # 最も下の位置で計算する
                 bottom_y = np.max(plot_ym)
-                bottom_x = center_polyfit_const[0]*bottom_y**2 + center_polyfit_const[1]*bottom_y + center_polyfit_const[2]
+                bottom_x = line_polyfit_const[0]*bottom_y**2 + line_polyfit_const[1]*bottom_y + line_polyfit_const[2]
                 meters_from_center = bottom_x - (cols/2)*xm_per_pix
 
             except:
@@ -304,10 +295,10 @@ def main():
             # 見た目画像を作成する
             ########################################
             if cv_rgb_road is not None:
-                # カメラ画像に道路領域画像を重ねる
+                # カメラ画像に道路を重ねる
                 cv_rgb = to_layer(cv_rgb,cv_rgb_road,overlay_alpha=0.5)
 
-            # 道路領域をリサイズする
+            # 道路をリサイズする
             cv_rgb_row1 = cv2.resize(cv_rgb, (cols*3,rows*3), interpolation = cv2.INTER_LINEAR)
 
             ########################################

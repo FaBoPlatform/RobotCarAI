@@ -12,7 +12,7 @@ from lib import *
 
 def main():
     FILE_DIR = './test_images'
-    FILENAME = "frame_86"
+    FILENAME = "frame_1"
     OUTPUT_DIR ='./output'
     mkdir(OUTPUT_DIR)    
     print("OpenCV Version : %s " % cv2.__version__)
@@ -23,17 +23,8 @@ def main():
         ########################################
         # Region Of Interest Coordinates
         ########################################
-        # sample
-        #roi_vertices = calc_roi_vertices(cv_bgr,
-        #                                 top_width_rate=0.3,top_height_position=0.15,
-        #                                 bottom_width_rate=0.8,bottom_height_position=0.9)
-        # capture-2
-        #roi_vertices = calc_roi_vertices(cv_bgr,
-        #                                 top_width_rate=0.45,top_height_position=0.15,
-        #                                 bottom_width_rate=4.0,bottom_height_position=1)
-        # robocar camera demo_lane
         roi_vertices = calc_roi_vertices(cv_bgr,
-                                         top_width_rate=0.9,top_height_position=0.15,
+                                         top_width_rate=0.80,top_height_position=0.65,
                                          bottom_width_rate=2.0,bottom_height_position=1)
 
         ########################################
