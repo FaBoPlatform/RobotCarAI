@@ -85,17 +85,14 @@ def to_white(cv_bgr):
     upper2_color = np.array([100,20,255])
     lower3_color = np.array([45,0,225])
     upper3_color = np.array([100,40,255])
-    lower4_color = np.array([50,0,180])
-    upper4_color = np.array([75,25,200])
 
     # 指定した色に基づいたマスク画像の生成
     white1_mask = cv2.inRange(cv_hsv,lower1_color,upper1_color)
     white2_mask = cv2.inRange(cv_hsv,lower2_color,upper2_color)
     white3_mask = cv2.inRange(cv_hsv,lower3_color,upper3_color)
-    white4_mask = cv2.inRange(cv_hsv,lower4_color,upper4_color)
+    img_mask = white1_mask
     img_mask = cv2.bitwise_or(white1_mask, white2_mask)
     img_mask = cv2.bitwise_or(img_mask, white3_mask)
-    img_mask = cv2.bitwise_or(img_mask, white4_mask)
     # フレーム画像とマスク画像の共通の領域を抽出する
     cv_bgr_result = cv2.bitwise_and(cv_bgr,cv_bgr,mask=img_mask)
     t1 = time.time()
@@ -436,7 +433,8 @@ def draw_histogram(cols,rows,histogram,lineType):
     '''
     # ヒストグラムの最大値を画像高さ*0.9の値に変換する
     max_value = np.max(histogram)
-    np.putmask(histogram,histogram>=0,np.uint32(rows - rows*0.9*histogram/max_value))
+    if max_value > 0:
+        np.putmask(histogram,histogram>=0,np.uint32(rows - rows*0.9*histogram/max_value))
     # ヒストグラムをx,y座標に変換する
     _x = np.arange(len(histogram))
     pts_histogram = np.transpose(np.vstack([_x, histogram]))

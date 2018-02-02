@@ -15,9 +15,10 @@ def main():
     np.set_printoptions(precision=5, suppress=True)  # suppress scientific float notation
 
     FILE_DIR = './demo_lane'
-    FILENAME = 'input2.mp4'
+    FILENAME = 'capture.mp4'
     OUTPUT_DIR ='./output'
-    OUTPUT_FILENAME = 'result_output2.avi'
+    OUTPUT_FILENAME = 'result_capture.avi'
+    HANDLE_ANGLE = 42
     # 描画、画像保存するフレーム番号
     TARGET_FRAME = -1
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
@@ -164,6 +165,7 @@ def main():
                 plt.imshow(to_rgb(cv_bgr))
                 plt.show()
                 cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_white.jpg",cv_bgr)
+
             cv_bgr_white = cv_bgr
 
 
@@ -214,7 +216,7 @@ def main():
                     = draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const)
 
                 # 白線画像にレーンを描画する
-                cv2.polylines(cv_rgb_bin,[pts_line],False,(0,0,255))
+                cv2.polylines(cv_rgb_bin,[pts_line],False,(255,0,0))
                 if frame_count == TARGET_FRAME:
                     cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_bin_road.jpg",to_bgr(cv_rgb_bin))
                 # 白線道路領域をIPM逆変換する
@@ -301,6 +303,14 @@ def main():
             # 道路をリサイズする
             cv_rgb_row1 = cv2.resize(cv_rgb, (cols*3,rows*3), interpolation = cv2.INTER_LINEAR)
 
+
+            '''
+            左右について
+            tiltx_deg: -が右、+が左
+            anglex_deg: +が右、-が左
+            meters_from_center: -が右にいる、+が左にいる
+            handle_angle: +が右、-が左
+            '''
             ########################################
             # row1に文字を書く
             ########################################
@@ -371,40 +381,51 @@ def main():
                 ####################
                 arrow_x = int(cv_rgb_row1.shape[1]/2-35)
                 arrow_y = int(cv_rgb_row1.shape[0]/2-35)
-                handle_angle = np.abs(tilt1_deg)
-                strings = [str(round(handle_angle,2))+"deg"]
-                if tilt1_deg < 0:
+                handle_angle = -1*tilt1_deg
+                strings = [str(round(np.abs(handle_angle),2))+"deg"]
+                if meters_from_center >= 0:
+                    # 左にいる
+                    if np.abs(meters_from_center)*100 > 20:
+                        # とても離れて左にいる：右に全開で曲がる
+                        handle_angle=HANDLE_ANGLE
+                    elif np.abs(meters_from_center)*100 > 10:
+                        if tilt2_deg > 0 :
+                            # 離れて左いる、奥は左カーブ：右に少し曲がる
+                            handle_angle=HANDLE_ANGLE/2
+                        else:
+                            # 離れて左いる、奥は右カーブ：右に全開で曲がる
+                            handle_angle=HANDLE_ANGLE
+                else:
+                    # 右にいる
+                    if np.abs(meters_from_center)*100 > 20:
+                        # とても離れて右にいる：左に全開で曲がる
+                        handle_angle=-1*HANDLE_ANGLE
+                    elif np.abs(meters_from_center)*100 > 10:
+                        if tilt2_deg < 0 :
+                            # 離れて右いる、奥は右カーブ：左に少し曲がる
+                            handle_angle=-1*HANDLE_ANGLE/2
+                        else:
+                            # 離れて右いる、奥は左カーブ、左に全開で曲がる
+                            handle_angle=-1*HANDLE_ANGLE
+
+                # 動作可能な角度内に調整する
+                if handle_angle > HANDLE_ANGLE:
+                    handle_angle = HANDLE_ANGLE
+                elif handle_angle <  -1*HANDLE_ANGLE:
+                    handle_angle = -1*HANDLE_ANGLE
+                ratio = 10*np.abs(handle_angle)/100
+
+                if handle_angle > 0:
                     arrow_type = 1
-                    # ハンドル角の文字を用意する
-                    if meters_from_center >= 0:
-                        if np.abs(meters_from_center)*100 > 10:
-                            # 右カーブで中央より左にいるので、ハンドル角を多く取る
-                            strings = [str(round(handle_angle,2))+"deg x 1.5"]
-                    else:
-                        if np.abs(meters_from_center)*100 > 10:
-                            # 右カーブで中央より右にいるのでハンドル角を少なく取る
-                            strings = [str(round(handle_angle,2))+"deg x 0.5"]
-                    ratio = 10*handle_angle/100
-                    if ratio > 1.0:
-                        ratio = 1.0
                     arrow_color=(255-(255*ratio),255-(255*ratio),255)
                     arrow_text_color=(0,0,255)
-
+                    strings = [str(round(handle_angle,2))+"deg"]
+                    arrow_text_color=(0,0,255)
                 else:
                     arrow_type = 3
-                    # ハンドル角の文字を用意する
-                    if meters_from_center >= 0:
-                        if np.abs(meters_from_center)*100 > 10:
-                            # 左カーブで中央より左にいるので、ハンドル角を少なく取る
-                            strings = [str(round(handle_angle,2))+"deg x 0.5"]
-                    else:
-                        if np.abs(meters_from_center)*100 < 10:
-                            # 左カーブで中央より右にいるのでハンドル角を多く取る
-                            strings = [str(round(handle_angle,2))+"deg x 1.5"]
-                    ratio = 10*handle_angle/100
-                    if ratio > 1.0:
-                        ratio = 1.0
                     arrow_color=(255,255-(255*ratio),255-(255*ratio))
+                    arrow_text_color=(255,0,0)
+                    strings = [str(round(np.abs(handle_angle),2))+"deg"]
                     arrow_text_color=(255,0,0)
 
                 draw_arrow(cv_rgb_row1,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
@@ -419,15 +440,6 @@ def main():
                     colors = [(0,0,255)]
                     draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-30)
 
-                ####################
-                # カーブ方向に車体が大きく向いているとき、drift文字を表示する
-                ####################
-                if tilt1_deg * angle2_deg > 0: # drift条件
-                    if np.abs(tilt1_deg) > 4 and np.abs(angle2_deg) > 4: # driftっぽい角度
-                        strings = ["drift"]
-                        colors = [(0,0,0)]
-                        draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-50)
-                    
             ########################################
             # cv_bgr_white に文字を描く
             ########################################
