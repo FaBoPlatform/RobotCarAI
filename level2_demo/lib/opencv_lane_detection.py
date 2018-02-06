@@ -18,7 +18,7 @@ class LaneDetection():
     vid = None
     out = None
     cv_bgr = None
-    def __init__(self,x_meter,cols=120,rows=160,):
+    def __init__(self,x_meter,y_meter,cols=120,rows=160):
         self.x_meter = x_meter
         self.y_meter = y_meter
         ########################################
@@ -40,6 +40,8 @@ class LaneDetection():
         # ピクセルをメートルに変換
         self.ym_per_pix = 1.0*self.y_meter/rows
         self.xm_per_pix = 1.0*self.x_meter/cols
+        self.cols = cols
+        self.rows = rows
 
         return
 

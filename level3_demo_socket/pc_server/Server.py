@@ -41,8 +41,8 @@ def main():
     PORT = 6666 # Server TCP Port
     #HOST = 'a32158c3da9f' # AWS
     #PORT = 8091 # AWS
-    HOST = '2204f9b0e871' # PC
-    PORT = 8091 # PC
+    #HOST = '2204f9b0e871' # PC
+    #PORT = 8091 # PC
 
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
     X_METER=1.5

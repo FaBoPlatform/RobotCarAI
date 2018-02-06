@@ -73,8 +73,8 @@ def main():
     PORT = 6666 # Server TCP Port
     #HOST = '34.224.145.198' # AWS
     #PORT = 8091 # AWS
-    HOST = '192.168.0.17' # PC
-    PORT = 8091 # PC
+    #HOST = '192.168.0.17' # PC
+    #PORT = 8091 # PC
 
     sock = None
     try:
