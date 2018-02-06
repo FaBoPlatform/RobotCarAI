@@ -459,7 +459,8 @@ def draw_histogram(cols,rows,histogram,lineType):
     '''
     # ヒストグラムの最大値を画像高さ*0.9の値に変換する
     max_value = np.max(histogram)
-    np.putmask(histogram,histogram>=0,np.uint32(rows - rows*0.9*histogram/max_value))
+    if max_value > 0:
+        np.putmask(histogram,histogram>=0,np.uint32(rows - rows*0.9*histogram/max_value))
     # ヒストグラムをx,y座標に変換する
     _x = np.arange(len(histogram))
     pts_histogram = np.transpose(np.vstack([_x, histogram]))
@@ -472,7 +473,7 @@ def draw_histogram(cols,rows,histogram,lineType):
     return cv_rgb_histogram
 
 
-def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_center,center_polyfit_const):
+def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_line,line_polyfit_const):
     '''
     弧と傾き角を描画する
     描画値 ピクセル座標系における計算
@@ -482,8 +483,8 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_center,center_
         plot_y: Y軸に均等なY座標群
         pts_left: 左線上の座標群
         pts_right: 右線上の座標群
-        pts_center: センター上の座標群
-        center_polyfit_const: センターの曲線式の定数
+        pts_line: センター上の座標群
+        line_polyfit_const: センターの曲線式の定数
     returns:
         cv_rgb_ellipse: 弧のOpenCV RGB画像データ
         cv_rgb_tilt: 傾き角のOpenCV RGB画像データ
@@ -500,27 +501,81 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_center,center_
     y1 = np.max(plot_y)
     x,y,r, \
         rotate_deg,angle_deg, \
-        tilt_deg = calc_curve(y0,y1,center_polyfit_const)
+        tilt_deg = calc_curve(y0,y1,line_polyfit_const)
     '''
     # 弧を描画する
     cv2.ellipse(cv_rgb_ellipse,(int(x),int(y)),(int(r),int(r)),rotate_deg,0,angle_deg,(255,0,0),-1)
     or
-    pts_ellipse = np.array(pts_center[:,int(pts_center.shape[1]/2):,:]).astype(int)
+    pts_ellipse = np.array(pts_line[:,int(pts_line.shape[1]/2):,:]).astype(int)
     pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
     cv2.fillPoly(cv_rgb_ellipse, [pts_ellipse], (255,0,0))
 
     cv2.ellipse()は小数点以下の角度が描画範囲に影響を与える時、正しく描画できない
     そのため、ポリゴンで描画する
     '''
-    pts_ellipse = np.array(pts_center[:,int(pts_center.shape[1]/2):,:]).astype(int)
-    pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
+    pts_ellipse = np.array(pts_line[:,int(pts_line.shape[1]/2):,:]).astype(int)
+
+    # x,yが画面より非常に遠く離れている時、描画に時間がかかるため、直線の式から画面上の点を取得する
+    # 2点(x,y),(x0,y0)を通る直線と、y=0,y=rows,x=0,x=colsの4直線との交点を求める
+    if x<0 or x>cols or y<0 or y>rows:
+        x0 = line_polyfit_const[0]*y0**2 + line_polyfit_const[1]*y0 + line_polyfit_const[2]
+        x1 = line_polyfit_const[0]*y1**2 + line_polyfit_const[1]*y1 + line_polyfit_const[2]
+        y0_1 = 0 # y = 0
+        x0_1 = calc_line(y,x,y0,x0,y0_1)
+        y0_2 = rows # y = rows
+        x0_2 = calc_line(y,x,y0,x0,y0_2)
+        x0_3 = 0 # x = 0
+        y0_3 = calc_line(x,y,x0,y0,x0_3)
+        x0_4 = cols # x = cols
+        y0_4 = calc_line(x,y,x0,y0,x0_4)
+
+        pts_x0 = [x0_1,x0_2,x0_3,x0_4]
+        pts_y0 = [y0_1,y0_2,y0_3,y0_4]
+
+        y1_1 = 0 # y = 0
+        x1_1 = calc_line(y,x,y1,x1,y1_1)
+        y1_2 = rows # y = rows
+        x1_2 = calc_line(y,x,y1,x1,y1_2)
+        x1_3 = 0 # x = 0
+        y1_3 = calc_line(x,y,x1,y1,x1_3)
+        x1_4 = cols # x = cols
+        y1_4 = calc_line(x,y,x1,y1,x1_4)
+
+        pts_x1 = [x1_1,x1_2,x1_3,x1_4]
+        pts_y1 = [y1_1,y1_2,y1_3,y1_4]
+
+        if x<0 or x>cols:
+            for i in range(4):
+                if (x<0 and pts_x0[i] == 0) or (x>cols and pts_x0[i] == cols):
+                    pts_x0 = pts_x0[i]
+                    pts_y0 = pts_y0[i]
+                    break
+            for i in range(4):
+                if (x<0 and pts_x1[i] == 0) or (x>cols and pts_x1[i] == cols):
+                    pts_x1 = pts_x1[i]
+                    pts_y1 = pts_y1[i]
+                    break
+        elif y<0 or y>rows:
+            for i in range(4):
+                if (y<0 and pts_y0[i] == 0) or (y>rows and pts_y0[i] == rows):
+                    pts_x0 = pts_x0[i]
+                    pts_y0 = pts_y0[i]
+                    break
+            for i in range(4):
+                if (y<0 and pts_y1[i] == 0) or (y>rows and pts_y1[i] == rows):
+                    pts_x1 = pts_x1[i]
+                    pts_y1 = pts_y1[i]
+                    break
+        pts_ellipse = np.concatenate((pts_ellipse,np.array([[[pts_x1,pts_y1],[pts_x0,pts_y0]]]).astype(int)),axis=1)
+    else:
+        pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
     cv2.fillPoly(cv_rgb_ellipse, [pts_ellipse], (255,0,0))
     ########################################
     # 傾きを描画する
     ########################################
     cv_rgb_tilt = new_rgb(rows,cols)
-    x0 = center_polyfit_const[0]*y0**2 + center_polyfit_const[1]*y0 + center_polyfit_const[2]
-    x1 = center_polyfit_const[0]*y1**2 + center_polyfit_const[1]*y1 + center_polyfit_const[2]
+    x0 = line_polyfit_const[0]*y0**2 + line_polyfit_const[1]*y0 + line_polyfit_const[2]
+    x1 = line_polyfit_const[0]*y1**2 + line_polyfit_const[1]*y1 + line_polyfit_const[2]
     pts_tilt = np.array([[x0,y0],[x1,y1],[x1,y0]]).astype(int)
     cv2.fillPoly(cv_rgb_tilt,[pts_tilt],(255,0,0))
 
@@ -532,29 +587,83 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_center,center_
     y1 = np.max(plot_y) - 2*quarter_y
     x,y,r, \
         rotate_deg,angle_deg, \
-        tilt_deg = calc_curve(y0,y1,center_polyfit_const)
+        tilt_deg = calc_curve(y0,y1,line_polyfit_const)
     # 弧を描画する
     #cv2.ellipse(cv_rgb_ellipse,(int(x),int(y)),(int(r),int(r)),rotate_deg,0,angle_deg,(0,255,255),-1)
-    pts_ellipse = np.array(pts_center[:,:int(pts_center.shape[1]/2),:]).astype(int)
-    pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
+    pts_ellipse = np.array(pts_line[:,:int(pts_line.shape[1]/2),:]).astype(int)
+    # x,yが画面より非常に遠く離れている時、描画に時間がかかるため、直線の式から画面上の点を取得する
+    # 2点(x,y),(x0,y0)を通る直線と、y=0,y=rows,x=0,x=colsの4直線との交点を求める
+    if x<0 or x>cols or y<0 or y>rows:
+        x0 = line_polyfit_const[0]*y0**2 + line_polyfit_const[1]*y0 + line_polyfit_const[2]
+        x1 = line_polyfit_const[0]*y1**2 + line_polyfit_const[1]*y1 + line_polyfit_const[2]
+        y0_1 = 0 # y = 0
+        x0_1 = calc_line(y,x,y0,x0,y0_1)
+        y0_2 = rows # y = rows
+        x0_2 = calc_line(y,x,y0,x0,y0_2)
+        x0_3 = 0 # x = 0
+        y0_3 = calc_line(x,y,x0,y0,x0_3)
+        x0_4 = cols # x = cols
+        y0_4 = calc_line(x,y,x0,y0,x0_4)
+
+        pts_x0 = [x0_1,x0_2,x0_3,x0_4]
+        pts_y0 = [y0_1,y0_2,y0_3,y0_4]
+
+        y1_1 = 0 # y = 0
+        x1_1 = calc_line(y,x,y1,x1,y1_1)
+        y1_2 = rows # y = rows
+        x1_2 = calc_line(y,x,y1,x1,y1_2)
+        x1_3 = 0 # x = 0
+        y1_3 = calc_line(x,y,x1,y1,x1_3)
+        x1_4 = cols # x = cols
+        y1_4 = calc_line(x,y,x1,y1,x1_4)
+
+        pts_x1 = [x1_1,x1_2,x1_3,x1_4]
+        pts_y1 = [y1_1,y1_2,y1_3,y1_4]
+
+        if x<0 or x>cols:
+            for i in range(4):
+                if (x<0 and pts_x0[i] == 0) or (x>cols and pts_x0[i] == cols):
+                    pts_x0 = pts_x0[i]
+                    pts_y0 = pts_y0[i]
+                    break
+            for i in range(4):
+                if (x<0 and pts_x1[i] == 0) or (x>cols and pts_x1[i] == cols):
+                    pts_x1 = pts_x1[i]
+                    pts_y1 = pts_y1[i]
+                    break
+        elif y<0 or y>rows:
+            for i in range(4):
+                if (y<0 and pts_y0[i] == 0) or (y>rows and pts_y0[i] == rows):
+                    pts_x0 = pts_x0[i]
+                    pts_y0 = pts_y0[i]
+                    break
+            for i in range(4):
+                if (y<0 and pts_y1[i] == 0) or (y>rows and pts_y1[i] == rows):
+                    pts_x1 = pts_x1[i]
+                    pts_y1 = pts_y1[i]
+                    break
+        print("{} {} {} {}".format(pts_x0,pts_y0,pts_x1,pts_y1))
+        pts_ellipse = np.concatenate((pts_ellipse,np.array([[[pts_x1,pts_y1],[pts_x0,pts_y0]]]).astype(int)),axis=1)
+    else:
+        pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
     cv2.fillPoly(cv_rgb_ellipse, [pts_ellipse], (0,255,255))
     ########################################
     # 傾きを描画する
     ########################################
-    x0 = center_polyfit_const[0]*y0**2 + center_polyfit_const[1]*y0 + center_polyfit_const[2]
-    x1 = center_polyfit_const[0]*y1**2 + center_polyfit_const[1]*y1 + center_polyfit_const[2]
+    x0 = line_polyfit_const[0]*y0**2 + line_polyfit_const[1]*y0 + line_polyfit_const[2]
+    x1 = line_polyfit_const[0]*y1**2 + line_polyfit_const[1]*y1 + line_polyfit_const[2]
     pts_tilt = np.array([[x0,y0],[x1,y1],[x1,y0]]).astype(int)
     cv2.fillPoly(cv_rgb_tilt,[pts_tilt],(0,255,255))
 
     # 弧にレーンを描画する
     cv2.polylines(cv_rgb_ellipse,[pts_left],False,(0,255,255))
     cv2.polylines(cv_rgb_ellipse,[pts_right],False,(0,255,255))
-    cv2.polylines(cv_rgb_ellipse,[pts_center],False,(0,255,255))
+    cv2.polylines(cv_rgb_ellipse,[pts_line],False,(0,255,255))
 
     # 傾きにレーンを描画する
     cv2.polylines(cv_rgb_tilt,[pts_left],False,(0,255,255))
     cv2.polylines(cv_rgb_tilt,[pts_right],False,(0,255,255))
-    cv2.polylines(cv_rgb_tilt,[pts_center],False,(0,255,255))
+    cv2.polylines(cv_rgb_tilt,[pts_line],False,(0,255,255))
 
     return cv_rgb_ellipse,cv_rgb_tilt
 
