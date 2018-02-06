@@ -73,16 +73,8 @@ def main():
     # IPM変換後の画像におけるx,yメートル(黒い部分も含む)
     X_METER=1.5
     Y_METER=1
-    roi_vertices = calc_roi_vertices(COLS,ROWS,
-                                     # robocar camera demo_lane
-                                     top_width_rate=0.80,top_height_position=0.65,
-                                     bottom_width_rate=2.0,bottom_height_position=1)
-    ipm_vertices = calc_ipm_vertices(COLS,ROWS,
-                                     # robocar camera demo_lane
-                                     top_width_rate=0.80,top_height_position=0.65,
-                                     bottom_width_rate=2.0,bottom_height_position=1)    
-    ld = LaneDetection(X_METER,Y_METER,roi_vertices,ipm_vertices)
-    ld.init_webcam(cols=COLS,rows=ROWS,fps=15,save=False) # Raspberry PiはCPU負荷が高いので消費電流を抑えるためにfpsを下げる必要がある。
+    ld = LaneDetection(X_METER,Y_METER,cols=COLS,rows=ROWS)
+    ld.init_webcam(fps=15,save=False) # Raspberry PiはCPU負荷が高いので消費電流を抑えるためにfpsを下げる必要がある。
     # ライン検出結果を保存しておく
     tilt1_deg = 0
     tilt2_deg = 0

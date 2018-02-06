@@ -1,9 +1,6 @@
 # coding: utf-8
 # OpenCV ライン検出クラス
-# 参考：https://github.com/BillZito/lane-detection
-#%matplotlib inline
 import cv2
-from matplotlib import pyplot as plt
 import numpy as np
 import time
 import os
@@ -21,6 +18,8 @@ class LaneDetection():
     def __init__(self,x_meter,y_meter,cols=120,rows=160):
         self.x_meter = x_meter
         self.y_meter = y_meter
+        self.cols = cols
+        self.rows = rows
         ########################################
         # Region Of Interest Coordinates
         ########################################
@@ -38,10 +37,8 @@ class LaneDetection():
                                               bottom_width_rate=2.0,bottom_height_position=1)
 
         # ピクセルをメートルに変換
-        self.ym_per_pix = 1.0*self.y_meter/rows
-        self.xm_per_pix = 1.0*self.x_meter/cols
-        self.cols = cols
-        self.rows = rows
+        self.ym_per_pix = 1.0*self.y_meter/self.rows
+        self.xm_per_pix = 1.0*self.x_meter/self.cols
 
         return
 
@@ -91,7 +88,7 @@ class LaneDetection():
 
         if save:
             mkdir(self.OUTPUT_DIR)
-            self.out = cv2.VideoWriter(os.path.join(self.OUTPUT_DIR, self.OUTPUT_FILENAME), int(fourcc), fps, (int(cols), int(rows)))
+            self.out = cv2.VideoWriter(os.path.join(self.OUTPUT_DIR, self.OUTPUT_FILENAME), int(fourcc), fps, (int(self.cols), int(self.rows)))
 
         return
 

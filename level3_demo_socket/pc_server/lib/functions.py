@@ -3,7 +3,7 @@ import os
 import cv2
 import numpy as np
 import math
-import time
+#import time
 
 def mkdir(PATH):
     '''
@@ -75,8 +75,8 @@ def to_white(cv_bgr):
     return:
         cv_bgr_result: OpenCV BGR画像データ
     '''
-    print("to_white()")
-    t0 = time.time()
+    #print("to_white()")
+    #t0 = time.time()
     cv_hsv = cv2.cvtColor(cv_bgr, cv2.COLOR_BGR2HSV)
     # 取得する色の範囲を指定する
     lower1_color = np.array([0,0,120])
@@ -85,22 +85,18 @@ def to_white(cv_bgr):
     upper2_color = np.array([100,20,255])
     lower3_color = np.array([45,0,225])
     upper3_color = np.array([100,40,255])
-    lower4_color = np.array([50,0,180])
-    upper4_color = np.array([75,25,200])
 
     # 指定した色に基づいたマスク画像の生成
     white1_mask = cv2.inRange(cv_hsv,lower1_color,upper1_color)
     white2_mask = cv2.inRange(cv_hsv,lower2_color,upper2_color)
     white3_mask = cv2.inRange(cv_hsv,lower3_color,upper3_color)
-    white4_mask = cv2.inRange(cv_hsv,lower4_color,upper4_color)
     img_mask = cv2.bitwise_or(white1_mask, white2_mask)
     img_mask = cv2.bitwise_or(img_mask, white3_mask)
-    img_mask = cv2.bitwise_or(img_mask, white4_mask)
     # フレーム画像とマスク画像の共通の領域を抽出する
     cv_bgr_result = cv2.bitwise_and(cv_bgr,cv_bgr,mask=img_mask)
-    t1 = time.time()
-    dt_cv = t1-t0
-    print("Conversion took {:.5} seconds".format(dt_cv))
+    #t1 = time.time()
+    #dt_cv = t1-t0
+    #print("Conversion took {:.5} seconds".format(dt_cv))
 
     return cv_bgr_result
 
@@ -113,8 +109,8 @@ def to_bin(cv_bgr):
     return:
         cv_bin: OpenCV 2値化したグレースケール画像データ
     '''
-    print("to_bin()")
-    t0 = time.time()
+    #print("to_bin()")
+    #t0 = time.time()
     # ガウスぼかしで境界線の弱い部分を消す
     cv_gauss = cv2.GaussianBlur(cv_bgr,(5,5),0) # サイズは奇数
     cv_gray = cv2.cvtColor(cv_gauss, cv2.COLOR_BGR2GRAY)
@@ -133,9 +129,9 @@ def to_bin(cv_bgr):
     # 入力画像，閾値，maxVal，閾値処理手法
     ret,cv_bin = cv2.threshold(cv_gray,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU);
 
-    t1 = time.time()
-    dt_cv = t1-t0
-    print("Conversion took {:.5} seconds".format(dt_cv))
+    #t1 = time.time()
+    #dt_cv = t1-t0
+    #print("Conversion took {:.5} seconds".format(dt_cv))
     return cv_bin
 
 
@@ -159,13 +155,13 @@ def to_edge(cv_gray):
     return:
         cv_gray_result: エッジのOpenCVグレースケール画像データ
     '''
-    print("to_edge()")
-    t0 = time.time()
+    #print("to_edge()")
+    #t0 = time.time()
     # Canny
     cv_gray_result = cv2.Canny(cv_gray, 50, 200);
-    t1 = time.time()
-    dt_cv = t1-t0
-    print("Conversion took {:.5} seconds".format(dt_cv))
+    #t1 = time.time()
+    #dt_cv = t1-t0
+    #print("Conversion took {:.5} seconds".format(dt_cv))
     return cv_gray_result
 
 
@@ -177,8 +173,8 @@ def to_hough_lines_p(cv_bin):
     return:
         cv_bin_out: OpenCV グレースケール画像データ
     '''
-    print("確率的Hough変換")
-    t0 = time.time()
+    #print("確率的Hough変換")
+    #t0 = time.time()
     threshold=10
     minLineLength=10
     maxLineGap=10
@@ -187,10 +183,11 @@ def to_hough_lines_p(cv_bin):
 
     cv_bin_result=np.zeros_like(cv_bin)
     if _lines is None:
-        print('There is no lines to be detected!')
+        #print('There is no lines to be detected!')
+        pass
     else:
         a,b,c = _lines.shape
-        print(len(_lines[0]))
+        #print(len(_lines[0]))
         for i in range(a):
             x1 = _lines[i][0][0]
             y1 = _lines[i][0][1]
@@ -198,9 +195,9 @@ def to_hough_lines_p(cv_bin):
             y2 = _lines[i][0][3]
             cv2.line(cv_bin_result,(x1,y1),(x2,y2),(255,255,255),1)
 
-    t1 = time.time()
-    dt_cv = t1-t0
-    print("Conversion took {:.5} seconds".format(dt_cv))
+    #t1 = time.time()
+    #dt_cv = t1-t0
+    #print("Conversion took {:.5} seconds".format(dt_cv))
     return cv_bin_result
 
 
@@ -264,13 +261,14 @@ def to_ipm(cv_bgr,ipm_vertices):
     return cv_bgr_ipm
 
 
-def calc_roi_vertices(cv_bgr,
+def calc_roi_vertices(cols,rows,
                       top_width_rate=0.6,top_height_position=0.7,
                       bottom_width_rate=4.0,bottom_height_position=0.95):
     '''
     Region Of Interest 頂点座標計算
     args:
-        cv_bgr: OpenCV BGR画像データ
+        cols: 画像横サイズ
+        rows: 画像縦サイズ
         top_widh_rate: 領域とする上辺幅の画像幅比
         top_height_position: 領域とする上辺位置の画像高さ比 0.0: 画像上、1.0:画像下
         bottom_width_rate: 領域とする底辺幅の画像比
@@ -284,8 +282,6 @@ def calc_roi_vertices(cv_bgr,
     top_width_right_position = (1.0 - top_width_rate)/2 + top_width_rate
 
     # Region Of Interest
-    rows, cols = cv_bgr.shape[:2]
-
     bottom_left  = [cols*bottom_width_left_position, rows*bottom_height_position]
     top_left     = [cols*top_width_left_position, rows*top_height_position]
     bottom_right = [cols*bottom_width_right_position, rows*bottom_height_position]
@@ -296,13 +292,14 @@ def calc_roi_vertices(cv_bgr,
     return vertices
 
 
-def calc_ipm_vertices(cv_bgr,
+def calc_ipm_vertices(cols,rows,
                       top_width_rate=0.6,top_height_position=0.7,
                       bottom_width_rate=4.0,bottom_height_position=0.95):
     '''
     Inverse Perspective Mapping 頂点座標計算
     args:
-        cv_bgr: OpenCV BGR画像データ
+        cols: 画像横サイズ
+        rows: 画像縦サイズ
         top_widh_rate: 変換する上辺幅の画像幅比
         top_height_position: 変換する上辺位置の画像高さ比 0.0: 画像上、1.0:画像下
         bottom_width_rate: 変換する底辺幅の画像比
@@ -316,8 +313,6 @@ def calc_ipm_vertices(cv_bgr,
     top_width_right_position = (1.0 - top_width_rate)/2 + top_width_rate
 
     # Inverse Perspective Mapping
-    rows, cols = cv_bgr.shape[:2]
-
     bottom_left  = [cols*bottom_width_left_position, rows*bottom_height_position]
     top_left     = [cols*top_width_left_position, rows*top_height_position]
     bottom_right = [cols*bottom_width_right_position, rows*bottom_height_position]
@@ -331,7 +326,7 @@ def calc_ipm_vertices(cv_bgr,
 def draw_vertices(cv_bgr,vertices):
     '''
     ROIの座標確認のために表示する
-    ROI範囲にレーンが映っているかを確認するためのもの
+    ROI範囲にラインが映っているかを確認するためのもの
     args:
         cv_bgr: 下になるOpenCV BGR画像
         vertices: オーバーレイ表示する頂点座標
@@ -357,41 +352,18 @@ def histogram_equalization(cv_bgr,grid_size=(8,8)):
     return:
         cv_bgr_result: OpenCV BGR画像データ
     '''
-    print("ヒストグラム平坦化")
-    t0 = time.time()
+    #print("ヒストグラム平坦化")
+    #t0 = time.time()
     lab= cv2.cvtColor(cv_bgr, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=grid_size)
     cl = clahe.apply(l)
     limg = cv2.merge((cl,a,b))
     cv_bgr_result = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-    t1 = time.time()
-    dt_cv = t1-t0
-    print("Conversion took {:.5} seconds".format(dt_cv))
+    #t1 = time.time()
+    #dt_cv = t1-t0
+    #print("Conversion took {:.5} seconds".format(dt_cv))
     return cv_bgr_result
-
-
-def draw_road_area(cols, rows, pts_left, pts_right):
-    '''
-    検出した左右線座標から道路領域を描画する
-    args:
-        cols: 画像横サイズ
-        rows: 画像縦サイズ
-        pts_left: 左線のx,y座標群
-        pts_right: 右線のx,y座標群
-    return:
-        cv_bgr_road: 道路領域を描画したOpenCV BGR画像データ
-    '''
-    # 検出したレーンを描画するためのブランク画像を作成
-    cv_rgb_road = new_rgb(rows,cols)
-
-    # ライン座標
-    pts = np.hstack((pts_left, pts_right))
-
-    # ライン座標に囲まれた領域を描画
-    cv2.fillPoly(cv_rgb_road, [pts], (0, 255, 0))
-
-    return cv_rgb_road
 
 
 def draw_arrow(cv_rgb, x, y, color, size=1, arrow_type=1, lineType=1):
@@ -473,7 +445,7 @@ def draw_histogram(cols,rows,histogram,lineType):
     return cv_rgb_histogram
 
 
-def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_line,line_polyfit_const):
+def draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const):
     '''
     弧と傾き角を描画する
     描画値 ピクセル座標系における計算
@@ -481,10 +453,8 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_line,line_poly
         cols: 画像横サイズ
         rows: 画像縦サイズ
         plot_y: Y軸に均等なY座標群
-        pts_left: 左線上の座標群
-        pts_right: 右線上の座標群
-        pts_line: センター上の座標群
-        line_polyfit_const: センターの曲線式の定数
+        pts_line: ライン上の座標群
+        line_polyfit_const: ラインの曲線式の定数
     returns:
         cv_rgb_ellipse: 弧のOpenCV RGB画像データ
         cv_rgb_tilt: 傾き角のOpenCV RGB画像データ
@@ -642,7 +612,7 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_line,line_poly
                     pts_x1 = pts_x1[i]
                     pts_y1 = pts_y1[i]
                     break
-        print("{} {} {} {}".format(pts_x0,pts_y0,pts_x1,pts_y1))
+        #print("{} {} {} {}".format(pts_x0,pts_y0,pts_x1,pts_y1))
         pts_ellipse = np.concatenate((pts_ellipse,np.array([[[pts_x1,pts_y1],[pts_x0,pts_y0]]]).astype(int)),axis=1)
     else:
         pts_ellipse = np.concatenate((pts_ellipse,np.array([[[x,y]]]).astype(int)),axis=1)
@@ -655,14 +625,10 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_left,pts_right,pts_line,line_poly
     pts_tilt = np.array([[x0,y0],[x1,y1],[x1,y0]]).astype(int)
     cv2.fillPoly(cv_rgb_tilt,[pts_tilt],(0,255,255))
 
-    # 弧にレーンを描画する
-    cv2.polylines(cv_rgb_ellipse,[pts_left],False,(0,255,255))
-    cv2.polylines(cv_rgb_ellipse,[pts_right],False,(0,255,255))
+    # 弧にラインを描画する
     cv2.polylines(cv_rgb_ellipse,[pts_line],False,(0,255,255))
 
-    # 傾きにレーンを描画する
-    cv2.polylines(cv_rgb_tilt,[pts_left],False,(0,255,255))
-    cv2.polylines(cv_rgb_tilt,[pts_right],False,(0,255,255))
+    # 傾きにラインを描画する
     cv2.polylines(cv_rgb_tilt,[pts_line],False,(0,255,255))
 
     return cv_rgb_ellipse,cv_rgb_tilt
@@ -694,51 +660,31 @@ def draw_text(cv_rgb,strings,colors,tx=10,ty=20):
 
 def sliding_windows(cv_bin):
     '''
-    sliding windowを行い、左右レーンを構成するピクセル座標を求める
+    sliding windowを行い、1本の線を構成するピクセル座標を求める
     args:
-        cv_bin: 2値化したレーン画像のOpenCV grayscale画像データ
+        cv_bin: 2値化したライン画像のOpenCV grayscale画像データ
     returns:
-        cv_rgb_sliding_windows: sliding window処理のOpenCV RGB画像データ
         histogram: 入力画像の下半分の列毎のピクセル総数の配列(1,col)
-        left_x: 左レーンを構成するピクセルのx座標群
-        left_y: 左レーンを構成するピクセルのy座標群
-        right_x: 右レーンを構成するピクセルのx座標群
-        right_y: 右レーンを構成するピクセルのy座標群
+        line_x: ラインを構成するピクセルのx座標群
+        line_y: ラインを構成するピクセルのy座標群
     '''
 
     '''
     画像下半分のピクセル数を列毎にカウントしたものをhistogramとする
-    画像は左上が原点
     '''
     rows, cols = cv_bin.shape[:2]
     # 画面下半分のピクセル数をカウントする
     histogram = np.sum(cv_bin[int(rows/2):,:], axis=0)
-    # sliding windows描画用にレーン画像をRGBに変換する
-    cv_rgb_sliding_windows = bin_to_rgb(cv_bin)
 
     '''
-    plt.title('HISTOGRAM')
-    plt.plot(histogram)
-    plt.show()
-
-    plt.title('before windows')
-    plt.imshow(cv_rgb_sliding_windows)
-    plt.show()
-    '''
-
-    '''
-    左右sliding windowの開始位置となるx座標を求める
+    sliding windowの開始位置となるx座標を求める
     histogramは画像幅ピクセル数分の配列数としているため、
     histogramの配列index番号が画像のx座標となる
     variables:
-        midpont: 画像横ピクセルの半分
-        win_left_x: 左sliding windowの現在のx座標
-        win_right_x: 右sliding windowの現在のx座標
+        win_line_x: sliding windowの現在のx座標
     '''
-    midpoint = np.int(histogram.shape[0]/2)
-    # windowのカレント位置を左右ヒストグラム最大となる位置で初期化する
-    win_left_x = np.argmax(histogram[:midpoint])
-    win_right_x = np.argmax(histogram[midpoint:]) + midpoint
+    # windowのカレント位置をヒストグラム最大となる位置で初期化する
+    win_line_x = np.argmax(histogram)
 
     # window分割数を決める
     nwindows = int(rows/5)    
@@ -749,104 +695,49 @@ def sliding_windows(cv_bin):
     nonzeroy = np.array(nonzero[0])
     nonzerox = np.array(nonzero[1])
     # window幅のマージン
-    margin = int(cols/20)
+    margin = int(cols/5)
     # windowをセンタリングするための最小ピクセル数
-    minpix = margin
-    # 左右のレーンピクセルindexを持つための配列
-    lane_left_idx = []
-    lane_right_idx = []
+    minpix = margin/2
+    # ラインピクセルindexを持つための配列
+    lane_line_idx = []
     # windowの色
     rectangle_color=(0,160,0)
 
     '''
     sliding windows
-    window処理から、左右レーンとなるピクセルを取得する
+    window処理から、ラインとなるピクセルを取得する
     枠が被ってしまう場合、直前の領域の多い方を優先枠範囲に取る
     空枠の時、片方が検出しているなら、そのx軸の移動範囲に追従する
     '''
-    last_lots_point=0 # 0: left, 1: right
     for window in range(nwindows):
-        # 左右windowの座標を求める
+        # windowの座標を求める
         win_y_low = rows - (window+1)*window_height
         win_y_high = rows - window*window_height
-        win_xleft_low = win_left_x - margin
-        win_xleft_high = win_left_x + margin
-        win_xright_low = win_right_x - margin
-        win_xright_high = win_right_x + margin
-
-        # 左右枠が被らないように調整する
-        if win_xleft_high > win_xright_low:
-            # 被っている
-            over = win_xleft_high - win_xright_low
-            if last_lots_point == 0:
-                # 左を優先する
-                win_xright_low = win_xleft_high
-                win_xright_high = win_xright_high + over
-                win_right_x = int((win_xright_low + win_xright_high)/2)
-            else:
-                # 右を優先する
-                win_xleft_high = win_xright_low
-                win_xleft_low = win_xleft_low - over
-                win_left_x = int((win_xleft_low + win_xleft_high)/2)
-
-        # 左右windowの枠を描画する
-        cv2.rectangle(cv_rgb_sliding_windows,(win_xleft_low,win_y_low),(win_xleft_high,win_y_high),rectangle_color, 1)
-        cv2.rectangle(cv_rgb_sliding_windows,(win_xright_low,win_y_low),(win_xright_high,win_y_high),rectangle_color, 1)
+        win_line_x_low = win_line_x - margin
+        win_line_x_high = win_line_x + margin
 
         # ウィンドウ内のxとyの非ゼロピクセルを取得する
-        win_left_idx = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xleft_low) & (nonzerox < win_xleft_high)).nonzero()[0]
-        win_right_idx = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xright_low) & (nonzerox < win_xright_high)).nonzero()[0]
+        win_line_idx = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_line_x_low) & (nonzerox < win_line_x_high)).nonzero()[0]
 
         # 枠内画素数をカウントする
-        win_num_lefts = len(win_left_idx)
-        win_num_rights = len(win_right_idx)
+        win_num_lines = len(win_line_idx)
         
-        # 次の開始位置は枠内要素が多い方を優先とする
-        if win_num_lefts > win_num_rights:
-            last_lots_point=0
-        elif win_num_lefts < win_num_rights:
-            last_lots_point=1
-        else:
-            # 要素数が同じ場合は直前の要素が多い方を優先として保持する
-            pass
-
-        # window内レーンピクセルを左右レーンピクセルに追加する
-        lane_left_idx.append(win_left_idx)
-        lane_right_idx.append(win_right_idx)
+        # window内ラインピクセルをラインピクセルに追加する
+        lane_line_idx.append(win_line_idx)
 
         # window開始x座標を更新する
-        if win_num_lefts > minpix:
-            last_win_left_x = win_left_x
-            win_left_x = np.int(np.mean(nonzerox[win_left_idx]))
-            # もし片方が空枠なら、次の開始位置を値のある枠と同じ量だけスライドする
-            if win_num_rights == 0:
-                win_right_x += win_left_x - last_win_left_x
-        if win_num_rights > minpix:
-            last_win_right_x = win_right_x
-            win_right_x = np.int(np.mean(nonzerox[win_right_idx]))
-            # もし片方が空枠なら、次の開始位置を値のある枠と同じ量だけスライドする
-            if win_num_lefts == 0:
-                win_left_x += win_right_x - last_win_right_x
+        if win_num_lines > minpix:
+            last_win_line_x = win_line_x
+            win_line_x = np.int(np.mean(nonzerox[win_line_idx]))
 
     # window毎の配列を結合する
-    lane_left_idx = np.concatenate(lane_left_idx)
-    lane_right_idx = np.concatenate(lane_right_idx)
+    lane_line_idx = np.concatenate(lane_line_idx)
 
-    # 左右レーンピクセル座標を取得する
-    left_x = nonzerox[lane_left_idx]
-    left_y = nonzeroy[lane_left_idx]
-    right_x = nonzerox[lane_right_idx]
-    right_y = nonzeroy[lane_right_idx]
+    # ラインピクセル座標を取得する
+    line_x = nonzerox[lane_line_idx]
+    line_y = nonzeroy[lane_line_idx]
 
-    '''
-    左右レーンとなるピクセルに色を付けて描画する
-    '''
-    high_color=200
-    low_color=0
-    cv_rgb_sliding_windows[left_y, left_x] = [high_color, low_color, low_color]
-    cv_rgb_sliding_windows[right_y, right_x] = [low_color, low_color, high_color]
-
-    return cv_rgb_sliding_windows, histogram, left_x, left_y, right_x, right_y
+    return line_x, line_y
 
 def polynormal_fit(pts_y,pts_x):
     '''
@@ -861,54 +752,38 @@ def polynormal_fit(pts_y,pts_x):
     polyfit_const = np.polyfit(pts_y, pts_x, 2)
     return polyfit_const
 
-def calc_lr_curve_lane(left_x,left_y,right_x,right_y,plot_y):
+def calc_line_curve(line_x,line_y,plot_y):
     '''
-    左右レーンを構成する(ピクセルorメートル)点座標から、左右センター曲線と曲線上の座標を求める
+    ラインを構成する(ピクセルorメートル)点座標から、曲線と曲線上の座標を求める
     args:
-        left_x: 左レーンを構成する点のx座標群
-        left_y: 左レーンを構成する点のy座標群
-        right_x: 右レーンを構成する点のx座標群
-        right_y: 右レーンを構成する点のy座標群
+        line_x: ラインを構成する点のx座標群
+        line_y: ラインを構成する点のy座標群
         plot_y: 曲線上のy座標群
     returns:
-        left_polyfit_const: 左レーン曲線の定数
-        right_polyfit_const: 右レーン曲線の定数
-        center_polyfit_const:　センター曲線の定数
-        pts_left: 左レーン曲線上の[x,y]座標群
-        pts_right: 右レーン曲線上の[x,y]座標群
-        pts_center: センター曲線上の[x,y]座標群
+        line_polyfit_const: ライン曲線の定数
+        pts_line: ライン曲線上の[x,y]座標群
     '''
 
     '''
-    左右点座標群から左右の二次多項式を求める
-    センターの二次多項式を求める
-    センターの曲率半径を求める
-    センターの画像下から画像中央までの角度を求める
+    点座標群からラインの二次多項式を求める
+    ラインの二次多項式を求める
+    ラインの曲率半径を求める
+    ラインの画像下から画像中央までの角度を求める
     '''
-    # 左右の二次多項式を求める
-    left_polyfit_const = polynormal_fit(left_y,left_x)
-    right_polyfit_const = polynormal_fit(right_y,right_x)
-    # センターの二次多項式を求める
-    center_polyfit_const = [(left_polyfit_const[0]+right_polyfit_const[0])/2,(left_polyfit_const[1]+right_polyfit_const[1])/2,(left_polyfit_const[2]+right_polyfit_const[2])/2]
+    # ラインの二次多項式を求める
+    line_polyfit_const = polynormal_fit(line_y,line_x)
 
-    # y軸に対する左右の二次多項式上のx座標を求める
-    left_plot_x = left_polyfit_const[0]*plot_y**2 + left_polyfit_const[1]*plot_y + left_polyfit_const[2]
-    right_plot_x = right_polyfit_const[0]*plot_y**2 + right_polyfit_const[1]*plot_y + right_polyfit_const[2]
-    # y軸に対するセンターの二次多項式上のx座標を求める
-    center_plot_x = center_polyfit_const[0]*plot_y**2 + center_polyfit_const[1]*plot_y + center_polyfit_const[2]
+    # y軸に対するラインの二次多項式上のx座標を求める
+    line_plot_x = line_polyfit_const[0]*plot_y**2 + line_polyfit_const[1]*plot_y + line_polyfit_const[2]
 
     '''
     x,y座標を[x,y]配列に変換する
-    左右間の領域描画用に、右側座標は逆順にする
-    pts_centerは中間線上の座標
     '''
-    pts_left = np.int32(np.array([np.transpose(np.vstack([left_plot_x, plot_y]))]))
-    pts_right = np.int32(np.array([np.flipud(np.transpose(np.vstack([right_plot_x, plot_y])))]))
-    pts_center = np.int32(np.array([np.transpose(np.vstack([center_plot_x, plot_y]))]))
+    pts_line = np.int32(np.array([np.transpose(np.vstack([line_plot_x, plot_y]))]))
 
-    #pts_left = pts_left.reshape((-1,1,2))
-    #pts_right = pts_right.reshape((-1,1,2))
-    return left_polyfit_const, right_polyfit_const, center_polyfit_const, pts_left, pts_right, pts_center
+    #pts_line = pts_line.reshape((-1,1,2))
+    return line_polyfit_const, pts_line
+
 
 def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
     '''
@@ -943,14 +818,14 @@ def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
 
     # 弧の描画角度を求める
     rotate_deg, angle_deg = calc_ellipse_angle(py,px,qy,qx,r,x,y,curve_polyfit_const[0])
-    print("py={},px={},qy={},qx={},x={},y={},r={}".format(py,px,qy,qx,x,y,r))
-    print("rotate_deg={} angle_deg={}".format(rotate_deg,angle_deg))
+    #print("py={},px={},qy={},qx={},x={},y={},r={}".format(py,px,qy,qx,x,y,r))
+    #print("rotate_deg={} angle_deg={}".format(rotate_deg,angle_deg))
 
     # 垂直方向との傾き角を求める
     # プラスなら左カーブ、マイナスなら右カーブ
     curve_tilt_rad = math.atan((px-qx)/(py-qy))
     curve_tilt_deg = math.degrees(curve_tilt_rad)
-    print("curve_tilt_deg={}".format(curve_tilt_deg))
+    #print("curve_tilt_deg={}".format(curve_tilt_deg))
 
     return x,y,r,rotate_deg,angle_deg,curve_tilt_deg
 
@@ -990,6 +865,7 @@ def calc_circle_center_point(px,py,qx,qy,r,const):
         y=(np.sqrt(-(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2 - 4*r**2))*(px - qx)/2 + (py + qy)*(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)/2)/(px**2 - 2*px*qx + py**2 - 2*py*qy + qx**2 + qy**2)
 
     return x,y
+
 
 def calc_ellipse_angle(py,px,qy,qx,r,x,y,const):
     # ellipseの角度は左回転角度が-、右回転角度が+
@@ -1053,3 +929,19 @@ def calc_ellipse_angle(py,px,qy,qx,r,x,y,const):
         #angle_deg = -1*angle_deg
 
     return rotate_deg, angle_deg
+
+def calc_line(x1,y1,x2,y2,x):
+    '''
+    二点(x1,y1),(x2,y2)を通る直線の方程式から、座標xにおけるyの値を求める
+    args:
+        x1: 直線1上の点1のx座標
+        y1: 直線1上の点1のy座標
+        x2: 直線1上の点2のx座標
+        y2: 直線1上の点2のy座標
+        x: 直線1上の点のx座標
+    return:
+        y: 直線1上の点のy座標
+    '''
+    y = (x*y1 - x*y2 + x1*y2 - x2*y1)/(x1 - x2)
+    return y
+

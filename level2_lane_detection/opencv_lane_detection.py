@@ -329,14 +329,14 @@ def main():
                 strings += ["Far"]
                 colors += [(0,255,255)]
                 if tilt2_deg < 0:
-                    strings += ["tilt2:"+str(round(-1*tilt2_deg,2))+"deg right"]
+                    strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg right"]
                     colors += [(0,255,255)]
                 else:
                     strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg left"]
                     colors += [(0,255,255)]
 
                 if angle2_deg < 0:
-                    strings += ["angle2:"+str(round(-1*angle2_deg,2))+"deg left"]
+                    strings += ["angle2:"+str(round(angle2_deg,2))+"deg left"]
                     colors += [(0,255,255)]
                 else:
                     strings += ["angle2:"+str(round(angle2_deg,2))+"deg right"]
@@ -347,14 +347,14 @@ def main():
                 strings += ["Near"]
                 colors += [(255,0,0)]
                 if tilt1_deg < 0:
-                    strings += ["tilt1:"+str(round(-1*tilt1_deg,2))+"deg right"]
+                    strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg right"]
                     colors += [(255,0,0)]
                 else:
                     strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg left"]
                     colors += [(255,0,0)]
 
                 if angle1_deg < 0:
-                    strings += ["angle1:"+str(round(-1*angle1_deg,2))+"deg left"]
+                    strings += ["angle1:"+str(round(angle1_deg,2))+"deg left"]
                     colors += [(255,0,0)]
                 else:
                     strings += ["angle1:"+str(round(angle1_deg,2))+"deg right"]
@@ -372,7 +372,7 @@ def main():
                     strings += ["center:"+str(round(meters_from_center*100,2))+"cm right"]
                     colors += [(0,255,0)]
                 else:
-                    strings +=["center:"+str(round(-1*meters_from_center*100,2))+"cm left"]
+                    strings +=["center:"+str(round(meters_from_center*100,2))+"cm left"]
                     colors += [(0,0,255)]
                 ty = draw_text(cv_rgb_row1,strings,colors,tx=tx,ty=ty)
 
@@ -382,7 +382,7 @@ def main():
                 arrow_x = int(cv_rgb_row1.shape[1]/2-35)
                 arrow_y = int(cv_rgb_row1.shape[0]/2-35)
                 handle_angle = -1*tilt1_deg
-                strings = [str(round(np.abs(handle_angle),2))+"deg"]
+                strings = [str(round(handle_angle,2))+"deg"]
                 if meters_from_center >= 0:
                     # 左にいる
                     if np.abs(meters_from_center)*100 > 20:
@@ -425,7 +425,7 @@ def main():
                     arrow_type = 3
                     arrow_color=(255,255-(255*ratio),255-(255*ratio))
                     arrow_text_color=(255,0,0)
-                    strings = [str(round(np.abs(handle_angle),2))+"deg"]
+                    strings = [str(round(handle_angle,2))+"deg"]
                     arrow_text_color=(255,0,0)
 
                 draw_arrow(cv_rgb_row1,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
@@ -477,7 +477,7 @@ def main():
                 strings += ["Far"]
                 colors += [(0,255,255)]
                 if tilt2_deg < 0:
-                    strings += ["tilt2:"+str(round(-1*tilt2_deg,2))+"deg right"]
+                    strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg right"]
                     colors += [(0,255,255)]
                 else:
                     strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg left"]
@@ -486,7 +486,7 @@ def main():
                 strings += ["Near"]
                 colors += [(255,0,0)]
                 if tilt1_deg < 0:
-                    strings += ["tilt1:"+str(round(-1*tilt1_deg,2))+"deg right"]
+                    strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg right"]
                     colors += [(255,0,0)]
                 else:
                     strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg left"]
@@ -501,7 +501,7 @@ def main():
             if is_meter_ellipse_success:
                 # Far
                 if angle2_deg < 0:
-                    strings += ["angle2:"+str(round(-1*angle2_deg,2))+"deg left"]
+                    strings += ["angle2:"+str(round(angle2_deg,2))+"deg left"]
                     colors += [(0,200,200)]
                 else:
                     strings += ["angle2:"+str(round(angle2_deg,2))+"deg right"]
@@ -510,7 +510,7 @@ def main():
                 colors += [(0,200,200)]
                 # Near
                 if angle1_deg < 0:
-                    strings += ["angle1:"+str(round(-1*angle1_deg,2))+"deg left"]
+                    strings += ["angle1:"+str(round(angle1_deg,2))+"deg left"]
                     colors += [(200,0,0)]
                 else:
                     strings += ["angle1:"+str(round(angle1_deg,2))+"deg right"]
