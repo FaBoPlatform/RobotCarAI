@@ -32,7 +32,6 @@ class Camera():
             vid = cv2.VideoCapture(0) # WebCam Raspberry Pi3 /dev/video0
         else: # amd64
             vid = cv2.VideoCapture(0) # WebCam
-            #vid = cv2.VideoCapture('udp://0084121c9205:8090') # GPU docker container id
 
         print(vid.isOpened())
         if not vid.isOpened():
