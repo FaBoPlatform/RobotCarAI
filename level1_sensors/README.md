@@ -341,7 +341,7 @@ placeholderの行数をNoneとすることで、1つの値を予測するため�
 ```python
 TARGET_STEP = 10000 # ステップ数
 ```
-今回はステップ数もモデルに変数として保存しているので、途中から再開してもTARGET_STEPまで学習したらそこで終了します。<br>
+今回はステップ数もモデルに変数として保存しているので、(途中から再開しても)TARGET_STEPまで学習したらそこで終了します。<br>
 TARGET_STEPを増やすことで、さらに学習させることが出来ます。
 <hr>
 
@@ -354,13 +354,13 @@ TARGET_STEPを増やすことで、さらに学習させることが出来ます
   * pbファイルに保存
   * pbファイルを読み込む
 
-checkpointで保存すると、学習・実行に必要な全てのモデル構成と変数値が保存されます。そのため、checkpointを読み込むことで学習を再開することが出来ます。<br>
-checkpointでは、モデル構成と変数値はそれぞれ別のファイルに保存されます。<br>
+checkpointに保存すると、学習・実行に必要な全てのモデル構成と変数値が保存されます。そのため、checkpointを読み込むことで学習を再開することが出来ます。<br>
+checkpointでは、モデル構成と学習した変数値はそれぞれ別のファイルに保存されるため、読み込みはモデルの読み込み方と、学習値の復元の2種類あります。<br>
 
 pbファイルで保存すると、予測に必要なオペレーション名だけを指定してモデル構成と変数値を保存することが出来ます。そのため、再学習に用いることは出来ませんが、バイナリサイズは小さくなります。<br>
 pbファイルでは変数値を定数に変換しモデル構成の中に埋め込みます。
 
-step pbファイル変換前
+step数を記録するために用意したstep変数に関連する情報：pbファイル変換前
 ```
 step/input_step [<tf.Tensor 'step/input_step:0' shape=<unknown> dtype=int32>]
 step/step/initial_value [<tf.Tensor 'step/step/initial_value:0' shape=() dtype=int32>]
@@ -369,12 +369,12 @@ step/step/Assign [<tf.Tensor 'step/step/Assign:0' shape=() dtype=int32_ref>]
 step/step/read [<tf.Tensor 'step/step/read:0' shape=() dtype=int32>]
 step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]
 ```
-step pbファイル変換後
+step数を記録するために用意したstep変数に関連する情報：pbファイル変換後
 ```
 prefix/step/step [<tf.Tensor 'prefix/step/step:0' shape=() dtype=int32>]
 ```
 
-neural_network_model/Variable_1 pbファイル変換前
+neural_network_model/Variable_1に関する情報：pbファイル変換前
 ```
 neural_network_model/Variable_1 [<tf.Tensor 'neural_network_model/Variable_1:0' shape=(3, 11) dtype=float32_ref>]
 neural_network_model/Variable_1/IsVariableInitialized [<tf.Tensor 'neural_network_model/Variable_1/IsVariableInitialized:0' shape=() dtype=bool>]
@@ -402,7 +402,7 @@ neural_network_model/Variable_1/Adam_1/read [<tf.Tensor 'neural_network_model/Va
 train_op/update_neural_network_model/Variable_1/ApplyAdam [<tf.Tensor 'train_op/update_neural_network_model/Variable_1/ApplyAdam:0' shape=(3, 11) dtype=float32_ref>]
 ```
 
-neural_network_model/Variable_1 pbファイル変換後
+neural_network_model/Variable_1に関する情報：pbファイル変換後
 ```
 prefix/neural_network_model/Variable_1 [<tf.Tensor 'prefix/neural_network_model/Variable_1:0' shape=(3, 11) dtype=float32>]
 prefix/neural_network_model/Variable_1/read [<tf.Tensor 'prefix/neural_network_model/Variable_1/read:0' shape=(3, 11) dtype=float32>]
@@ -425,6 +425,7 @@ prefixはpb読み込み時に追加した接頭辞<br>
 <hr>
 
 #### 再利用可能な方法
+学習途中で保存したり、学習コード内で保存する際はcheckpointに保存します。
 <hr>
 
 #### checkpointに保存
@@ -482,7 +483,7 @@ checkpointから復元した再学習可能なフルモデルデータでも予�
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 
 ![](./document/freeze-design1.png)
-学習コードで学習済みモデルのpbファイルを作ろうとすると、学習時のセッションとは別のセッションを作成して変数値を再読み込みしないといけないため、コードを分けて用意します。<br>
+学習コードで学習済みモデルのpbファイルを作ろうとすると、学習時のセッションとは別のセッションを作成して変数値を再読み込みしないといけないため、pbファイルを作成するコードは学習コードとは別に用意します。<br>
 <hr>
 
 予測時に使うOP名は、学習コードで付けた名前になります。tf.variable_scope()で名前スコープを付けた場合はスコープ名から必要になります。<br>
@@ -528,20 +529,11 @@ step/Assign [<tf.Tensor 'step/Assign:0' shape=() dtype=int32_ref>]
 freeze_graph.pyは、他のモデルのcheckpointでも使うことが出来ます。
 <hr>
 
-学習環境と実行環境で異なるマシン環境の場合は、モデル構成情報からデバイス情報を削除します。<br>
+基本的に学習マシンと実行マシンは異なるため、通常はモデル構成情報からデバイス情報を削除してcheckpointからモデル構成を復元します。<br>
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```python
 CLEAR_DEVICES=True
 ...
-        # Graphを読み込む
-        # We import the meta graph and retrieve a Saver
-        saver = tf.train.import_meta_graph(last_model + '.meta', clear_devices=CLEAR_DEVICES)
-```
-<hr>
-
-freeze_graphにはモデル構成をコードに書いていないため、checkpointからモデルを復元します。<br>
-pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
-```python
         # Graphを読み込む
         # We import the meta graph and retrieve a Saver
         saver = tf.train.import_meta_graph(last_model + '.meta', clear_devices=CLEAR_DEVICES)
@@ -558,7 +550,7 @@ pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```
 <hr>
 
-学習済みの値を復元します。<br>
+学習済みの変数値を復元します。<br>
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```python
         saver.restore(sess, last_model)
@@ -566,7 +558,7 @@ pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 
 <hr>
 
-必要な情報だけに削り落とします。<br>
+必要なモデル情報だけに削り落とします。<br>
 pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```python
         # We use a built-in TF helper to export variables to constants
@@ -589,6 +581,7 @@ as_text=Trueにすると、テキストファイルで保存することが出�
 <a name="6-4">
 
 #### pbファイルを読み込む
+予測実行を行うアプリケーションでは、pbファイルを読み込んで予測を実行します。<br>
 予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
 ```python
 def load_graph(frozen_graph_filename):
@@ -629,7 +622,7 @@ step = graph.get_tensor_by_name('prefix/step/step:0')
 ```
 <hr>
 
-これで予測実行まで出来るようになります。<br>
+pbファイルを読み込みオペレーションを用意したら、予測実行が出来るようになります。<br>
 予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
 ```python
 with tf.Session(graph=graph) as sess:
