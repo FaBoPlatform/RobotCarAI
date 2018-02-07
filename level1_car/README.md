@@ -60,7 +60,7 @@ CLASS1 LASERで距離を計測する機器。
 3センサー値を入力に、STOP,LEFT,FOWARD,RIGHTを識別出来るように値を返すIF文を作ります。<br>
 0:STOP,1:LEFT,2:FOWARD,3:RIGHTと定義しますが、level1_sensorsのNeural Networksのone hot valueの値に合わせておくために、<br>
 [1,0,0,0]:STOP,[0,1,0,0]:LEFT,[0,0,1,0]:FOWARD,[0,0,0,1]:RIGHTとして値を返しておきます。<br>
-0-3の値としては配列の最大値のindex番号となるため、numpyで取得することが出来ます。<br>
+one hot value(配列)の最大値を持つindex番号が0-3の値(0:STOP,1:LEFT,2:FOWARD,3:RIGHT)となります。<br>
 ```python
 value = np.argmax([1,0,0,0]) # value = 0
 ```
@@ -180,8 +180,7 @@ try:
 ## [Python] 距離センサーの値を取る
 距離センサーにはLidarLite v3を使います。<br>
 今回3つの距離センサーを使うのですが、全てのセンサーは通電時に同じ物理アドレスとなっていますので、それぞれのアドレスを変更する必要があります。<br>
-このアドレス変更を自動的に行うために、Fabo #902 Kerberos基板を使ってアドレス変更を行ったうえで取得しています。<br>
-クラス化して簡単に使えるようにしてあります。<br>
+このアドレス変更を自動的に行うために、Fabo #902 Kerberos基板を使ってアドレス変更を行ったうえで取得するライブラリを作成してあります。<br>
 
 距離センサー用ライブラリ：[./fabolib/kerberos.py](./fabo_lib/kerberos.py)<br>
 距離取得確認コード：[./test/fabolib_kerberos_test.py](./test/fabolib_kerberos_test.py)<br>
@@ -200,17 +199,25 @@ try:
 
 ## [Python] 自走コードを作成する
 #### 距離センサーの値を取る
+距離センサーは0.02秒間隔で値が更新されるので、値を取ったら余裕を持って0.05秒のsleepを入れておきます。<br>
 車両自走コード：[./run_car_if.py](./run_car_if.py)<br>
 ```python
     # 近接センサー準備
     kerberos = Kerberos()
     LIDAR_INTERVAL = 0.05
 ...
+    try:
+        while main_thread_running:
+...
             ########################################
             # 近接センサー値を取得する
             ########################################
             distance1,distance2,distance3 = kerberos.get_distance()
             sensors = [distance1,distance2,distance3]
+...
+            time.sleep(LIDAR_INTERVAL)
+
+    except:
 ```
 <hr>
 
