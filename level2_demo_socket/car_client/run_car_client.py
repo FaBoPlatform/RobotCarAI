@@ -13,13 +13,6 @@ from lib import SPI
 from lib import Camera
 from lib import *
 
-import sys
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-if PY2:
-    import Queue
-elif PY3:
-    import queue as Queue
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] time:%(created).8f pid:%(process)d pn:%(processName)-10s tid:%(thread)d tn:%(threadName)-10s fn:%(funcName)-10s %(message)s',
