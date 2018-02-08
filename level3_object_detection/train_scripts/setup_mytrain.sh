@@ -218,18 +218,6 @@ sed -i 's/from datasets import pascalvoc_to_tfrecords/from datasets import pasca
 
 
 ####################
-# download VGG16 model
-####################
-cd $SSD_TENSORFLOW_DIR/checkpoints
-if [ ! -e $SSD_TENSORFLOW_DIR/checkpoints/vgg_16_2016_08_28.tar.gz ]; then
-   wget http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
-fi
-if [ ! -e $SSD_TENSORFLOW_DIR/checkpoints/vgg_16.ckpt ]; then
-     tar fxv vgg_16_2016_08_28.tar.gz
-fi
-
-
-####################
 # edit nets/ssd_vgg_300.py
 ####################
 # sed
