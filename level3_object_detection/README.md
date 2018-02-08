@@ -76,7 +76,7 @@ Balancap SSD-Tensorflow：[https://github.com/balancap/SSD-Tensorflow](https://g
 
 #### インストール
 インストール先や学習コード生成に必要な情報はスクリプト設定ファイルで用意しました。環境に合わせて修正してください。<br>
-特に、Jetson TX2では/home/ubuntu/notebooks/github/...と直します。<br>
+デフォルトでは/home/ubuntu/notebooks/github/...としてあります。<br>
 
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
 ```bash
