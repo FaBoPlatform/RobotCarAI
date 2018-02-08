@@ -1053,3 +1053,19 @@ def calc_ellipse_angle(py,px,qy,qx,r,x,y,const):
         #angle_deg = -1*angle_deg
 
     return rotate_deg, angle_deg
+
+
+def calc_line(x1,y1,x2,y2,x):
+    '''
+    二点(x1,y1),(x2,y2)を通る直線の方程式から、座標xにおけるyの値を求める
+    args:
+        x1: 直線1上の点1のx座標
+        y1: 直線1上の点1のy座標
+        x2: 直線1上の点2のx座標
+        y2: 直線1上の点2のy座標
+        x: 直線1上の点のx座標
+    return:
+        y: 直線1上の点のy座標
+    '''
+    y = (x*y1 - x*y2 + x1*y2 - x2*y1)/(x1 - x2)
+    return y
