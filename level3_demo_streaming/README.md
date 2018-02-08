@@ -7,6 +7,9 @@
 【目標】
 #### 映像をサーバに送り、level2,level3によるサーバからの走行指示でロボットカーを自走させる
 
+【動画】<br>
+走行しながら止まれを検出して止まる動画：[./document/leve3_aws_demo1.mp4](./document/leve3_aws_demo1.mp4)<br>
+
 実行環境の構成
 * Fabo TYPE1 ロボットカー
 
