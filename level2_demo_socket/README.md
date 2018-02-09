@@ -5,51 +5,127 @@
 <hr>
 
 【目標】
-#### 映像をサーバに送り、サーバからの走行指示でロボットカーを自走させる
+#### カメラ映像をTCP通信でサーバに送り、サーバからの走行指示でロボットカーを自走させる
 
-実行環境の構成
+【画像】<br>
+![](./document/robotcar1.jpg)<br>
+![](./document/robotcar2.jpg)<br>
+![](./document/robotcar3.jpg)<br>
+
+【実行環境】
 * Fabo TYPE1 ロボットカー
+  * USB Webcam
+  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
+  * Fabo Robot Car #1202 Rev. 1.0.1
+  * Tower Pro SG90
+  * Raspberry Pi3
+    * Jessie Lite
+    * docker
+      * Ubuntu
+      * Python 2.7
+      * FaBoPWM-PCA9685-Python
+      * FaBoGPIO-PCAL6408-Python
+      * OpenCV 2.4
+* Jetson TX2
+  * JetPack 3.1
+    * Ubuntu
+    * Python 3.6
+    * OpenCV 3.3
 
 <a name='0'>
 
+【実行】
+* [インストール方法](#a)
+* [Jetson TX2/PC] {サーバ起動](#b)
+* [Raspberry Pi3] [ロボットカー起動](#c)
+
 【目次】
-* [実行方法](#1)
-  * [Jetson TX2/PC] サーバ起動
-  * [Raspberry Pi3] ロボットカー起動
 * [トラブルシューティング](#2)
   * Webcamが起動しない
   * 走行中にハンドルが固まった
   * Raspberry Pi3が起動しない
   * サーバが起動しない
 * [ディレクトリとファイルについて](#3)
+
 <hr>
 
-<a name='1'>
+<a name='a'>
 
-## 実行方法
-ダウンロード
-> `git pull https://github.com/FaBoPlatform/RobotCarAI`<br>
+## インストール方法
+インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
 
-#### [Jetson TX2/PC] サーバ起動
-> `cd level2_demo_socket/pc_server`<br>
-> `python server.py`<br>
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
 
+<a name='b'>
+
+## [Jetson TX2/PC] サーバ起動
+#### 1. Jetson TX2にログインします
+USER:ubuntu<br>
+PASSWORD:ubuntu<br>
+> `ssh ubuntu@192.168.xxx.xxx`<br>
+
+用意してあるJetson TX2はDockerを使っていないので、Raspberry Pi3の時のようなdockerコンテナへのログインはありません。<br>
+
+#### 2. ロボットカーのディレクトリに移動します
+> `cd ~/notebooks/github/RobotCarAI/level2_demo_socket/pc_server`<br>
+> `ls`<br>
+>> total 24<br>
+>> 160938  4 ./  160847  4 ../  160939  4 lib/  142530 12 server.py<br>
+
+#### 3. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 サーバ側が監視する自分のIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>
 > `vi server.py`
 >>`    HOST = '192.168.0.77' # Server IP Address`
 >>`    PORT = 6666 # Server Port`
 
-#### [Raspberry Pi3] ロボットカー起動
-> `cd level2_demo_socket/car_server`<br>
-> `python start_button.py`<br>
+#### 4. ライン検出コードを実行します
+> `python server.py`<br>
 
-青いボタンを押すと走行開始します。<br>
-赤いボタンを押すと走行停止します。<br>
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
 
+<a name='c'>
+
+## [Raspberry Pi3] ロボットカー起動
+#### 1. ロボットカーのRaspberry Pi3にログインします
+USER:pi<br>
+PASSWORD:raspberry<br>
+> `ssh pi@192.168.xxx.xxx`<br>
+
+#### 2. rootになってdockerコンテナIDを調べます
+> `sudo su`<br>
+> `docker ps -a`<br>
+>> CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                     PORTS                                                                    NAMES<br>
+>> 2133fa3ca362        naisy/fabo-jupyter-armhf   "/bin/bash -c 'jup..."   3 weeks ago         Up 2 minutes               0.0.0.0:6006->6006/tcp, 0.0.0.0:8091->8091/tcp, 0.0.0.0:8888->8888/tcp   hardcore_torvalds<br>
+
+STATUSがUpになっているコンテナIDをメモします。
+
+#### 3. dockerコンテナにログインします
+
+> `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+#### 4. ロボットカーのディレクトリに移動します
+> `cd /notebooks/github/RobotCarAI/evel2_demo_socket/car_client/`<br>
+> `ls`<br>
+>> total 28<br>
+>> 160848 4 ./  160847 4 ../  160850 4 fabolib/  160937 4 lib/  142528 8 run_car_client.py  142529 4 start_button.py<br>
+
+#### 5. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 クライアント側も通信先のサーバのIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>
 > `vi run_car_client.py`
 >>`    HOST = '192.168.0.77' # Server IP Address`
 >>`    PORT = 6666 # Server Port`
+
+#### 5. ロボットカーを起動します
+> `python start_button.py`<br>
+
+#### 6. 走行開始するには、ロボットカーの青いボタンを押します
+![](./document/img2.jpg)
+
+#### 7. 走行停止するには、ロボットカーの赤いボタンを押します
+![](./document/img3.jpg)<br>
+Ctrl + c でstart_button.pyを終了します
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

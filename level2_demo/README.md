@@ -11,19 +11,31 @@
 ![](./document/robotcar1.jpg)<br>
 ![](./document/robotcar2.jpg)<br>
 ![](./document/robotcar3.jpg)<br>
-実行環境の構成
-* Fabo TYPE1 ロボットカー
 
 【動画】<br>
 level2解析動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
 走行デモ動画：[./document/demo2.mp4](./document/demo2.mp4)<br>
 
+【実行環境】
+* Fabo TYPE1 ロボットカー
+  * USB Webcam
+  * Raspberry Pi3
+    * Jessie Lite
+    * docker
+      * Ubuntu
+      * Python 2.7
+      * OpenCV 2.4
+
 <hr>
 
 <a name='0'>
 
+【実行】
+* [インストール方法](#a)
+* [Raspberry Pi3での実行方法](#b)
+* [Jetson TX2での実行方法](#c)
+
 【目次】
-* [実行方法](#1)
 * [トラブルシューティング](#2)
   * Webcamが起動しない
   * 走行中にハンドルが固まった
@@ -31,15 +43,46 @@ level2解析動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
 * [ディレクトリとファイルについて](#3)
 <hr>
 
-<a name='1'>
+## Raspberry Pi3での実行方法
+#### 1. ロボットカーのRaspberry Pi3にログインします
+USER:pi<br>
+PASSWORD:raspberry<br>
+> `ssh pi@192.168.xxx.xxx`<br>
 
-## 実行方法
-> `git pull https://github.com/FaBoPlatform/RobotCarAI`<br>
-> `cd level2_demo`<br>
+#### 2. rootになってdockerコンテナIDを調べます
+> `sudo su`<br>
+> `docker ps -a`<br>
+>> CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                     PORTS                                                                    NAMES<br>
+>> 2133fa3ca362        naisy/fabo-jupyter-armhf   "/bin/bash -c 'jup..."   3 weeks ago         Up 2 minutes               0.0.0.0:6006->6006/tcp, 0.0.0.0:8091->8091/tcp, 0.0.0.0:8888->8888/tcp   hardcore_torvalds<br>
+
+STATUSがUpになっているコンテナIDをメモします。
+
+#### 3. dockerコンテナにログインします
+
+> `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+#### 4. ロボットカーのディレクトリに移動します
+> `cd /notebooks/github/RobotCarAI/level2_demo/`<br>
+> `ls`<br>
+>> total 36<br>
+>> 160689 4 ./   125775 4 README.md  160691 4 fabolib/  142518 8 run_car.py<br>
+>> 123628 4 ../  160690 4 document/  160692 4 lib/      142519 4 start_button.py<br>
+
+#### 5. ロボットカーを起動します
 > `python start_button.py`<br>
 
-青いボタンを押すと走行開始します。<br>
-赤いボタンを押すと走行停止します。<br>
+#### 6. 走行開始するには、ロボットカーの青いボタンを押します
+![](./document/img2.jpg)
+
+#### 7. 走行停止するには、ロボットカーの赤いボタンを押します
+![](./document/img3.jpg)<br>
+Ctrl + c でstart_button.pyを終了します
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+## Jetson TX2での実行方法
+Jetson TX2での実行方法は今後追加予定です。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
