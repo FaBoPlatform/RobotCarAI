@@ -274,7 +274,7 @@ result_*.jpg が検出結果の画像になります。<br>
 
 ## 物体検出の紹介
 画像ベースで識別する方法は大きくわけて3種類あります。<br>
-![](./document/detection.jpg)<br>
+![](./document/detection.png)<br>
 Classificationは画像1枚で判断します。<br>
 Object Detectionは画像の特定の領域で判断します。<br>
 Segmentationは画像の1画素単位で判断します。<br>
