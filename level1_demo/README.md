@@ -10,7 +10,8 @@
 【画像】<br>
 ![](./document/img1.jpg)
 ![](./document/robotcar.jpg)<br>
-実行環境の構成
+
+【実行環境】
 * Fabo TYPE1 ロボットカー
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
   * Fabo #902 Kerberos ver 1.0.0

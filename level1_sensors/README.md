@@ -8,8 +8,9 @@
 #### 3つの距離センサーから値を取得し、ロボットカーが走行可能な進行方向をニューラルネットワークモデルを用いて予測する
 
 【画像】
-![](./document/robotcar.jpg)
-実行環境の構成
+![](./document/robotcar.jpg)<br>
+
+【実行環境】
 * Fabo TYPE1 ロボットカー
   * Fabo #902 Kerberos ver 1.0.0
   * Lidar Lite v3
