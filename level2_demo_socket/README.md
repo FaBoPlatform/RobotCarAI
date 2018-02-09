@@ -75,9 +75,9 @@ PASSWORD:ubuntu<br>
 
 #### 3. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 サーバ側が監視する自分のIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>
-> `vi server.py`
->>`    HOST = '192.168.0.77' # Server IP Address`
->>`    PORT = 6666 # Server Port`
+> `vi server.py`<br>
+>>`    HOST = '192.168.0.77' # Server IP Address`<br>
+>>`    PORT = 6666 # Server Port`<br>
 
 #### 4. ライン検出コードを実行します
 > `python server.py`<br>
@@ -113,9 +113,9 @@ STATUSがUpになっているコンテナIDをメモします。
 
 #### 5. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 クライアント側も通信先のサーバのIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>
-> `vi run_car_client.py`
->>`    HOST = '192.168.0.77' # Server IP Address`
->>`    PORT = 6666 # Server Port`
+> `vi run_car_client.py`<br>
+>>`    HOST = '192.168.0.77' # Server IP Address`<br>
+>>`    PORT = 6666 # Server Port`<br>
 
 #### 5. ロボットカーを起動します
 > `python start_button.py`<br>
