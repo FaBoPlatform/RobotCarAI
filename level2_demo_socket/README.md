@@ -106,7 +106,7 @@ STATUSがUpになっているコンテナIDをメモします。
 > `docker exec -it 2133fa3ca362 /bin/bash`<br>
 
 #### 4. ロボットカーのディレクトリに移動します
-> `cd /notebooks/github/RobotCarAI/evel2_demo_socket/car_client/`<br>
+> `cd /notebooks/github/RobotCarAI/level2_demo_socket/car_client/`<br>
 > `ls`<br>
 >> total 28<br>
 >> 160848 4 ./  160847 4 ../  160850 4 fabolib/  160937 4 lib/  142528 8 run_car_client.py  142529 4 start_button.py<br>
@@ -146,8 +146,8 @@ OpenCVの映像取得に失敗した場合にこのエラーが発生します�
 >`VIDIOC_DQBUF: No such device`
 
 ロボットカーの赤いボタンを押して車両を停止してください。<br>
-走行中に突然一方方向に進み続けてしまう場合は、Raspberry Pi3からの電力供給が遮断されてカメラが認識不能になったために発生します。<br>
 カメラのUSBケーブルを抜き差ししてください。<br>
+走行中に突然一方方向に進み続けてしまう場合は、Raspberry Pi3からの電力供給が遮断されてカメラが認識不能になったために発生します。<br>
 Faboシールドの電源をRaspberry Pi3から取得している時に、サーボの消費電力量が増えた瞬間に発生します。電力供給はすぐに復旧するので走行は続くのですが、カメラが認識不能になるため、制御不能に陥ります。<br>
 <hr>
 
