@@ -174,6 +174,7 @@ Raspberry Pi3は物体検出を行うには非常に非力なので、実行に�
 #### 8. 検出結果を確認します
 ブラウザでRaspberry Pi3のjupyterにアクセスします<br>
 > http://192.168.xxx.xxx:8888/tree/github/SSD-Tensorflow/demo_images/<br>
+
 jupyterのpasswordは別途説明があるかと思います。<br>
 
 result_*.jpg が検出結果の画像になります。<br>
@@ -261,6 +262,7 @@ Jetson TX2はRaspberry Pi3よりかなり実行速度が速いことが分かり
 #### 8. 検出結果を確認します
 ブラウザでJetson TX2のjupyterにアクセスします<br>
 > http://192.168.xxx.xxx:8888/tree/github/SSD-Tensorflow/demo_images/<br>
+
 jupyterのpasswordは別途説明があるかと思います。<br>
 
 result_*.jpg が検出結果の画像になります。<br>

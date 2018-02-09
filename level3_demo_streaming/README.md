@@ -37,7 +37,7 @@
 
 【実行】
 * [インストール方法](#a)
-* [Jetson TX2/PC] {サーバ起動](#b)
+* [Jetson TX2/PC] [サーバ起動](#b)
 * [Raspberry Pi3] [ロボットカー FFMPEG UDP Streaming起動](#c)
 * [Raspberry Pi3] [ロボットカー起動](#d)
 
@@ -118,12 +118,13 @@ dockerコンテナが止まっている状態<br>
 > `docker ps -a`<br>
 >>CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                       PORTS                                                                    NAMES<br>
 >>95cbdd5f98b6        ffmpeg                     "/bin/bash -c 'ffm..."   3 minutes ago       Exited (255) 7 seconds ago                                                                            kind_hawking<br>
+
 dockerコンテナIDを指定して起動する<br>
 > `docker start 95cbdd5f98b6<br>
 
 サーバのIPアドレスを間違えて起動した場合は、dockerコンテナを停止して、新しくコンテナを作成してください。<br>
 dockerコンテナIDを指定して停止する<br>
-> `docker stop 95cbdd5f98b6<br>
+> `docker stop 95cbdd5f98b6`<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
