@@ -19,12 +19,17 @@ level2解析動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
 【実行環境】
 * Fabo TYPE1 ロボットカー
   * USB Webcam
+  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
+  * Fabo Robot Car #1202 Rev. 1.0.1
+  * Tower Pro SG90
   * Raspberry Pi3
     * Jessie Lite
     * docker
       * Ubuntu
       * Python 2.7
       * OpenCV 2.4
+      * FaBoPWM-PCA9685-Python
+      * FaBoGPIO-PCAL6408-Python
 
 <hr>
 
@@ -42,6 +47,16 @@ level2解析動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
   * Raspberry Pi3が起動しない
 * [ディレクトリとファイルについて](#3)
 <hr>
+
+<a name='a'>
+
+## インストール方法
+インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='b'>
 
 ## Raspberry Pi3での実行方法
 #### 1. ロボットカーのRaspberry Pi3にログインします
@@ -80,6 +95,8 @@ Ctrl + c でstart_button.pyを終了します
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
+
+<a name='c'>
 
 ## Jetson TX2での実行方法
 Jetson TX2での実行方法は今後追加予定です。<br>

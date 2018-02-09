@@ -23,9 +23,9 @@
     * docker
       * Ubuntu
       * Python 2.7
+      * OpenCV 2.4
       * FaBoPWM-PCA9685-Python
       * FaBoGPIO-PCAL6408-Python
-      * OpenCV 2.4
 * Jetson TX2
   * JetPack 3.1
     * Ubuntu
