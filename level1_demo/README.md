@@ -8,9 +8,23 @@
 #### 3つの距離センサーから値を取得し、Neaural Networksで進行方向を判断してロボットカーを自走させる
 
 【画像】<br>
+![](./document/img1.jpg)
 ![](./document/robotcar.jpg)<br>
 実行環境の構成
 * Fabo TYPE1 ロボットカー
+  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
+  * Fabo #902 Kerberos ver 1.0.0
+  * Fabo Robot Car #1202 Rev. 1.0.1
+  * Lidar Lite v3
+  * Tower Pro SG90
+  * Raspberry Pi3
+    * Jessie Lite
+    * docker
+      * Ubuntu
+      * Python 2.7
+      * FaBoPWM-PCA9685-Python
+      * FaBoGPIO-PCAL6408-Python
+      * Tensorflow r1.1.0
 
 【動画】<br>
 走行デモ動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
@@ -18,6 +32,9 @@
 <hr>
 
 <a name='0'>
+【実行】
+* [インストール方法](#a)
+* [実行方法](#b)
 
 【目次】
 * [必要なコードとファイル](#1)
@@ -25,6 +42,52 @@
   * Neural Networksの判断処理を追加する
   * 開始ボタン
 * [ディレクトリとファイルについて](#3)
+<hr>
+
+<a name='a'>
+
+## インストール方法
+インストール済みのロボットカーを用意しているので省略します。
+<hr>
+
+<a name='b'>
+## 実行方法
+#### 1. ロボットカーのRaspberry Pi3にログインします
+USER:pi<br>
+PASSWORD:raspberry<br>
+> `ssh pi@192.168.xxx.xxx`<br>
+
+#### 2. rootになってdockerコンテナIDを調べます
+> `sudo su`<br>
+> `docker ps -a`<br>
+>> CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                     PORTS                                                                    NAMES<br>
+>> 2133fa3ca362        naisy/fabo-jupyter-armhf   "/bin/bash -c 'jup..."   3 weeks ago         Up 2 minutes               0.0.0.0:6006->6006/tcp, 0.0.0.0:8091->8091/tcp, 0.0.0.0:8888->8888/tcp   hardcore_torvalds<br>
+
+STATUSがUpになっているコンテナIDをメモします。
+
+#### 3. dockerコンテナにログインします
+
+> `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+#### 4. ロボットカーのディレクトリに移動します
+
+> `cd /notebooks/github/RobotCarAI/level1_demo/`<br>
+> `ls`<br>
+>> total 48<br>
+>> 160769  4 ./   127297  4 README.md  160770  4 fabolib/  160772  4 model/         141770  4 start_button.py<br>
+>> 123628  4 ../  160804  4 document/  160771  4 lib/      141769 16 run_car_ai.py<br>
+
+#### 5. ロボットカーを起動します
+> `python start_button.py`<br>
+
+#### 6. 走行開始するには、ロボットカーの青いボタンを押します
+![](./document/img2.jpg)
+
+#### 7. 走行停止するには、ロボットカーの赤いボタンを押します
+![](./document/img3.jpg)<br>
+Ctrl + c でstart_button.pyを終了します
+
+[<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='1'>
