@@ -15,16 +15,40 @@
 止まれを検出する動画：[./document/stop.mp4](./document/stop.mp4)<br>
 走行しながら道路標識を検出する動画：[./document/course160x120.mp4](./document/course160x120.mp4)<br>
 
+【実行環境】
+* Fabo TYPE1 ロボットカー
+  * USB Webcam
+  * Raspberry Pi3
+    * Jessie Lite
+    * docker
+      * Ubuntu
+      * Python 2.7
+      * OpenCV 2.4
+      * Tensorflow r1.1.0
+* Jetson TX2
+  * USB Webcam
+  * JetPack 3.1
+    * Ubuntu
+    * Python 3.6
+    * OpenCV 3.3
+    * Tensorflow r1.4.1
+
 <hr>
 
 <a name='0'>
 
+【実行】
+* [インストール方法](#a)
+* [Raspberry Pi3での実行方法](#b)
+* [Jetson TX2での実行方法](#c)
+
 【目次】
 * [物体検出の紹介](#1)
-  * [OpenCV] [テンプレートマッチング]
-  * [Python] [Selective Search]
-  * [Neural Networks] [SSD: Single Shot MultiBox Detection]
-  * [Python/TensorFlow] [TensorFlow Object Detection API]
+  * object detection
+    * [OpenCV] [テンプレートマッチング]
+    * [Python] [Selective Search]
+    * [Neural Networks] [SSD: Single Shot MultiBox Detection]
+    * [Python/TensorFlow] [TensorFlow Object Detection API]
 * [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflowを使う](#2)
   * インストール
   * demo実行
@@ -40,10 +64,224 @@
 * [開発/学習/実行環境について](#4)
 <hr>
 
+
+<a name='a'>
+
+## インストール方法
+インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+## Raspberry Pi3での実行方法
+#### 1. ロボットカーのRaspberry Pi3にログインします
+USER:pi<br>
+PASSWORD:raspberry<br>
+> `ssh pi@192.168.xxx.xxx`<br>
+
+#### 2. rootになってdockerコンテナIDを調べます
+> `sudo su`<br>
+> `docker ps -a`<br>
+>> CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                     PORTS                                                                    NAMES<br>
+>> 2133fa3ca362        naisy/fabo-jupyter-armhf   "/bin/bash -c 'jup..."   3 weeks ago         Up 2 minutes               0.0.0.0:6006->6006/tcp, 0.0.0.0:8091->8091/tcp, 0.0.0.0:8888->8888/tcp   hardcore_torvalds<br>
+
+STATUSがUpになっているコンテナIDをメモします。
+
+#### 3. dockerコンテナにログインします
+
+> `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+#### 4. ロボットカーのディレクトリに移動します
+> `cd /notebooks/github/RobotCarAI/level3_object_detection/`<br>
+> `ls`<br>
+>> total 56<br>
+>> 160711  4 ./         160811  4 copy_to_SSD-Tensorflow/  160814  4 patch_to_SSD-Tensorflow/  160725  4 train_scripts/<br>
+>> 123628  4 ../        160712  4 document/                160721  4 roadsign_data/<br>
+>> 125879 20 README.md  160713  4 install_scripts/         141626  4 script_define.conf<br>
+
+#### 5. スクリプト設定ファイルを編集します
+dockerのディレクトリパスに合わせて編集します。<br>
+
+> `vi script_define.conf`<br>
+>> # 編集前<br>
+>> GIT_DIR=/home/ubuntu/notebooks/github<br>
+>> ... <br>
+>> VOC_DATASET_DIR=/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/PascalVOC<br>
+>> TF_DATASET_DIR=/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/tfrecords<br>
+>> # 編集後<br>
+>> GIT_DIR=/notebooks/github<br>
+>> ... <br>
+>> VOC_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/PascalVOC<br>
+>> TF_DATASET_DIR=/notebooks/github/RobotCarAI/level3_object_detection/roadsign_data/tfrecords<br>
+
+#### 6. インストールスクリプトに実行権限を付与して実行します
+> `chmod 755 ./install_scripts/*.sh`<br>
+> `./install_scripts/install.sh`<br>
+
+すでに実行してある場合は、再実行すると以下のようになりますので、パッチを戻すか？という問いにはnで答えてください。<br>
+>fatal: destination path 'SSD-Tensorflow' already exists and is not an empty directory.<br>
+>Archive:  ssd_300_vgg.ckpt.zip<br>
+>  inflating: ssd_300_vgg.ckpt.index  <br>
+>patching file /notebooks/github/SSD-Tensorflow/preprocessing/ssd_vgg_preprocessing.py<br>
+>Reversed (or previously applied) patch detected!  Assume -R? [n] n<br>
+>Apply anyway? [n] n<br>
+>Skipping patch.<br>
+>1 out of 1 hunk ignored -- saving rejects to file /notebooks/github/SSD-Tensorflow/preprocessing/ssd_vgg_preprocessing.py.rej<br>
+>patching file /notebooks/github/SSD-Tensorflow/nets/ssd_vgg_300.py<br>
+>Reversed (or previously applied) patch detected!  Assume -R? [n] n<br>
+>Apply anyway? [n] n<br>
+>Skipping patch.<br>
+>3 out of 3 hunks ignored -- saving rejects to file /notebooks/github/SSD-Tensorflow/nets/ssd_vgg_300.py.rej<br>
+
+よくわからなくなったら、SSD-Tensorflowのディレクトリを削除してからインストールスクリプトを実行してください。<br>
+
+> `rm -rf /notebooks/github/SSD-Tensorflow/`<br>
+> `./install_scripts/install.sh`<br>
+
+#### 6. トレーニングスクリプトに実行権限を付与して実行します
+> `chmod 755 ./train_scripts/*.sh`<br>
+> `./train_scripts/setup_mytrain.sh`<br>
+>> total objects:891<br>
+>> label:objects:images<br>
+>> stop:149:142<br>
+>> speed_10:202:185<br>
+>> speed_20:356:349<br>
+>> speed_30:184:184<br>
+
+実際の学習は多くのGPUメモリを搭載したマシンが必要となるので、ここでは学習は行いません。<br>
+
+#### 7. 道路標識の検出を実行する
+> `cd /notebooks/github/SSD-Tensorflow`<br>
+> `python run_ssd.py`<br>
+>> time:116.36789203 clock:54.87105800<br>
+>> time:15.70358896 clock:51.92819900<br>
+>> time:14.47124100 clock:51.34533300<br>
+>> time:14.39473701 clock:50.40863100<br>
+>> time:17.08592391 clock:51.68568700<br>
+>> time:14.97833300 clock:47.98345900<br>
+>> time:12.63103414 clock:47.83602600<br>
+>> time:12.64851999 clock:48.24852800<br>
+>> time:12.63877583 clock:47.83689600<br>
+>> time:12.62398911 clock:48.13235200<br>
+>> time:12.84498405 clock:48.04971600<br>
+>> time:12.57889819 clock:47.78148500<br>
+>> time:12.74054813 clock:48.23995300<br>
+>> end<br>
+
+
+Raspberry Pi3は物体検出を行うには非常に非力なので、実行には少し時間がかかります。<br>
+
+#### 8. 検出結果を確認します
+ブラウザでRaspberry Pi3のjupyterにアクセスします<br>
+> http://192.168.xxx.xxx:8888/tree/github/SSD-Tensorflow/demo_images/<br>
+jupyterのpasswordは別途説明があるかと思います。<br>
+
+result_*.jpg が検出結果の画像になります。<br>
+
+入力に使ったデータは、result_の付いていない画像になります。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+## Jetson TX2での実行方法
+#### 1. Jetson TX2にログインします
+USER:ubuntu<br>
+PASSWORD:ubuntu<br>
+> `ssh ubuntu@192.168.xxx.xxx`<br>
+
+用意してあるJetson TX2はDockerを使っていないので、Raspberry Pi3の時のようなdockerコンテナへのログインはありません。<br>
+
+#### 2. ロボットカーのディレクトリに移動します
+> `cd ~/notebooks/github/RobotCarAI/level3_object_detection/`<br>
+> `ls`<br>
+>> total 56<br>
+>> 160711  4 ./         160811  4 copy_to_SSD-Tensorflow/  160814  4 patch_to_SSD-Tensorflow/  160725  4 train_scripts/<br>
+>> 123628  4 ../        160712  4 document/                160721  4 roadsign_data/<br>
+>> 125879 20 README.md  160713  4 install_scripts/         141626  4 script_define.conf<br>
+
+
+#### 3. インストールスクリプトに実行権限を付与して実行します
+スクリプト設定ファイルはJetson TX2の環境に合わせて用意してあるので編集の必要はないので、インストールスクリプトの実行を行ってください。<br>
+> `chmod 755 ./install_scripts/*.sh`<br>
+> `./install_scripts/install.sh`<br>
+
+すでに実行してある場合は、再実行すると以下のようになりますので、パッチを戻すか？という問いにはnで答えてください。<br>
+>fatal: destination path 'SSD-Tensorflow' already exists and is not an empty directory.<br>
+>Archive:  ssd_300_vgg.ckpt.zip<br>
+>patching file /home/ubuntu/notebooks/github/SSD-Tensorflow/preprocessing/ssd_vgg_preprocessing.py<br>
+>Reversed (or previously applied) patch detected!  Assume -R? [n] n<br>
+>Apply anyway? [n] n<br>
+>Skipping patch.<br>
+>1 out of 1 hunk ignored -- saving rejects to file /home/ubuntu/notebooks/github/SSD-Tensorflow/preprocessing/ssd_vgg_preprocessing.py.rej<br>
+>patching file /home/ubuntu/notebooks/github/SSD-Tensorflow/nets/ssd_vgg_300.py<br>
+>Reversed (or previously applied) patch detected!  Assume -R? [n] n<br>
+>Apply anyway? [n] n<br>
+>Skipping patch.<br>
+>3 out of 3 hunks ignored -- saving rejects to file /home/ubuntu/notebooks/github/SSD-Tensorflow/nets/ssd_vgg_300.py.rej<br>
+
+よくわからなくなったら、SSD-Tensorflowのディレクトリを削除してからインストールスクリプトを実行してください。<br>
+
+> `rm -rf /home/ubuntu/notebooks/github/SSD-Tensorflow/`<br>
+> `./install_scripts/install.sh`<br>
+
+#### 4. トレーニングスクリプトに実行権限を付与して実行します
+> `chmod 755 ./train_scripts/*.sh`<br>
+> `./train_scripts/setup_mytrain.sh`<br>
+>> total objects:891<br>
+>> label:objects:images<br>
+>> stop:149:142<br>
+>> speed_10:202:185<br>
+>> speed_20:356:349<br>
+>> speed_30:184:184<br>
+
+実際の学習は多くのGPUメモリを搭載したマシンが必要となるので、ここでは学習は行いません。<br>
+Jetson TX2は8GBのGPUメモリがありますが、これでも学習には向きません。<br>
+この学習は、AWS p3.2xlargeインスタンスで1日程度実行してあります。<br>
+
+#### 5. 道路標識の検出を実行する
+> `cd ~/notebooks/github/SSD-Tensorflow`<br>
+> `python run_ssd.py`<br>
+>>time:25.23302293 clock:23.77420100<br>
+>>time:1.77238727 clock:1.49304700<br>
+>>time:1.77872753 clock:1.42159600<br>
+>>time:1.78329659 clock:1.58512700<br>
+>>time:1.76960158 clock:1.57257700<br>
+>>time:1.41074395 clock:1.13222900<br>
+>>time:0.36464643 clock:0.34475100<br>
+>>time:0.36422086 clock:0.34886500<br>
+>>time:0.36535668 clock:0.35530400<br>
+>>time:0.35956836 clock:0.34501500<br>
+>>time:0.36577463 clock:0.35173300<br>
+>>time:0.37001014 clock:0.35788600<br>
+>>time:0.36742902 clock:0.35056400<br>
+>>end<br>
+
+Jetson TX2はRaspberry Pi3よりかなり実行速度が速いことが分かります。<br>
+
+#### 8. 検出結果を確認します
+ブラウザでJetson TX2のjupyterにアクセスします<br>
+> http://192.168.xxx.xxx:8888/tree/github/SSD-Tensorflow/demo_images/<br>
+jupyterのpasswordは別途説明があるかと思います。<br>
+
+result_*.jpg が検出結果の画像になります。<br>
+
+入力に使ったデータは、result_の付いていない画像になります。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
 <a name='1'>
 
 ## 物体検出の紹介
-物体検出はこれまでに色々な方法が試みられてきました。
+画像ベースで識別する方法は大きくわけて3種類あります。<br>
+![](./document/detection.jpg)<br>
+Classificationは画像1枚で判断します。<br>
+Object Detectionは画像の特定の領域で判断します。<br>
+Segmentationは画像の1画素単位で判断します。<br>
+Classificationの方が処理速度が速く、Segmentationになると処理速度が遅くなります。<br>
+
+今回はSSD300を使ったObject Detectionで道路標識をの検出します。<br>
+
 #### [OpenCV] テンプレートマッチング
 昔からある方法としては、黒枠などのテンプレート画像を検索する方法があり、OpenCVで使う事が出来ます。<br>
 検出には入力画像内にあるテンプレート同様の画像サイズが、用意したテンプレート画像サイズとほぼ一致している必要があるため、複数のサイズでテンプレートを用意します。<br>

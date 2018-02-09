@@ -151,7 +151,7 @@ PASSWORD:ubuntu<br>
 >TypeError: expected non-empty vector for x<br>
 
 #### 6. 確認します
-ブラウザでRaspberry Pi3のjupyterにアクセスします<br>
+ブラウザでJetson TX2のjupyterにアクセスします<br>
 > http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level2_lane_detection/<br>
 jupyterのpasswordは別途説明があるかと思います。<br>
 
