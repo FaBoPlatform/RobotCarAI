@@ -8,13 +8,34 @@
 #### 3つの距離センサーから値を取得し、IF文で進行方向を判断してロボットカーを自走させる
 
 【画像】
+![](./document/img1.jpg)
 ![](./document/robotcar.jpg)
-実行環境の構成
+
+【動画】<br>
+走行デモ動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
+
+【実行環境】
 * Fabo TYPE1 ロボットカー
+  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
+  * Fabo #902 Kerberos ver 1.0.0
+  * Fabo Robot Car #1202 Rev. 1.0.1
+  * Lidar Lite v3
+  * Tower Pro SG90
+  * Raspberry Pi3
+    * Jessie Lite
+    * docker
+      * Ubuntu
+      * Python 2.7
+      * FaBoPWM-PCA9685-Python
+      * FaBoGPIO-PCAL6408-Python
 
 <hr>
 
 <a name='0'>
+
+【実行】
+* [インストール方法](#a)
+* [実行方法](#b)
 
 【目次】
 * [Hardware] [距離センサーLidarLite v3について](#1)
@@ -36,6 +57,75 @@
   * 停止ボタンを追加する
   * 開始ボタンを追加する
 * [ディレクトリとファイルについて](#6)
+<hr>
+
+<a name='a'>
+
+## インストール方法
+インストール済みのロボットカーを用意しているので省略します。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='b'>
+
+## 実行方法
+#### 1. ロボットカーのRaspberry Pi3にログインします
+USER:pi<br>
+PASSWORD:raspberry<br>
+> `ssh pi@192.168.xxx.xxx`<br>
+
+#### 2. rootになってdockerコンテナIDを調べます
+> `sudo su`<br>
+> `docker ps -a`<br>
+>> CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                     PORTS                                                                    NAMES<br>
+>> 2133fa3ca362        naisy/fabo-jupyter-armhf   "/bin/bash -c 'jup..."   3 weeks ago         Up 2 minutes               0.0.0.0:6006->6006/tcp, 0.0.0.0:8091->8091/tcp, 0.0.0.0:8888->8888/tcp   hardcore_torvalds<br>
+
+STATUSがUpになっているコンテナIDをメモします。
+
+#### 3. dockerコンテナにログインします
+
+> `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+#### 4. ロボットカーのディレクトリに移動します
+
+> `cd /notebooks/github/RobotCarAI/level1_car/`<br>
+> `ls`<br>
+>> total 60<br>
+>> 160688  4 ./   125618 16 README.md  160720  4 fabolib/    160809  4 lib/           127092  4 start_button.py<br>
+>> 123628  4 ../  160708  4 document/  160808  4 generator/  127056 12 run_car_if.py  160810  4 test/<br>
+
+#### 5. ロボットカーを起動します
+> `python start_button.py`<br>
+
+#### 6. 走行開始するには、ロボットカーの青いボタンを押します
+![](./document/img2.jpg)
+
+#### 7. 走行停止するには、ロボットカーの赤いボタンを押します
+![](./document/img3.jpg)<br>
+Ctrl + c でstart_button.pyを終了します
+
+#### 8. ソースコードを修正して、ロボットカーを再度走らせます
+進行方向の判断処理を変更してロボットカーを走らせてみます。<br>
+> `vi run_car_if.py`<br>
+ソースコード：[./run_car_if.py](./run_car_if.py)<br>
+```python
+# 書き換え前
+from generator import SimpleLabelGenerator as LabelGenerator
+#from generator import LabelGenerator
+
+# 書き換え後
+#from generator import SimpleLabelGenerator as LabelGenerator
+from generator import LabelGenerator
+```
+走行から終了は5.6.7.の手順になります。<br>
+
+#### これ以降について
+level1_carでは、ロボットカーの制御方法についての内容になります。<br>
+level1_sensorsでは、書き換え後となるLabelGeneratorの進行方向の判断処理についてと、その判断をニューラルネットワークに覚えさせる内容になります。<br>
+level1_demoでは、ニューラルネットワークで判断処理を行い、ロボットカーを制御する内容になります。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='1'>

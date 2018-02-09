@@ -5,7 +5,7 @@ import time
 import logging
 import threading
 import numpy as np
-from fab_lib import Kerberos
+from fabolib import Kerberos
 from lib import AI
 
 import sys

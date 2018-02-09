@@ -11,10 +11,10 @@ RobotCar AI Playground.
 * [Level 3: ニューラルネットワークで道路標識を検出する](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level3_object_detection)
 * [Level 3: ロボットカー走行デモ TCP通信版](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level3_demo_socket)
 * [Level 3: ロボットカー走行デモ FFMPEG UDP Streaming/TCP通信版](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level3_demo_streaming)
-* [Level 4: OpenCVでレーン検出する](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level4_lane_detection)
+* [Level 4: OpenCVでレーンを検出する](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level4_lane_detection)
 
 #### Level 1
-![](./level1_sensors/document/robotcar.jpg)<br>
+![](./level1_car/document/img1.jpg)<br>
 
 #### Level 2
 ![](./level2_lane_detection/document/result_frame_1.jpg)<br>
@@ -29,15 +29,7 @@ RobotCar AI Playground.
 ## Component
 * [FaBo](http://fabo.io)
 * [FaBo Open Source Robot Car](https://github.com/FaBoPlatform/RobotCar)
-* [FaBo Motor Shield](https://github.com/FaBoPlatform/MotorShield)
-* [FaBo Motor Shield Example](https://github.com/FaBoPlatform/MotorShield/example)
-* [FaBo RC Car Examples](https://github.com/FaBoPlatform/MotorShieldExamples])
 
-
-## Robot Component Tutorial
-
-* [DeviceWebAPI](http://docs.fabo.io/devicewebapi/)
-* [OpenRTM](http://docs.fabo.io/openrtm/)
 
 ## Tutorial
 

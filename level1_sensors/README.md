@@ -10,15 +10,23 @@
 【画像】
 ![](./document/robotcar.jpg)
 実行環境の構成
-* Raspberry Pi3
-* Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
-* Fabo #902 Kerberos ver 1.0.0
-* LidarLite v3
-* USB電源
+* Fabo TYPE1 ロボットカー
+  * Fabo #902 Kerberos ver 1.0.0
+  * Lidar Lite v3
+  * Raspberry Pi3
+    * Jessie Lite
+    * docker
+      * Ubuntu
+      * Python 2.7
+      * Tensorflow r1.1.0
 
 <hr>
 
 <a name='0'>
+
+【実行】
+* [インストール方法](#a)
+* [実行方法](#b)
 
 【目次】
 * [Hardware] [距離センサーLidarLite v3について](#1)
@@ -41,6 +49,57 @@
 * [Python/TensorFlow] [予測を実行](#7)
 * [Python/TensorFlow] [予測精度を評価](#8)
 * [ディレクトリとファイルについて](#9)
+<hr>
+
+<a name='a'>
+
+## インストール方法
+インストール済みのロボットカーを用意しているので省略します。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='b'>
+
+## 実行方法
+#### 1. ロボットカーのRaspberry Pi3にログインします
+USER:pi<br>
+PASSWORD:raspberry<br>
+> `ssh pi@192.168.xxx.xxx`<br>
+
+#### 2. rootになってdockerコンテナIDを調べます
+> `sudo su`<br>
+> `docker ps -a`<br>
+>> CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                     PORTS                                                                    NAMES<br>
+>> 2133fa3ca362        naisy/fabo-jupyter-armhf   "/bin/bash -c 'jup..."   3 weeks ago         Up 2 minutes               0.0.0.0:6006->6006/tcp, 0.0.0.0:8091->8091/tcp, 0.0.0.0:8888->8888/tcp   hardcore_torvalds<br>
+
+STATUSがUpになっているコンテナIDをメモします。
+
+#### 3. dockerコンテナにログインします
+
+> `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+#### 4. ロボットカーのディレクトリに移動します
+> `cd /notebooks/github/RobotCarAI/level1_sensors/`<br>
+> `ls`<br>
+>> total 100<br>
+>> 160616  4 ./    125780 48 README.md  160618  4 generator/  125805  4 run_ai.py<br>
+>> 123628  4 ../   160709  4 document/  160686  4 lib/        125870  8 run_ai_eval.py<br>
+>> 160617  4 MLP/  160710  4 fabolib/   160687  4 model/      125871  8 run_ai_eval_400.py<br>
+
+#### 5. ニューラルネットワークによる進行方向判断処理を実行します
+今回は学習済みのモデルを実行します。
+> `python run_ai.py`<br>
+>> [DEBUG] time:1518164009.79348111 pid:170 pn:MainProcess tid:1811108976 tn:Thread-1   fn:do_stop    enter<br>
+>> learned_step:50000000<br>
+>> result:FORWARD [218, 511, 112]        <br>
+>> main end<br>
+
+#### これ以降について
+学習はMLP/train_model.pyを実行することで出来ますが、メモリやCPU性能のいいマシンを用意する必要があります。<br>
+この学習はAWS c5.xlargeインスタンスで一週間程度実行してあります。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='1'>
