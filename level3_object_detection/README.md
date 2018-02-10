@@ -520,6 +520,15 @@ USBカメラが未接続だったり、ストリーミングが開始されて�
 受信側確認コマンド(動画プレイヤーが立ち上がるので、画面のあるPCで確認する場合になります)
 > `ffplay udp://localhost:8090`<br>
 
+ロボットカーのRaspberry Pi3では、level3_demo_streamingでFFMPEG用にdockerイメージを用意してありますので、それを使うことができます。<br>
+サーバに合わせてIPアドレスを変更してください。<br>
+> `sudo su`<br>
+
+dockerコンテナを作成する<br>
+> `docker run -itd --device=/dev/video0:/dev/video0 ffmpeg /bin/bash -c "ffmpeg -thread_queue_size 1024 -r 1 -video_size 160x120 -input_format yuyv422 -i /dev/video0 -pix_fmt yuv422p -threads 4 -f mpegts udp://192.168.0.77:8090"`<br>
+>> 95cbdd5f98b6981259e6b29a7e11ea3c24c945e7157ec4725a2d8d8e3491c918<br>
+
+
 AWSで受信する場合は、UDPポートで受信出来るようにするために、外部IPアドレスを持ち、セキュリティグループにUDPポート番号を設定必要があります。<br>
 Jetson TX2で受信する場合は、内部IPアドレスとポート番号だけで受信出来ます。
 
