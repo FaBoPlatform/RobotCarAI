@@ -520,7 +520,7 @@ USBカメラが未接続だったり、ストリーミングが開始されて�
 受信側確認コマンド(動画プレイヤーが立ち上がるので、画面のあるPCで確認する場合になります)
 > `ffplay udp://localhost:8090`<br>
 
-ロボットカーのRaspberry Pi3では、level3_demo_streamingでFFMPEG用にdockerイメージを用意してありますので、それを使うことができます。<br>
+ロボットカーのRaspberry Pi3では、[level3_demo_streaming](../level3_demo_streaming#c)でFFMPEG用にdockerイメージを用意してありますので、それを使うことができます。<br>
 サーバに合わせてIPアドレスを変更してください。<br>
 > `sudo su`<br>
 

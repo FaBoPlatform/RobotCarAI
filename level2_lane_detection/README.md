@@ -40,6 +40,7 @@ level4:OpenCVでレーン検出する: [level4_lane_detection](../level4_lane_de
 
 【実行】
 * [インストール方法](#a)
+* [コースの準備](#course)
 * [Raspberry Pi3での実行方法](#b)
 * [Jetson TX2での実行方法](#c)
 
@@ -52,6 +53,18 @@ level4:OpenCVでレーン検出する: [level4_lane_detection](../level4_lane_de
 
 ## インストール方法
 インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='course'>
+
+## コースの準備
+走行中のカメラ動画をdemo_lane/capture.mp4に用意してあるのでコースの準備は不要です。<br>
+自分でコースを用意する場合は、白色抽出しやすいようにはっきりとした白色でコースを作ってください。<br>
+急なカーブはカメラに映らなくなってしまうので、できるだけ緩やかなカーブでコースを作ってください。<br>
+
+![](./document/course.jpg)<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -85,6 +98,7 @@ STATUSがUpになっているコンテナIDをメモします。
 >> 142509  4 README.md  160849  4 lib/        160942  4 test_images/              142546  4 to_white.py<br>
 
 #### 5. ライン検出コードを実行します
+demo_lane/capture.mp4を入力として1フレームずつ検出し、output/result_capture.aviに保存します。<br>
 > `python opencv_lane_detection.py`<br>
 >> FPS:6.43823125369 <br>
 >> frame 229 Done!<br>
@@ -135,6 +149,7 @@ PASSWORD:ubuntu<br>
 >> 142509  4 README.md  160849  4 lib/        160942  4 test_images/              142546  4 to_white.py<br>
 
 #### 3. ライン検出コードを実行します
+demo_lane/capture.mp4を入力として1フレームずつ検出し、output/result_capture.aviに保存します。<br>
 > `python opencv_lane_detection.py`<br>
 >> FPS:34.37121576286537 <br>
 >> frame 229 Done!<br>
