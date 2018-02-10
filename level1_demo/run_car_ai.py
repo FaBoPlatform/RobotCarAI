@@ -1,6 +1,6 @@
 # coding: utf-8
 # ロボットカー自走コード
-
+print("loading...")
 import time
 import logging
 import threading
@@ -59,6 +59,8 @@ def main():
     '''
     global stop_thread_running
     global main_thread_running
+
+    print("main")
 
     # CAR準備
     STOP=0
