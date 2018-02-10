@@ -83,9 +83,9 @@ STATUSがUpになっているコンテナIDをメモします。
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level1_sensors/`<br>
 > `ls`<br>
->> total 100<br>
->> 160616  4 ./    125780 48 README.md  160618  4 generator/  125805  4 run_ai.py<br>
->> 123628  4 ../   160709  4 document/  160686  4 lib/        125870  8 run_ai_eval.py<br>
+>> total 104<br>
+>> 160616  4 ./    125780 48 README.md  160618  4 generator/  142810  4 run_ai.py           141770  4 to_one_hot_value.py<br>
+>>  123628  4 ../   160709  4 document/  160686  4 lib/        125870  8 run_ai_eval.py<br>
 >> 160617  4 MLP/  160710  4 fabolib/   160687  4 model/      125871  8 run_ai_eval_400.py<br>
 
 #### 5. ニューラルネットワークによる進行方向判断処理を実行します
@@ -139,7 +139,8 @@ label1 | 0 | 1 | 0 | 0
 label2 | 0 | 0 | 1 | 0
 label3 | 0 | 0 | 0 | 1
 
-pythonでは、numpyを使ってone hot valueを作ることが出来ます。
+pythonでは、numpyを使ってone hot valueを作ることが出来ます。<br>
+ソースコード：[./to_one_hot_value.py](./to_one_hot_value.py)<br>
 ```python
 # coding: utf-8
 import numpy as np

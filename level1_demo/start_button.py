@@ -1,7 +1,7 @@
 # coding: utf-8
 # pip3 install spidev
 # AI開始ボタン
-
+print("loading...")
 import spidev
 import time
 import sys
@@ -19,6 +19,7 @@ spi = SPI()
 proc = None
 try:
     cmd = "python "+os.path.abspath(os.path.dirname(__file__))+"/run_car_ai.py"
+    print("ready")
     while True:
         data = spi.readadc(START_BUTTON_SPI_PIN) # data: 0-1023
         if data >= 1000:
