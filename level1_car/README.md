@@ -18,7 +18,8 @@
 * Fabo TYPE1 ロボットカー
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
   * Fabo #902 Kerberos ver 1.0.0
-  * Fabo Robot Car #1202 Rev. 1.0.1
+  * Fabo #1202 Robot Car Rev. 1.0.1
+  * Fabo #103 Button
   * Lidar Lite v3
   * Tower Pro SG90
   * Raspberry Pi3
