@@ -8,7 +8,7 @@
 #### 映像をサーバに送り、level2,level3によるサーバからの走行指示でロボットカーを自走させる
 
 【動画】<br>
-走行しながら止まれを検出して止まる動画：[./document/leve3_aws_demo1.mp4](./document/leve3_aws_demo1.mp4)<br>
+走行しながら止まれを検出して止まる動画：[![走行しながら止まれを検出して止まる動画](https://img.youtube.com/vi/crsxRYU_j_E/2.jpg)](https://www.youtube.com/watch?v=crsxRYU_j_E)<br>
 
 【実行環境】
 * Fabo TYPE1 ロボットカー
