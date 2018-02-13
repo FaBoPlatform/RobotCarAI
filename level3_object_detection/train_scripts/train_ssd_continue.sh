@@ -8,7 +8,7 @@ source $SCRIPT_DIR/../script_define.conf
 
 
 ####################
-OUTPUT_DIR=$SSD_TENSORFLOW_DIR/output/
+OUTPUT_DIR=$SCRIPT_DIR/../output/
 TRAIN_CODE=train_${MY_TRAIN}.py
 
 
