@@ -12,13 +12,14 @@
 ![](./document/robotcar.jpg)
 
 【動画】<br>
-走行デモ動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
+走行デモ動画：[![走行デモ動画](https://img.youtube.com/vi/aGF8QZeBsto/2.jpg)](https://www.youtube.com/watch?v=aGF8QZeBsto)<br>
 
 【実行環境】
 * Fabo TYPE1 ロボットカー
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
   * Fabo #902 Kerberos ver 1.0.0
-  * Fabo Robot Car #1202 Rev. 1.0.1
+  * Fabo #1202 Robot Car Rev. 1.0.1
+  * Fabo #103 Button
   * Lidar Lite v3
   * Tower Pro SG90
   * Raspberry Pi3
