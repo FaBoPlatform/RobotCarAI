@@ -98,7 +98,7 @@ STATUSがUpになっているコンテナIDをメモします。
 >> 142509  4 README.md  160849  4 lib/        160942  4 test_images/              142546  4 to_white.py<br>
 
 #### 5. ライン検出コードを実行します
-demo_lane/capture.mp4を入力として1フレームずつ検出し、output/result_capture.aviに保存します。<br>
+demo_lane/capture.mp4を入力として読み込み、1フレームずつ検出してoutput/result_capture.aviに保存します。<br>
 > `python opencv_lane_detection.py`<br>
 >> FPS:6.43823125369 <br>
 >> frame 229 Done!<br>
@@ -149,7 +149,7 @@ PASSWORD:ubuntu<br>
 >> 142509  4 README.md  160849  4 lib/        160942  4 test_images/              142546  4 to_white.py<br>
 
 #### 3. ライン検出コードを実行します
-demo_lane/capture.mp4を入力として1フレームずつ検出し、output/result_capture.aviに保存します。<br>
+demo_lane/capture.mp4を入力として読み込み、1フレームずつ検出してoutput/result_capture.aviに保存します。<br>
 > `python opencv_lane_detection.py`<br>
 >> FPS:34.37121576286537 <br>
 >> frame 229 Done!<br>
