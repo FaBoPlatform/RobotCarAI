@@ -21,8 +21,6 @@ RobotCar AI Playground.
 [![走行デモ動画](https://img.youtube.com/vi/L7d6JyxL-sM/1.jpg)](https://www.youtube.com/watch?v=L7d6JyxL-sM)<br>
 
 #### Level 3
-![](./level3_object_detection/document/jetson_tx2-stop.png)<br>
-https://youtu.be/crsxRYU_j_E
 [![走行しながら止まれを検出して止まる動画](https://img.youtube.com/vi/crsxRYU_j_E/2.jpg)](https://www.youtube.com/watch?v=crsxRYU_j_E)<br>
 
 #### Level 4
