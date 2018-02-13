@@ -37,6 +37,7 @@ level2解析動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
 
 【実行】
 * [インストール方法](#a)
+* [コースの準備](#course)
 * [Raspberry Pi3での実行方法](#b)
 * [Jetson TX2での実行方法](#c)
 
@@ -52,6 +53,17 @@ level2解析動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
 
 ## インストール方法
 インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='course'>
+
+## コースの準備
+コースは白線で作り、カーブは緩やかに作ってください。<br>
+カーブが急だとカメラに映らなくなります。<br>
+
+![](./document/course.jpg)<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

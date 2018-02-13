@@ -37,6 +37,7 @@
 
 【実行】
 * [インストール方法](#a)
+* [コースの準備](#course)
 * [Jetson TX2/PC] [サーバ起動](#b)
 * [Raspberry Pi3] [ロボットカー FFMPEG UDP Streaming起動](#c)
 * [Raspberry Pi3] [ロボットカー起動](#d)
@@ -55,6 +56,17 @@
 ## インストール方法
 インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
 SSD300環境のために、Jetson TX2で一度level3_object_detectionをしておく必要があります。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='course'>
+
+## コースの準備
+コースはlevel2のコース横に道路標識を置きます。<br>
+走行はlevel2と同じくラインを検出して走行しますが、道路標識を認識することで速度が変化したり停止したりします。<br>
+
+![](./document/course.jpg)<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
