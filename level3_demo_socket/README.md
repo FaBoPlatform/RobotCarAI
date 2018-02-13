@@ -7,6 +7,9 @@
 【目標】
 #### 映像をサーバに送り、level2,level3によるサーバからの走行指示でロボットカーを自走させる
 
+【動画】<br>
+解析動画：[![解析動画](https://img.youtube.com/vi/Ouzch9JsaQo/1.jpg)](https://www.youtube.com/watch?v=Ouzch9JsaQo)<br>
+
 【実行環境】
 * Fabo TYPE1 ロボットカー
   * USB Webcam
