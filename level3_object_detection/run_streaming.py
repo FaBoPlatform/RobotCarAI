@@ -8,17 +8,25 @@ import os
 import cv2
 import random
 import sys
-
-#import sys
-#sys.path.append('../')
+sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
 
 from nets import ssd_vgg_300, np_methods
+from lib import *
+
+def mkdir(PATH):
+    '''
+    ディレクトリを作成する
+    '''
+    if not os.path.exists(PATH):
+        os.makedirs(PATH)
+    return
 
 tf.reset_default_graph()
 
 MODEL_DIR="./model"
 FROZEN_MODEL_NAME="ssd_roadsign.pb"
-DEMO_DIR="./demo_images"
+OUTPUT_DIR="./output"
+mkdir(OUTPUT_DIR)
 
 # TensorFlow session: grow memory when needed. TF, DO NOT USE ALL MY GPU MEMORY!!!
 gpu_options = tf.GPUOptions(allow_growth=True)
@@ -85,7 +93,7 @@ bbox_img= graph.get_tensor_by_name('prefix/ssd_preprocessing_train/my_bbox_img/s
 
 # SSD default anchor boxes.
 net_shape = (300, 300)
-ssd_net = ssd_vgg_300.SSDNet()
+ssd_net = ssd_vgg_300.SSDNet(params=ssd_params)
 ssd_anchors = ssd_net.anchors(net_shape)
 
 ########################################
@@ -196,8 +204,8 @@ else:
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 
 # FPSは処理速度を実際の見てから考慮する
-#out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), fps, (int(vidw), int(vidh)))
-out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(vidh)))
+#out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), fps, (int(vidw), int(vidh)))
+out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(vidh)))
 
 frame_count = 0
 frame_done = 300 # この分のフレームを処理したら終了する

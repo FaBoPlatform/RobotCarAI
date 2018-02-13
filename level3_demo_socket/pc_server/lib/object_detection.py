@@ -15,7 +15,7 @@ sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
 from nets import ssd_vgg_300, np_methods
 
 class ObjectDetection():
-    MODEL_DIR="/home/ubuntu/notebooks/github/SSD-Tensorflow/model"
+    MODEL_DIR="/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/model"
     FROZEN_MODEL_NAME="ssd_roadsign.pb"
 
     sess = None

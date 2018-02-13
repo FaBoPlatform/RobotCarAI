@@ -11,6 +11,7 @@ NUM_CLASSES=$(( ${#LABELS[@]} + 1 ))
 TRAIN_CODE=train_$MY_TRAIN.py # copy train_ssd_network.py to $TRAIN_CODE
 PASCALVOC_LABEL=pascalvoc_common_$MY_TRAIN
 
+
 ####################
 # edit label
 ####################
@@ -217,9 +218,9 @@ cp $SSD_TENSORFLOW_DIR/tf_convert_data.py $SSD_TENSORFLOW_DIR/tf_convert_data_$M
 sed -i 's/from datasets import pascalvoc_to_tfrecords/from datasets import pascalvoc_'$MY_TRAIN'_to_tfrecords as pascalvoc_to_tfrecords/g' $SSD_TENSORFLOW_DIR/tf_convert_data_$MY_TRAIN.py
 
 
-####################
-# edit nets/ssd_vgg_300.py
-####################
+########################################
+# edit lib/ssd_params.py
+########################################
 # sed
 # escape characters \'$.*/[]^
 # 1. Write the regex between single quotes.
@@ -227,10 +228,142 @@ sed -i 's/from datasets import pascalvoc_to_tfrecords/from datasets import pasca
 # 3. ' -> '\''
 # 4. Put a backslash before $.*/[]^ and only those characters.
 
-# before: num_classes=21,
-# after:  num_classes=5,
-# before: no_annotation_label=21,
-# after:  no_annotation_label=5,
+# before:
+#ssd_params = ssd_class.default_params._replace(num_classes=5)
+#
+# after:
+#ssd_params = ssd_class.default_params._replace(num_classes=5)
 
-sed -i 's/num_classes=[0-9]\+,/num_classes='$NUM_CLASSES',/g' $SSD_TENSORFLOW_DIR/nets/ssd_vgg_300.py
-sed -i 's/no_annotation_label=[0-9]\+,/no_annotation_label='$NUM_CLASSES',/g' $SSD_TENSORFLOW_DIR/nets/ssd_vgg_300.py
+sed -i 's/ssd_params = .*$/ssd_params = ssd_class.default_params._replace(num_classes='$NUM_CLASSES')/g' $SCRIPT_DIR/../lib/ssd_params.py
+
+
+########################################
+# edit freeze_graph.py
+########################################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+#
+# after:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|sys\.path\.append('\''\/.*$|sys.path.append('\'''$SSD_TENSORFLOW_DIR'\/'\'')|g' $SCRIPT_DIR/freeze_graph.py
+
+
+########################################
+# edit add_input_x.py
+########################################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+#
+# after:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|sys\.path\.append('\''\/.*$|sys.path.append('\'''$SSD_TENSORFLOW_DIR'\/'\'')|g' $SCRIPT_DIR/add_input_x.py
+
+
+########################################
+# edit run_ssd.py
+########################################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+#
+# after:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|sys\.path\.append('\''\/.*$|sys.path.append('\'''$SSD_TENSORFLOW_DIR'\/'\'')|g' $SCRIPT_DIR/../run_ssd.py
+
+
+########################################
+# edit run_streaming.py
+########################################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+#
+# after:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|sys\.path\.append('\''\/.*$|sys.path.append('\'''$SSD_TENSORFLOW_DIR'\/'\'')|g' $SCRIPT_DIR/../run_streaming.py
+
+
+########################################
+# edit level3_demo_socket/pc_server/lib/object_detection.py
+########################################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+#
+# after:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|sys\.path\.append('\''\/.*$|sys.path.append('\'''$SSD_TENSORFLOW_DIR'\/'\'')|g' $GIT_DIR/RobotCarAI/level3_demo_socket/pc_server/lib/object_detection.py
+
+# before:
+#MODEL_DIR="/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/model"
+#
+# after:
+#MODEL_DIR="/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/model"
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|MODEL_DIR="\/.*$|MODEL_DIR="'$GIT_DIR'/RobotCarAI/level3_object_detection/model"|g' $GIT_DIR/RobotCarAI/level3_demo_socket/pc_server/lib/object_detection.py
+
+
+########################################
+# edit level3_demo_streaming/pc_server/lib/object_detection.py
+########################################
+# sed
+# escape characters \'$.*/[]^
+# 1. Write the regex between single quotes.
+# 2. \ -> \\
+# 3. ' -> '\''
+# 4. Put a backslash before $.*/[]^ and only those characters.
+
+# before:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+#
+# after:
+#sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|sys\.path\.append('\''\/.*$|sys.path.append('\'''$SSD_TENSORFLOW_DIR'\/'\'')|g' $GIT_DIR/RobotCarAI/level3_demo_streaming/pc_server/lib/object_detection.py
+
+# before:
+#MODEL_DIR="/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/model"
+#
+# after:
+#MODEL_DIR="/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/model"
+# $PATHに/があるため、sedのdelimiterを|にする
+sed -i 's|MODEL_DIR="\/.*$|MODEL_DIR="'$GIT_DIR'/RobotCarAI/level3_object_detection/model"|g' $GIT_DIR/RobotCarAI/level3_demo_streaming/pc_server/lib/object_detection.py
+
+

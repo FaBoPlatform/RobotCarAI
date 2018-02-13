@@ -4,15 +4,16 @@
 import os
 import tensorflow as tf
 slim = tf.contrib.slim
-
 import sys
+sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
 sys.path.append('../')
 
 from nets import ssd_vgg_300
 from preprocessing import ssd_vgg_preprocessing
+from lib import *
 
-MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/output"
-OUTPUT_MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
+MODEL_DIR="../output"
+OUTPUT_MODEL_DIR="../model"
 # TensorFlow session: grow memory when needed. TF, DO NOT USE ALL MY GPU MEMORY!!!
 gpu_options = tf.GPUOptions(allow_growth=True)
 config = tf.ConfigProto(log_device_placement=False, gpu_options=gpu_options)
@@ -29,7 +30,7 @@ image_4d = tf.expand_dims(image_pre, 0)
 
 # Define the SSD model.
 reuse = True if 'ssd_net' in locals() else None
-ssd_net = ssd_vgg_300.SSDNet()
+ssd_net = ssd_vgg_300.SSDNet(params=ssd_params)
 with slim.arg_scope(ssd_net.arg_scope(data_format=data_format)):
     predictions, localizations, _, _ = ssd_net.net(image_4d, is_training=False, reuse=reuse)
 

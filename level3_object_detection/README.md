@@ -39,6 +39,7 @@
 
 【実行】
 * [インストール方法](#a)
+* [コースの準備](#course)
 * [Raspberry Pi3での実行方法](#b)
 * [Jetson TX2での実行方法](#c)
 
@@ -73,6 +74,14 @@
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
+<a name='course'>
+
+## コースの準備
+ここは画像を元に解析をおこなう項目なので、ロボットカーは走行しないのでコースの準備は不要です。<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
 ## Raspberry Pi3での実行方法
 #### 1. ロボットカーのRaspberry Pi3にログインします
 USER:pi<br>
@@ -94,10 +103,14 @@ STATUSがUpになっているコンテナIDをメモします。
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level3_object_detection/`<br>
 > `ls`<br>
->> total 56<br>
->> 160711  4 ./         160811  4 copy_to_SSD-Tensorflow/  160814  4 patch_to_SSD-Tensorflow/  160725  4 train_scripts/<br>
->> 123628  4 ../        160712  4 document/                160721  4 roadsign_data/<br>
->> 125879 20 README.md  160713  4 install_scripts/         141626  4 script_define.conf<br>
+>>total 92<br>
+>>1467711  4 ./                        1468006 32 README.md<br>
+>>1446753  4 ../                       1468007  4 roadsign_data/<br>
+>>1467903  4 demo_images/              1446969  8 run_ssd.py<br>
+>>1467990  4 install_scripts/          1446978 12 run_streaming.py<br>
+>>1467997  4 lib/                      1469662  4 script_define.conf<br>
+>>1468000  4 model/                    1474562  4 train_scripts/<br>
+>>1468003  4 patch_to_SSD-Tensorflow/<br>
 
 #### 5. スクリプト設定ファイルを編集します
 dockerのディレクトリパスに合わせて編集します。<br>
@@ -150,8 +163,7 @@ dockerのディレクトリパスに合わせて編集します。<br>
 
 実際の学習は多くのGPUメモリを搭載したマシンが必要となるので、ここでは学習は行いません。<br>
 
-#### 7. 道路標識の検出を実行する
-> `cd /notebooks/github/SSD-Tensorflow`<br>
+#### 7. 道路標識の検出を実行します
 > `python run_ssd.py`<br>
 >> time:116.36789203 clock:54.87105800<br>
 >> time:15.70358896 clock:51.92819900<br>
@@ -173,7 +185,7 @@ Raspberry Pi3は物体検出を行うには非常に非力なので、実行に�
 
 #### 8. 検出結果を確認します
 ブラウザでRaspberry Pi3のjupyterにアクセスします<br>
-> http://192.168.xxx.xxx:8888/tree/github/SSD-Tensorflow/demo_images/<br>
+> http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level3_object_detection/output/<br>
 
 jupyterのpasswordは別途説明があるかと思います。<br>
 
@@ -195,11 +207,14 @@ PASSWORD:ubuntu<br>
 #### 2. ロボットカーのディレクトリに移動します
 > `cd ~/notebooks/github/RobotCarAI/level3_object_detection/`<br>
 > `ls`<br>
->> total 56<br>
->> 160711  4 ./         160811  4 copy_to_SSD-Tensorflow/  160814  4 patch_to_SSD-Tensorflow/  160725  4 train_scripts/<br>
->> 123628  4 ../        160712  4 document/                160721  4 roadsign_data/<br>
->> 125879 20 README.md  160713  4 install_scripts/         141626  4 script_define.conf<br>
-
+>>total 92<br>
+>>1467711  4 ./                        1468006 32 README.md<br>
+>>1446753  4 ../                       1468007  4 roadsign_data/<br>
+>>1467903  4 demo_images/              1446969  8 run_ssd.py<br>
+>>1467990  4 install_scripts/          1446978 12 run_streaming.py<br>
+>>1467997  4 lib/                      1469662  4 script_define.conf<br>
+>>1468000  4 model/                    1474562  4 train_scripts/<br>
+>>1468003  4 patch_to_SSD-Tensorflow/<br>
 
 #### 3. インストールスクリプトに実行権限を付与して実行します
 スクリプト設定ファイルはJetson TX2の環境に合わせて用意してあるので編集の必要はないので、インストールスクリプトの実行を行ってください。<br>
@@ -239,8 +254,7 @@ PASSWORD:ubuntu<br>
 Jetson TX2は8GBのGPUメモリがありますが、これでも学習には向きません。<br>
 この学習は、AWS p3.2xlargeインスタンスで1日程度実行してあります。<br>
 
-#### 5. 道路標識の検出を実行する
-> `cd ~/notebooks/github/SSD-Tensorflow`<br>
+#### 5. 道路標識の検出を実行します
 > `python run_ssd.py`<br>
 >>time:25.23302293 clock:23.77420100<br>
 >>time:1.77238727 clock:1.49304700<br>
@@ -261,7 +275,7 @@ Jetson TX2はRaspberry Pi3よりかなり実行速度が速いことが分かり
 
 #### 8. 検出結果を確認します
 ブラウザでJetson TX2のjupyterにアクセスします<br>
-> http://192.168.xxx.xxx:8888/tree/github/SSD-Tensorflow/demo_images/<br>
+> http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level3_object_detection/output/<br>
 
 jupyterのpasswordは別途説明があるかと思います。<br>
 
@@ -440,14 +454,13 @@ Balancap SSD-Tensorflowではjpegしか扱えないため、pngで画像を用�
 pbファイルを読み込んで実行します。<br>
 
 検出結果は層毎に出てくるため、SSDNetクラスを使って集計を行います。<br>
-検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)<br>
+検出実行コード：[./run_ssd.py](./run_ssd.py)<br>
 ```python
         # 予測実行
         rclasses, rscores, rbboxes =  process_image(sess,cv_bgr)
 ```
 
-検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)
-> `cd /notebooks/github/SSD-Tensorflow/`<br>
+検出実行コード：[./run_ssd.py](./run_ssd.py)
 > `python run_ssd.py`<br>
 
 Jetson TX2<br>
@@ -485,7 +498,7 @@ Raspberry Pi3<br>
 最初の1回目はJITになっているのか遅いです。<br>
 2回目以降はJetson TX2とRaspberry Pi3では物体検出の実行速度に15倍以上の差があります。<br>
 
-/notebooks/github/SSD-Tensorflow/demo_images/以下に検出元画像と検出結果画像があります。
+/notebooks/github/RobotCarAI/level3_object_detection/output/以下に検出元画像と検出結果画像があります。
 
 <hr>
 
@@ -493,13 +506,13 @@ Raspberry Pi3<br>
 画像の時と同じで、カメラ映像の時も1フレームを1画像として読み込みます。<br>
 
 画像の読み込み<br>
-検出実行コード：[./copy_to_SSD-Tensorflow/run_ssd.py](./copy_to_SSD-Tensorflow/run_ssd.py)<br>
+検出実行コード：[./run_ssd.py](./run_ssd.py)<br>
 ```python
         cv_bgr = cv2.imread(DEMO_DIR+"/" + file_name)
 ```
 
 カメラ映像の読み込み<br>
-WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/run_streaming.py](./copy_to_SSD-Tensorflow/run_streaming.py)
+WebCamストリーミング解析コード：[./run_streaming.py](./run_streaming.py)
 ```python
     vid = cv2.VideoCapture(1) # WebCam Jetson TX2 /dev/video1
 ...
@@ -536,7 +549,7 @@ Jetson TX2で受信する場合は、内部IPアドレスとポート番号だ�
 
 #### ストリーミング解析実行
 ストリーミング時はUDPポートを読み込みに指定します。
-WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/run_streaming.py](./copy_to_SSD-Tensorflow/run_streaming.py)
+WebCamストリーミング解析コード：[./run_streaming.py](./run_streaming.py)
 ```python
     vid = cv2.VideoCapture('udp://localhost:8090') # UDP Streaming
 ```
@@ -550,11 +563,11 @@ Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等�
 
 Jetson TX2では、pbファイル化して検出に不要なオペレーションをそぎ落としてメモリ消費量を抑えることで、SSDの結果を動画に保存することが出来ます。<br>
 
-WebCamストリーミング解析コード：[./copy_to_SSD-Tensorflow/run_streaming.py](./copy_to_SSD-Tensorflow/run_streaming.py)
+WebCamストリーミング解析コード：[./run_streaming.py](./run_streaming.py)
 ```python
 # FPSは処理速度を実際の見てから考慮する
-#out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), fps, (int(vidw), int(vidh)))
-out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(vidh)))
+#out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), fps, (int(vidw), int(vidh)))
+out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(vidh)))
     ...
             # 予測実行
             rclasses, rscores, rbboxes = process_image(sess,cv_bgr)
@@ -563,7 +576,7 @@ out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(
             # avi動画に保存する
             out.write(cv_bgr)
 ```
-動画はavi形式で/notebooks/github/SSD-Tensorflow/demo_images/output.aviに保存されます。
+動画はavi形式で/notebooks/github/RobotCarAI/level3_object_detection/output/output.aviに保存されます。
 
 [<ページTOP>](#top)　[<目次>](#0)
 
@@ -575,28 +588,26 @@ out = cv2.VideoWriter(DEMO_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), int(
 * ディレクトリについて
   * documment/ ドキュメント関連
   * install_scripts/ インストールスクリプト
-  * copy_to_SSD-Tensorflow/ Balancap SSD-Tensorflowにコピーするファイル
   * roadsign_data/ 道路標識データ
   * train_scripts/ 学習関連スクリプト
 * ファイルについて
   * README.md このファイル
   * scritp_define.conf ディレクトリパス等設定ファイル
+  * run_ssd.py 検出実行コード
+  * run_streaming.py Webcamストリーミング動画解析コード
   * install_scripts/install.sh インストールスクリプト
     * install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト
     * install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト
-    * install_scripts/copy_to.sh ファイルコピースクリプト
     * install_scripts/patch_to.sh ファイル修正スクリプト
   * install_scripts/install_labelimg.sh LabelImg インストールスクリプト
-  * copy_to_SSD-Tensorflow/add_input_x.py 学習済みcheckpointに入力名を追加するコード
-  * copy_to_SSD-Tensorflow/freeze_graph.py モデル凍結コード
-  * copy_to_SSD-Tensorflow/run_ssd.py 検出実行コード
-  * copy_to_SSD-Tensorflow/model/ssd_roadsign.pb 学習済みモデル
-  * copy_to_SSD-Tensorflow/run_streaming.py Webcamストリーミング動画解析コード
+  * model/ssd_roadsign.pb 学習済みモデル
   * train_scripts/setup_mytrain.sh 学習コード生成スクリプト
   * train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト
   * train_scripts/train_ssd.sh 学習実行スクリプト
   * train_scripts/train_ssd_continue.sh 学習再開スクリプト
   * train_scripts/freeze_graph.sh モデル凍結スクリプト
+  * train_scripts/add_input_x.py 学習済みcheckpointに入力名を追加するコード
+  * train_scripts/freeze_graph.py モデル凍結コード
 
 [<ページTOP>](#top)　[<目次>](#0)
 

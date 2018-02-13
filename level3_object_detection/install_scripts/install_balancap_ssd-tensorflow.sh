@@ -16,6 +16,7 @@ git clone https://github.com/balancap/SSD-Tensorflow
 ####################
 # unzip demo model
 ####################
-cd $SSD_TENSORFLOW_DIR/checkpoints
-unzip -u ssd_300_vgg.ckpt.zip
+if [ ! -e $SSD_TENSORFLOW_DIR/checkpoints/ssd_300_vgg.ckpt.index ]; then
+    cd $SSD_TENSORFLOW_DIR/checkpoints
+    unzip -u ssd_300_vgg.ckpt.zip
 
