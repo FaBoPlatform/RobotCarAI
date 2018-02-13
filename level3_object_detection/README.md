@@ -355,7 +355,7 @@ LABELS[4]=speed_30
 # 新規VGG16 checkpoint
 CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/checkpoints/vgg_16.ckpt
 # 学習を再開するcheckpoint
-LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-7352
+LEARNED_CHECKPOINT_PATH=$GIT_DIR/RobotCarAI/level3_object_detection/output/model.ckpt-7352
 ```
 <hr>
 
@@ -433,7 +433,7 @@ LABELS[4]=speed_30
 スクリプト設定ファイル：[./script_define.conf](./script_define.conf)<br>
 ```bash
 # 学習済みcheckpoint
-LEARNED_CHECKPOINT_PATH=$SSD_TENSORFLOW_DIR/output/model.ckpt-7352
+LEARNED_CHECKPOINT_PATH=$GIT_DIR/RobotCarAI/level3_object_detection/output/model.ckpt-7352
 ```
 学習再開クリプト：[./train_scripts/train_ssd_continue.sh](./train_scripts/train_ssd_continue.sh)<br>
 > `./train_scripts/train_ssd_continue.sh`<br>
