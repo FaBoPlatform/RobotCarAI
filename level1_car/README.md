@@ -12,7 +12,7 @@
 ![](./document/robotcar.jpg)
 
 【動画】<br>
-走行デモ動画：[./document/demo1.mp4](./document/demo1.mp4)<br>
+走行デモ動画：[![走行デモ動画](https://img.youtube.com/vi/aGF8QZeBsto/2.jpg)](https://www.youtube.com/watch?v=aGF8QZeBsto)<br>
 
 【実行環境】
 * Fabo TYPE1 ロボットカー
