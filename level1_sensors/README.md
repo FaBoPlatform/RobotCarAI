@@ -329,6 +329,8 @@ def generate_random_train_data(n_rows):
     batch_target = csvdata[0:n_rows,DATA_COLS:]
     return batch_data, batch_target
 ```
+
+[<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
 <a name='4'>
@@ -398,6 +400,75 @@ placeholderの行数をNoneとすることで、1つの値を予測するため�
         # 予測を実行する
         _output_y,_score = sess.run([output_y,score],feed_dict={input_x:sensors})
 ```
+<hr>
+
+ミニバッチデータは学習とは別のスレッドで作成するので、スレッドセーフなqueueに入れておきます。<br>
+queueには1ステップ分の学習データを入れておくので、queueの容量をBATCH_SIZEにしてあります。<br>
+TensorFlowでは、オペレーションの実行はsess.run()で指定したオペレーションと関連しているオペレーションが連鎖的に実行されるため、ここはqueueの出し入れについてのオペレーション定義をしている部分となります。<br>
+ソースコード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+CHUNK_SIZE = BATCH_SIZE*1 # queueで保持するデータ件数
+...
+with tf.variable_scope("queue"):
+    queue = tf.FIFOQueue(
+        capacity=CHUNK_SIZE, # enqueue size
+        dtypes=['float', 'float'],
+        shapes=[[DATA_COLS], [N_CLASSES]],
+        name='FIFOQueue'
+    )
+
+    # Enqueue and dequeue operations
+    enqueue_op = queue.enqueue_many([placeholder_input_data, placeholder_input_target], name='enqueue_op')
+    # dequeue_manyでBATCH_SIZE分のデータを取得する。テストデータや実際に予測時に使う可変個数のデータ件数に対応するためにplaceholderで取得件数を指定する。
+    dequeue_input_data, dequeue_input_target = queue.dequeue_many(placeholder_batch_size, name='dequeue_op') # instead of data/target placeholder
+```
+
+load_and_enqueue()が学習データをqueueに入れる役割になります。これはスレッドで動作させています。<br>
+無限ループにあるsess.run()でenqueue_opを実行していますが、queueには指定した容量分しか入らないので、dequeue_many()によってqueueが空になるまで待機することになります。<br>
+ソースコード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+N_THREADS = 1 # データ生成スレッド件数。ミニバッチデータ作成時間より学習時間の方が処理負荷が高いので、データ生成スレッドは1スレッドにする
+...
+def load_and_enqueue(sess):
+    while True:
+        try:
+            batch_data, batch_target = generate_random_train_data(BATCH_SIZE)
+            sess.run(enqueue_op, feed_dict={placeholder_input_data:batch_data, placeholder_input_target:batch_target})
+            #logging.debug("running")
+        except tf.errors.CancelledError as e:
+            break
+    print("finished enqueueing")
+...
+    # 学習データ ジェネレータを用いてミニバッチデータを作成し、enqueue_op実行によりqueueへデータを挿入するスレッドを開始する
+    for i in range(N_THREADS):
+        enqueue_thread = threading.Thread(target=load_and_enqueue, args=[sess])
+        enqueue_thread.isDaemon()
+        enqueue_thread.start()
+```
+
+queueからミニバッチデータを取得するのは、dequeue_opと名付けたオペレーションがsess.run()によって実行された時になります。<br>
+これはtrain_opが実行された時に、連鎖的に実行されるオペレーションになります。<br>
+実際にコードを追ってみましょう。<br>
+ソースコード：[./MLP/train_model.py](./MLP/train_model.py)
+```python
+    # 中間層計算
+    layer_1 = tf.add(tf.matmul(dequeue_input_data,hidden_layer_1['weights']), hidden_layer_1['biases'])
+    layer_1 = tf.nn.relu(layer_1)
+...
+    prediction = tf.add(tf.matmul(layer_1,output_layer['weights']), output_layer['biases'], name='output_y')
+...
+    losses = tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=dequeue_input_target)
+    loss_op = tf.reduce_mean(losses, name='cost')
+...
+train_op = tf.train.AdamOptimizer(0.0001).minimize(loss_op, name='train_op')
+...
+            _, batch_loss, w_summary = sess.run([train_op, loss_op, summary_op],
+                                                feed_dict={placeholder_batch_size:BATCH_SIZE})
+```
+train_opがsess.run()で実行されると、loss_op->losses->prediction->layer_1->dequeue_input_dataまで連鎖的に実行されることになります。<br>
+この時、dequeue_many()が実行され、queueにある学習データが取得されます。<br>
+このコードでは、accuracyとtrain_opをsess.run()で実行した時に、queueからのデータ取得が実行されます。<br>
+また、queueからデータ取得が実行された瞬間に、新たにqueueにデータが挿入されることになります。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
