@@ -131,6 +131,9 @@ def main():
             if answer == 'GOT SIZE':
                 is_need_header_send = False
                 sock.sendall(bytes)
+                # 画像データ送信後、0.5秒したら前回制御命令で動作している車両を停止する
+                time.sleep(0.5)
+                car.stop()
                 # check what server send
                 answer = sock.recv(4096)
                 answer = answer.decode('ascii')
@@ -163,8 +166,6 @@ def main():
                 else:
                     car.forward(speed)
             print("FPS:{} ".format(1/(time.time() - start_time)))
-            time.sleep(0.5)
-            car.stop()
     except:
         import traceback
         traceback.print_exc()

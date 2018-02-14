@@ -145,8 +145,8 @@ STATUSがUpになっているコンテナIDをメモします。
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level3_demo_socket/car_client/`<br>
 > `ls`<br>
->> total 28<br>
->> 160944 4 ./  160943 4 ../  160945 4 fabolib/  160946 4 lib/  142577 8 run_car_client.py  142576 4 start_button.py<br>
+>> total 56<br>
+>> 7233453  4 ./  7233433  4 ../  7233455  4 analyzelib/  7233454 24 analyze.py  7233460  4 lib/  7233465 16 server.py<br>
 
 #### 5. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 クライアント側も通信先のサーバのIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>
