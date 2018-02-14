@@ -98,6 +98,27 @@ PASSWORD:ubuntu<br>
 
 ライブラリの読み込みや、TensorFlowのSSD300モデルを読み込むので、起動完了まで少し時間がかかります。<br>
 
+#### 5. 走行が終わったら、走行中の動画を解析します<br>
+ここはロボットカーの方で走行を行った後におこないます。<br>
+走行中にサーバが受け取ったフレームは動画に保存してあります。<br>
+ソースコード：./pc_server/server.py<br>
+```python
+    # 映像を保存するかどうか
+    IS_SAVE = True
+    OUTPUT_DIR ='./'
+    OUTPUT_FILENAME = 'received.avi'
+...
+                            # avi動画に保存する
+                            if IS_SAVE:
+                                out.write(cv_bgr)
+```
+server.pyと同じディレクトリにreceived.aviが作成されるので、この動画を解析にかけます。<br>
+> `python analyze.py`<br>
+>> frame 170 Done!<br>
+
+解析結果はpc_server/output/analyze.aviとして動画で保存されているので、ブラウザでサーバのjupyterにアクセスして確認します。<br>
+> http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level3_demo_socket/pc_server/output/<br>
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -124,8 +145,8 @@ STATUSがUpになっているコンテナIDをメモします。
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level3_demo_socket/car_client/`<br>
 > `ls`<br>
->> total 28<br>
->> 160944 4 ./  160943 4 ../  160945 4 fabolib/  160946 4 lib/  142577 8 run_car_client.py  142576 4 start_button.py<br>
+>> total 56<br>
+>> 7233453  4 ./  7233433  4 ../  7233455  4 analyzelib/  7233454 24 analyze.py  7233460  4 lib/  7233465 16 server.py<br>
 
 #### 5. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 クライアント側も通信先のサーバのIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>

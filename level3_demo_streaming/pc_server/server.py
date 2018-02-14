@@ -88,6 +88,7 @@ def do_analyze():
     for i in range(300):
         res = camera.webcam_capture()
     while is_analyze_running:
+        frame_start_time = time.time()
         #time.sleep(0.2)
         ########################################
         # 映像取得
@@ -103,21 +104,18 @@ def do_analyze():
         cv_bgr = camera.cv_bgr
         if cv_bgr is None:
             continue
-        od.cv_bgr = cv_bgr
-        rclasses,rscores,rbboxes = od.get_detection()
+        # avi動画に保存する
+        if IS_SAVE:
+            out.write(cv_bgr)
+        rclasses,rscores,rbboxes = od.get_detection(cv_bgr)
         print(rclasses,rscores,rbboxes)
         if len(rclasses) > 0:
             prediction_class = np.min(rclasses)
             if prediction_class == 1:
                 # 止まれを検出した
-                # avi動画に保存する
-                if IS_SAVE:
-                    out.write(od.cv_bgr)
-                    #cv2.imwrite(OUTPUT_DIR+"/frame_"+str(frame_counter)+".jpg",cv_bgr)
                 is_need_header_receive = True
                 control='0,0,'
-                if is_analyze_running:
-                    sock.sendall(("CONTROL,"+ control).encode('ascii'))
+                sock.sendall(("CONTROL,"+ control).encode('ascii'))
                 continue
             elif prediction_class == 2:
                 # 10を検出した
@@ -144,10 +142,6 @@ def do_analyze():
                 meters_from_center = ld.lane_detection()
         except:
             # ライン検出失敗
-            # avi動画に保存する
-            if IS_SAVE:
-                out.write(cv_bgr)
-                #cv2.imwrite(OUTPUT_DIR+"/frame_fail_"+str(frame_counter)+".jpg",cv_bgr)
             is_need_header_receive = True
             control='0,0,'
             sock.sendall(("CONTROL,"+ control).encode('ascii'))
@@ -203,16 +197,12 @@ def do_analyze():
         if handle_angle < -1*HANDLE_ANGLE:
             handle_angle = -1*HANDLE_ANGLE
 
-        # avi動画に保存する
-        if IS_SAVE:
-            out.write(cv_bgr)
-            #cv2.imwrite(OUTPUT_DIR+"/frame_success_"+str(frame_counter)+".jpg",cv_bgr)
-
         # 車両制御送信
         control=str(speed)+','+str(handle_angle)+','
         print("speed={},handle_angle={},CONTROL,{}".format(speed,handle_angle,control))
-        sock.sendall(("CONTROL,"+ control).encode('ascii'))                                
-
+        sock.sendall(("CONTROL,"+ control).encode('ascii'))
+        frame_end_time = time.time()
+        print("FPS={}".format(round(1/(frame_end_time-frame_start_time),2)))
 
 def main():
     global is_analyze_running

@@ -74,7 +74,7 @@ def main():
     print("vidw:{} vidh:{}".format(vidw,vidh))
     out = cv2.VideoWriter(os.path.join(OUTPUT_DIR, OUTPUT_FILENAME), int(fourcc), fps, (int(vidw)*3, int(vidh)*5))
 
-    frame_count = 0
+    frame_counter = 0
     start_time,clock_time = time.time(),time.clock()
 
     try:
@@ -83,14 +83,14 @@ def main():
             retval, cv_bgr = vid.read()
             if not retval:
                 flag_read_frame = False
-                print("FPS:{} ".format(frame_count/(time.time() - start_time)))
-                print("frame {} Done!".format(frame_count))
+                print("FPS:{} ".format(frame_counter/(time.time() - start_time)))
+                print("frame {} Done!".format(frame_counter))
                 break
-            frame_count+=1
-            #if not frame_count == TARGET_FRAME:
+            frame_counter+=1
+            #if not frame_counter == TARGET_FRAME:
             #    continue
 
-            print("frame_count = {}".format(frame_count))
+            print("frame_counter = {}".format(frame_counter))
             rows, cols = cv_bgr.shape[:2]
             print(cv_bgr.shape)
 
@@ -99,11 +99,11 @@ def main():
             # RGBに変換する
             ########################################
             cv_rgb = to_rgb(cv_bgr)
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 plt.title('Original RGB')
                 plt.imshow(cv_rgb)
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/frame_"+str(frame_count)+".jpg",cv_rgb)
+                cv2.imwrite(OUTPUT_DIR+"/frame_"+str(frame_counter)+".jpg",cv_rgb)
 
             ########################################
             # Region Of Interest Coordinates
@@ -125,16 +125,16 @@ def main():
             # Region Of Interest
             ########################################
             cv_bgr = to_roi(cv_bgr,roi_vertices)
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 plt.title('After ROI')
                 plt.imshow(to_rgb(cv_bgr))
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_after_roi.jpg",cv_bgr)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_after_roi.jpg",cv_bgr)
 
             ########################################
             # IPM座標を確認する
             ########################################
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 cv_bgr_ipm_before_preview = draw_vertices(cv_bgr,ipm_vertices)
                 plt.title('Before IPM')
                 plt.imshow(to_rgb(cv_bgr_ipm_before_preview))
@@ -143,28 +143,28 @@ def main():
                 plt.title('After IPM')
                 plt.imshow(to_rgb(cv_bgr_ipm_after_preview))
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_before_ipm.jpg",cv_bgr_ipm_before_preview)
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_after_ipm.jpg",cv_bgr_ipm_after_preview)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_before_ipm.jpg",cv_bgr_ipm_before_preview)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_after_ipm.jpg",cv_bgr_ipm_after_preview)
 
             ########################################
             # Inverse Perspective Mapping
             ########################################
             cv_bgr = to_ipm(cv_bgr,ipm_vertices)
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 plt.title('IPM')
                 plt.imshow(to_rgb(cv_bgr))
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_ipm.jpg",cv_bgr)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_ipm.jpg",cv_bgr)
 
             ########################################
             # 白色抽出
             ########################################
             cv_bgr = to_white(cv_bgr)
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 plt.title('WHITE')
                 plt.imshow(to_rgb(cv_bgr))
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_white.jpg",cv_bgr)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_white.jpg",cv_bgr)
 
             cv_bgr_white = cv_bgr
 
@@ -174,11 +174,11 @@ def main():
             ########################################
             cv_bin = to_bin(cv_bgr)
             cv_rgb_bin = bin_to_rgb(cv_bin)
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 plt.title('BIN')
                 plt.imshow(cv_rgb_bin)
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_bin.jpg",cv_rgb_bin)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_bin.jpg",cv_rgb_bin)
 
 
             cv_rgb_road = None
@@ -217,8 +217,8 @@ def main():
 
                 # 白線画像にレーンを描画する
                 cv2.polylines(cv_rgb_bin,[pts_line],False,(255,0,0))
-                if frame_count == TARGET_FRAME:
-                    cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_bin_road.jpg",to_bgr(cv_rgb_bin))
+                if frame_counter == TARGET_FRAME:
+                    cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_bin_road.jpg",to_bgr(cv_rgb_bin))
                 # 白線道路領域をIPM逆変換する
                 cv_rgb_bin = reverse_ipm(cv_rgb_bin,ipm_vertices)
 
@@ -303,7 +303,6 @@ def main():
             # 道路をリサイズする
             cv_rgb_row1 = cv2.resize(cv_rgb, (cols*3,rows*3), interpolation = cv2.INTER_LINEAR)
 
-
             '''
             左右について
             tiltx_deg: -が右、+が左
@@ -320,7 +319,7 @@ def main():
             colors = []
             strings += ["FPS:"+str(round(1/(frame_end_time-frame_start_time),2))]
             colors += [(255,255,255)]
-            strings += ["FRAME:"+str(frame_count)]
+            strings += ["FRAME:"+str(frame_counter)]
             colors += [(255,255,255)]
             ty = draw_text(cv_rgb_row1,strings,colors,tx=tx,ty=ty)
             if is_meter_ellipse_success:
@@ -533,16 +532,16 @@ def main():
             # avi動画に保存する
             out.write(to_bgr(cv_rgb_debug))
 
-            if frame_count == TARGET_FRAME:
+            if frame_counter == TARGET_FRAME:
                 plt.title('result imgage')
                 plt.imshow(cv_rgb_debug)
                 plt.show()
                 cv_bgr_debug = to_bgr(cv_rgb_debug)
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+".jpg",cv_bgr_debug)
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_ellipse.jpg",to_bgr(cv_rgb_ellipse))
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_tilt.jpg",to_bgr(cv_rgb_tilt))
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_histogram.jpg",to_bgr(cv_rgb_histogram))
-                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_count)+"_sliding_windows.jpg",to_bgr(cv_rgb_sliding_windows))
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+".jpg",cv_bgr_debug)
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_ellipse.jpg",to_bgr(cv_rgb_ellipse))
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_tilt.jpg",to_bgr(cv_rgb_tilt))
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_histogram.jpg",to_bgr(cv_rgb_histogram))
+                cv2.imwrite(OUTPUT_DIR+"/result_frame_"+str(frame_counter)+"_sliding_windows.jpg",to_bgr(cv_rgb_sliding_windows))
             #break
     except:
         import traceback

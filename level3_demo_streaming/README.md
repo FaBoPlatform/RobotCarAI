@@ -84,8 +84,8 @@ PASSWORD:ubuntu<br>
 #### 2. ロボットカーのディレクトリに移動します
 > `cd ~/notebooks/github/RobotCarAI/level3_demo_streaming/pc_server`<br>
 > `ls`<br>
->> total 28<br>
->> 160947  4 ./  160943  4 ../  160948  4 lib/  142670 16 server.py<br>
+>> total 52<br>
+>> 7233485  4 ./  7233466  4 ../  7233487  4 analyzelib/  7233486 24 analyze.py  7233492  4 lib/  7233498 12 server.py<br>
 
 #### 3. ソースコードのIPアドレスをサーバのIPアドレスに修正します
 サーバ側が監視する自分のIPアドレスとTCPポート番号をサーバに合わせて修正してください。<br>
@@ -98,6 +98,18 @@ PASSWORD:ubuntu<br>
 >> Server start<br>
 
 ライブラリの読み込みや、TensorFlowのSSD300モデルを読み込むので、起動完了まで少し時間がかかります。<br>
+
+#### 5. 考察
+Streamingでの走行中の動画解析は正確なものにはなりません。<br>
+TCPで受信を確認しながら通信をしているlevel3_demo_socketの場合は確実に処理をおこないますが、Streamingの場合は相手の処理状態を考慮せずに送り続けます。(Raspberry Pi3のFFMPEG UDP Streamingはサーバ側の処理状態を考慮せずに映像を送り続けます。サーバ側のロボットカーへの制御命令はロボットカーの処理状態を考慮せずに命令を送り続けます。)<br>
+そのため、サーバで処理した映像が、ロボットカーの制御そのものになっていることは保障されないため、デフォルトではサーバ側の映像保存はFalseとしてあります。<br>
+ソースコード：./pc_server/server.py<br>
+```python
+    # 映像を保存するかどうか
+    IS_SAVE = False
+    OUTPUT_DIR ='./'
+    OUTPUT_FILENAME = 'received.avi'
+```
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
