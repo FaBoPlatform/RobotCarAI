@@ -10,6 +10,7 @@ Python 3.6
     送信するmessageは.encode('ascii')や.encode('utf-8')等でエンコードする必要がる
     ここではClientから送られてくるOpenCV BGR画像データが'ascii'に変換されているので'ascii'で統一している
 '''
+print("loading...")
 import socket, select
 import time
 import cv2
@@ -77,6 +78,7 @@ def main():
     else:
         # OpenCV 3.1
         fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    print("ready")
 
     try:
         while True:
