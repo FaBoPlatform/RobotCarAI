@@ -98,6 +98,27 @@ PASSWORD:ubuntu<br>
 
 ライブラリの読み込みや、TensorFlowのSSD300モデルを読み込むので、起動完了まで少し時間がかかります。<br>
 
+#### 5. 走行が終わったら、走行中の動画を解析します<br>
+ここはロボットカーの方で走行を行った後におこないます。<br>
+走行中にサーバが受け取ったフレームは動画に保存してあります。<br>
+ソースコード：./pc_server/server.py<br>
+```python
+    # 映像を保存するかどうか
+    IS_SAVE = True
+    OUTPUT_DIR ='./'
+    OUTPUT_FILENAME = 'received.avi'
+...
+                            # avi動画に保存する
+                            if IS_SAVE:
+                                out.write(cv_bgr)
+```
+server.pyと同じディレクトリにreceived.aviが作成されるので、この動画を解析にかけます。<br>
+> `python analyze.py`<br>
+>> frame 170 Done!<br>
+
+解析結果はpc_server/output/analyze.aviとして動画で保存されているので、ブラウザでサーバのjupyterにアクセスして確認します。<br>
+> http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level3_demo_socket/pc_server/output/<br>
+
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 

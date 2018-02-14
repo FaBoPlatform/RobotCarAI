@@ -165,21 +165,19 @@ def main():
 
                             nparr = np.fromstring(data, np.uint8)
                             cv_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # cv2.CV_LOAD_IMAGE_COLOR/cv2.IMREAD_COLOR in OpenCV 3.1
+                            # avi動画に保存する
+                            if IS_SAVE:
+                                out.write(cv_bgr)
                             #cv_bgr = cv2.resize(cv_bgr, (300,300), interpolation = cv2.INTER_LINEAR)
                             ########################################
                             # 物体認識
                             ########################################
-                            od.cv_bgr = cv_bgr
-                            rclasses,rscores,rbboxes = od.get_detection()
+                            rclasses,rscores,rbboxes = od.get_detection(cv_bgr)
                             print(rclasses,rscores,rbboxes)
                             if len(rclasses) > 0:
                                 prediction_class = np.min(rclasses)
                                 if prediction_class == 1:
                                     # 止まれを検出した
-                                    # avi動画に保存する
-                                    if IS_SAVE:
-                                        out.write(od.cv_bgr)
-                                        #cv2.imwrite(OUTPUT_DIR+"/frame_"+str(frame_counter)+".jpg",cv_bgr)
                                     is_need_header_receive = True
                                     control='0,0'
                                     sock.sendall(("CONTROL,"+ control).encode('ascii'))
@@ -209,10 +207,6 @@ def main():
                                     meters_from_center = ld.lane_detection()
                             except:
                                 # ライン検出失敗
-                                # avi動画に保存する
-                                if IS_SAVE:
-                                    out.write(cv_bgr)
-                                    #cv2.imwrite(OUTPUT_DIR+"/frame_fail_"+str(frame_counter)+".jpg",cv_bgr)
                                 is_need_header_receive = True
                                 control='0,0'
                                 sock.sendall(("CONTROL,"+ control).encode('ascii'))
@@ -267,12 +261,6 @@ def main():
                                 handle_angle = HANDLE_ANGLE
                             if handle_angle <  -1*HANDLE_ANGLE:
                                 handle_angle = -1*HANDLE_ANGLE
-
-                            # avi動画に保存する
-                            if IS_SAVE:
-                                out.write(cv_bgr)
-                                #cv2.imwrite(OUTPUT_DIR+"/frame_success_"+str(frame_counter)+".jpg",cv_bgr)
-
 
                             is_need_header_receive = True
                             control=str(speed)+','+str(handle_angle)
