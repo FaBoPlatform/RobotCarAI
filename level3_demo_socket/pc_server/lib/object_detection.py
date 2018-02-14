@@ -8,18 +8,15 @@ import os
 import cv2
 import random
 import sys
-
-#import sys
 sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
-
 from nets import ssd_vgg_300, np_methods
+from nets import nets_factory
 
 class ObjectDetection():
     MODEL_DIR="/home/ubuntu/notebooks/github/RobotCarAI/level3_object_detection/model"
     FROZEN_MODEL_NAME="ssd_roadsign.pb"
 
     sess = None
-    cv_bgr=None
 
     def __init__(self):
         tf.reset_default_graph()
@@ -57,7 +54,9 @@ class ObjectDetection():
 
         # SSD default anchor boxes.
         net_shape = (300, 300)
-        ssd_net = ssd_vgg_300.SSDNet()
+        ssd_class = nets_factory.get_network('ssd_300_vgg')
+        ssd_params = ssd_class.default_params._replace(num_classes=5)        
+        ssd_net = ssd_vgg_300.SSDNet(ssd_params)
         self.ssd_anchors = ssd_net.anchors(net_shape)
 
         ########################################
@@ -117,11 +116,11 @@ class ObjectDetection():
             )
         return graph
 
-    def write_bboxes(self, classes, scores, bboxes):
+    def write_bboxes(self, cv_bgr, classes, scores, bboxes):
         """Visualize bounding boxes. Largely inspired by SSD-MXNET!
         """
-        height = self.cv_bgr.shape[0]
-        width = self.cv_bgr.shape[1]
+        height = cv_bgr.shape[0]
+        width = cv_bgr.shape[1]
         for i in range(classes.shape[0]):
             cls_id = int(classes[i])
             if cls_id >= 0:
@@ -130,14 +129,14 @@ class ObjectDetection():
                 xmin = int(bboxes[i, 1] * width)
                 ymax = int(bboxes[i, 2] * height)
                 xmax = int(bboxes[i, 3] * width)
-                cv2.rectangle(self.cv_bgr, (xmin, ymin), (xmax, ymax),
+                cv2.rectangle(cv_bgr, (xmin, ymin), (xmax, ymax),
                               self.colors[cls_id],
                               2)
                 class_name = self.VOC_LABELS[cls_id]
-                cv2.rectangle(self.cv_bgr, (xmin, ymin-6), (xmin+180, ymin+6),
+                cv2.rectangle(cv_bgr, (xmin, ymin-6), (xmin+180, ymin+6),
                               self.colors[cls_id],
                               -1)
-                cv2.putText(self.cv_bgr, '{:s} | {:.3f}'.format(class_name, score),
+                cv2.putText(cv_bgr, '{:s} | {:.3f}'.format(class_name, score),
                             (xmin, ymin + 6),
                             cv2.FONT_HERSHEY_PLAIN, 1,
                             (255, 255, 255))
@@ -145,11 +144,11 @@ class ObjectDetection():
 
 
     # Main image processing routine.
-    def get_detection(self,select_threshold=0.5, nms_threshold=.45, net_shape=(300, 300)):
+    def get_detection(self, cv_bgr, select_threshold=0.5, nms_threshold=.45, net_shape=(300, 300)):
         # 予測実行
         # Run SSD network.
         rpredictions, rlocalisations, rbbox_img = self.sess.run([self.predictions, self.localisations, self.bbox_img],
-                                                           feed_dict={self.input_x: self.cv_bgr})
+                                                           feed_dict={self.input_x: cv_bgr})
 
         # Get classes and bboxes from the net outputs.
         rclasses, rscores, rbboxes = np_methods.ssd_bboxes_select(
@@ -162,8 +161,4 @@ class ObjectDetection():
         # Resize bboxes to original image shape. Note: useless for Resize.WARP!
         rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
 
-        self.write_bboxes(rclasses, rscores, rbboxes)
         return rclasses, rscores, rbboxes
-
-
-
