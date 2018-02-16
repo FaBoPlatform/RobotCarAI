@@ -12,8 +12,8 @@ from nets import ssd_vgg_300
 from preprocessing import ssd_vgg_preprocessing
 from lib import *
 
-MODEL_DIR="../output"
-OUTPUT_MODEL_DIR="../model"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../output"
+OUTPUT_MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../model"
 # TensorFlow session: grow memory when needed. TF, DO NOT USE ALL MY GPU MEMORY!!!
 gpu_options = tf.GPUOptions(allow_growth=True)
 config = tf.ConfigProto(log_device_placement=False, gpu_options=gpu_options)
@@ -43,7 +43,7 @@ if checkpoint:
 else:
     #ckpt_filename = '../checkpoints/ssd_300_vgg.ckpt'
     #ckpt_filename = '../checkpoints/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt'
-    ckpt_filename = './output/model.ckpt-7352'
+    ckpt_filename = os.path.abspath(os.path.dirname(__file__))+'/../output/model.ckpt-7352'
 
 isess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()

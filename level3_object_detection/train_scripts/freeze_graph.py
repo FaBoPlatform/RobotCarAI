@@ -7,7 +7,7 @@ from tensorflow.python.framework import graph_util
 import sys
 sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
 
-MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/model"
+MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../model"
 FROZEN_MODEL_NAME="ssd_roadsign.pb"
 # 非常に粗いconv10_2とconv11_2を削ってもよい
 OUTPUT_NODE_NAMES="""input_x,
