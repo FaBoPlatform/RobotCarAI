@@ -57,7 +57,7 @@ def do_analyze():
     global od
 
     # 映像を保存するかどうか
-    IS_SAVE = False
+    IS_SAVE = True
     OUTPUT_DIR ='./'
     OUTPUT_FILENAME = 'received.avi'
 
