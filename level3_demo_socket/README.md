@@ -39,14 +39,15 @@
 * [コースの準備](#course)
 * [Jetson TX2/PC] [サーバ起動](#b)
 * [Raspberry Pi3] [ロボットカー起動](#c)
+* [解析実行] (#2)
 
 【目次】
-* [トラブルシューティング](#2)
+* [トラブルシューティング](#3)
   * Webcamが起動しない
   * 走行中にハンドルが固まった
   * Raspberry Pi3が起動しない
   * サーバが起動しない
-* [ディレクトリとファイルについて](#3)
+* [ディレクトリとファイルについて](#4)
 <hr>
 
 
@@ -98,27 +99,6 @@ PASSWORD:ubuntu<br>
 
 ライブラリの読み込みや、TensorFlowのSSD300モデルを読み込むので、起動完了まで少し時間がかかります。<br>
 
-#### 5. 走行が終わったら、走行中の動画を解析します<br>
-ここはロボットカーの方で走行を行った後におこないます。<br>
-走行中にサーバが受け取ったフレームは動画に保存してあります。<br>
-ソースコード：./pc_server/server.py<br>
-```python
-    # 映像を保存するかどうか
-    IS_SAVE = True
-    OUTPUT_DIR ='./'
-    OUTPUT_FILENAME = 'received.avi'
-...
-                            # avi動画に保存する
-                            if IS_SAVE:
-                                out.write(cv_bgr)
-```
-server.pyと同じディレクトリにreceived.aviが作成されるので、この動画を解析にかけます。<br>
-> `python analyze.py`<br>
->> frame 170 Done!<br>
-
-解析結果はpc_server/output/analyze.aviとして動画で保存されているので、ブラウザでサーバのjupyterにアクセスして確認します。<br>
-> http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level3_demo_socket/pc_server/output/<br>
-
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -139,8 +119,10 @@ PASSWORD:raspberry<br>
 STATUSがUpになっているコンテナIDをメモします。
 
 #### 3. dockerコンテナにログインします
-
+docker exec -it CONTAINER_ID /bin/bash<br>
 > `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca362を使います。<br>
 
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level3_demo_socket/car_client/`<br>
@@ -168,6 +150,32 @@ Ctrl + c でstart_button.pyを終了します
 <hr>
 
 <a name='2'>
+
+#### 5. 走行が終わったら、走行中の動画を解析します<br>
+ここはロボットカーの方で走行を行った後におこないます。<br>
+走行中にサーバが受け取ったフレームは動画に保存してあります。<br>
+ソースコード：./pc_server/server.py<br>
+```python
+    # 映像を保存するかどうか
+    IS_SAVE = True
+    OUTPUT_DIR ='./'
+    OUTPUT_FILENAME = 'received.avi'
+...
+                            # avi動画に保存する
+                            if IS_SAVE:
+                                out.write(cv_bgr)
+```
+server.pyと同じディレクトリにreceived.aviが作成されるので、この動画を解析にかけます。<br>
+> `python analyze.py`<br>
+>> frame 170 Done!<br>
+
+解析結果はpc_server/output/analyze.aviとして動画で保存されているので、ブラウザでサーバのjupyterにアクセスして確認します。<br>
+> http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level3_demo_socket/pc_server/output/<br>
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='3'>
 
 ## トラブルシューティング
 #### Webcamが起動しない
@@ -197,11 +205,18 @@ Faboシールドの電源をRaspberry Pi3から取得している時に、サー
 server.pyのHOST,PORTを確認してください。<br>
 Dockerを使っている場合は、HOSTはDockerコンテナIDになります。<br>
 ファイアーウォールは通常、内部IPに対して設定していないので通信可能ですが、設定している場合はサーバ側でTCPポート番号の通信を許可してください。<br>
+<hr>
+
+#### 走行開始ボタンを押してもすぐ終了する
+run_car.pyのHOST,PORTを確認してください。(サーバのIPアドレス、ポート番号を設定します)<br>
+サーバが起動していることを確認してください。<br>
+
+カメラエラーかもしれないので、USBカメラを抜き差ししてください。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='4'>
 
 ## ディレクトリとファイルについて
 * ディレクトリについて

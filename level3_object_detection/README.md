@@ -97,8 +97,10 @@ PASSWORD:raspberry<br>
 STATUSがUpになっているコンテナIDをメモします。
 
 #### 3. dockerコンテナにログインします
-
+docker exec -it CONTAINER_ID /bin/bash<br>
 > `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca362を使います。<br>
 
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level3_object_detection/`<br>

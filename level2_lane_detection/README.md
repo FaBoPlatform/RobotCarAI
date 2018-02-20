@@ -45,7 +45,7 @@ level4:OpenCVでレーン検出する: [level4_lane_detection](../level4_lane_de
 * [Jetson TX2での実行方法](#c)
 
 【目次】
-* [実行方法](#1)
+* [座標とカラーフィルタの確認](#1)
 * [処理について](#2)
 * [ディレクトリとファイルについて](#3)
 
@@ -86,8 +86,10 @@ PASSWORD:raspberry<br>
 STATUSがUpになっているコンテナIDをメモします。
 
 #### 3. dockerコンテナにログインします
-
+docker exec -it CONTAINER_ID /bin/bash<br>
 > `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca362を使います。<br>
 
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level2_lane_detection/`<br>
@@ -190,13 +192,7 @@ http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level2_lane_detection/demo_la
 
 <a name='1'>
 
-## 実行方法
-> `git pull https://github.com/FaBoPlatform/RobotCarAI`<br>
-> `cd level2_lane_detection`<br>
-> `python opencv_lane_detection.py`<br>
-
-./demo_lane/capture.mp4を読み込み、白線で出来たラインを検出して車両に与えるためのハンドル角度を描画します。<br>
-検出結果は./output/result_capture.aviに保存されます。
+## 座標とカラーフィルタの確認
 
 自分のライン動画で検出する場合、視点変更、ラインの色抽出を調整する必要があります。<br>
 関心領域の確認<br>

@@ -100,8 +100,10 @@ PASSWORD:raspberry<br>
 STATUSがUpになっているコンテナIDをメモします。
 
 #### 3. dockerコンテナにログインします
-
+docker exec -it CONTAINER_ID /bin/bash<br>
 > `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca362を使います。<br>
 
 #### 4. ロボットカーのディレクトリに移動します
 
@@ -122,20 +124,20 @@ STATUSがUpになっているコンテナIDをメモします。
 Ctrl + c でstart_button.pyを終了します
 
 #### 8. ソースコードを修正して、ロボットカーを再度走らせます
-進行方向の判断処理を変更してロボットカーを走らせてみます。<br>
+進行方向の判断処理を変更して、ロボットカーを走らせてみます。<br>
 > `vi run_car_if.py`<br>
 
 ソースコード：[./run_car_if.py](./run_car_if.py)<br>
 ```python
-# 書き換え前
+# 書き換え前 シンプルな判断処理を読み込む
 from generator import SimpleLabelGenerator as LabelGenerator
 #from generator import LabelGenerator
 
-# 書き換え後
+# 書き換え後 複雑な判断処理を読み込むように、#を入れ替えてコメントアウトを変更
 #from generator import SimpleLabelGenerator as LabelGenerator
 from generator import LabelGenerator
 ```
-走行から終了は5.6.7.の手順になります。<br>
+走行は5.6.7.の手順になります。<br>
 
 #### これ以降について
 level1_carでは、ロボットカーの制御方法についての内容になります。<br>
