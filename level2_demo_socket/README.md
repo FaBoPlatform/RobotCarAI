@@ -114,8 +114,10 @@ PASSWORD:raspberry<br>
 STATUSがUpになっているコンテナIDをメモします。
 
 #### 3. dockerコンテナにログインします
-
+docker exec -it CONTAINER_ID /bin/bash<br>
 > `docker exec -it 2133fa3ca362 /bin/bash`<br>
+
+CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca362を使います。<br>
 
 #### 4. ロボットカーのディレクトリに移動します
 > `cd /notebooks/github/RobotCarAI/level2_demo_socket/car_client/`<br>
@@ -172,6 +174,13 @@ Faboシールドの電源をRaspberry Pi3から取得している時に、サー
 server.pyのHOST,PORTを確認してください。<br>
 Dockerを使っている場合は、HOSTはDockerコンテナIDになります。<br>
 ファイアーウォールは通常、内部IPに対して設定していないので通信可能ですが、設定している場合はサーバ側でTCPポート番号の通信を許可してください。<br>
+<hr>
+
+#### 走行開始ボタンを押してもすぐ終了する
+run_car.pyのHOST,PORTを確認してください。(サーバのIPアドレス、ポート番号を設定します)<br>
+サーバが起動していることを確認してください。<br>
+
+カメラエラーかもしれないので、USBカメラを抜き差ししてください。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
