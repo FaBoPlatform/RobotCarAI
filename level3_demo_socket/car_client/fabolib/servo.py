@@ -31,8 +31,8 @@ class ServoConfig():
 
 class Servo():
     '''
-    ロボットアームのSERVOサーボ回転を制御するクラス
-    arm = Servo(channel=#PWD)
+    SERVOサーボ回転を制御するクラス
+    servo = Servo(channel=#PWD)
     '''
     CHANNEL = 0 # PCA9685 サーボ接続チャネル
 
