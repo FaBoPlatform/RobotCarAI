@@ -44,11 +44,11 @@ class Motor():
     def map(self, x, in_min, in_max, out_min, out_max):
         return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
-    def back(self, speed):
+    def forward(self, speed):
         '''
-        後進する値は2bitで
-        xxxx xx01 となる。(FORWARD = 0x01)
         前進する値は2bitで
+        xxxx xx01 となる。(FORWARD = 0x01)
+        後進する値は2bitで
         xxxx xx10 となる。(BACK = 0x02)
         停止する値は2bitで
         xxxx xx00 となる。(STOP = 0x00)
@@ -73,7 +73,7 @@ class Motor():
     def stop(self):
         self.bus.write_byte_data(self.MOTOR_ADDRESS,self.COMMAND0,self.STOP) #モータへの電力の供給を停止(惰性で動き続ける)
 
-    def forward(self, speed):
+    def back(self, speed):
         if speed <= 0:
             print("value is under 0,  must define 1-100 as speed.")
             return
