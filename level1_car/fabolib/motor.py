@@ -73,7 +73,7 @@ class Motor():
     def stop(self):
         self.bus.write_byte_data(self.MOTOR_ADDRESS,self.COMMAND0,self.STOP) #モータへの電力の供給を停止(惰性で動き続ける)
 
-    def foward(self, speed):
+    def forward(self, speed):
         if speed <= 0:
             print("value is under 0,  must define 1-100 as speed.")
             return
