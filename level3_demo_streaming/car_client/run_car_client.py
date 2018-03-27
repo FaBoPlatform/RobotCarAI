@@ -53,6 +53,9 @@ def main():
     global stop_thread_running
     global main_thread_running
 
+    # I2C Bus number
+    BUSNUM = 1
+
     # CAR設定
     HANDLE_NEUTRAL = 95 # ステアリングニュートラル位置
     HANDLE_ANGLE = 42 # 左右最大アングル
@@ -74,7 +77,7 @@ def main():
         ########################################
         # CAR準備
         ########################################
-        car = Car()
+        car = Car(busnum=BUSNUM)
         speed = 0
         ########################################
         # 通信準備
