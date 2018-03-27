@@ -76,7 +76,7 @@ def main():
                 plt.title('Original RGB')
                 plt.imshow(cv_rgb)
                 plt.show()
-                cv2.imwrite(OUTPUT_DIR+"/frame_"+str(frame_count)+".jpg",cv_rgb)
+                cv2.imwrite(OUTPUT_DIR+"/frame_"+str(frame_count)+".jpg",cv_bgr)
 
             ########################################
             # Region Of Interest Coordinates

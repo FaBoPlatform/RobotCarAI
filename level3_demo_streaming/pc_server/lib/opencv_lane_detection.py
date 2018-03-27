@@ -15,7 +15,7 @@ class LaneDetection():
     vid = None
     out = None
     cv_bgr = None
-    def __init__(self,x_meter,y_meter,cols=120,rows=160):
+    def __init__(self,x_meter,y_meter,cols=160,rows=120):
         self.x_meter = x_meter
         self.y_meter = y_meter
         self.cols = cols

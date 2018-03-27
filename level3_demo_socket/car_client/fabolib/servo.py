@@ -45,11 +45,11 @@ class Servo():
     # PWM周期 PCA9685設定になるため、全てのサーボで同じ値を使うこと。60Hzだと壊れるサーボを使うため、50Hzに設定する。
     SERVO_HZ = 50
 
-    def __init__(self,bus=1,channel=0,conf=ServoConfig()):
+    def __init__(self,busnum=1,channel=0,conf=ServoConfig()):
         try:
             self.conf = conf
             self.CHANNEL = channel
-            self.bus = smbus.SMBus(bus)
+            self.bus = smbus.SMBus(busnum)
             init_analog = self.angle_to_analog(90)
             self.PCA9685 = Fabo_PCA9685.PCA9685(self.bus,init_analog)
             self.PCA9685.set_hz(self.SERVO_HZ)
