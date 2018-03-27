@@ -19,11 +19,11 @@ class Car():
     motor = None # モーター制御クラスを保持する
     handle = None # ハンドル制御クラスを保持する
 
-    def __init__(self):
+    def __init__(self,busnum=1):
         logging.debug("init")
-
-        self.motor = Motor()
-        self.handle = Servo()
+        busnum = busnum
+        self.motor = Motor(busnum=busnum)
+        self.handle = Servo(busnum=busnum)
         HANDLE_NEUTRAL = 90 # ステアリングニュートラル位置
         self.motor.stop()
         self.handle.set_angle(HANDLE_NEUTRAL)

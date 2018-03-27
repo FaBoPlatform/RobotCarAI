@@ -6,6 +6,7 @@ import logging
 import threading
 import numpy as np
 from fabolib import Kerberos
+#from fabolib import KerberosVL53L0X as Kerberos
 from fabolib import Car
 from lib import SPI
 from lib import AI
@@ -62,6 +63,9 @@ def main():
 
     print("main")
 
+    # I2C Bus number
+    BUSNUM=1
+
     # CAR準備
     STOP=0
     LEFT=1
@@ -69,7 +73,7 @@ def main():
     RIGHT=3
     HANDLE_NEUTRAL = 95 # ステアリングニュートラル位置
     HANDLE_ANGLE = 42 # 左右最大アングル
-    car = Car()
+    car = Car(busnum=BUSNUM)
     speed = 0
     angle = HANDLE_NEUTRAL
     ratio = 1.0 # 角度制御率
@@ -86,7 +90,7 @@ def main():
     # IF準備 (学習ラベル ジェネレータ)
     #generator = LabelGenerator()
     # 近接センサー準備
-    kerberos = Kerberos()
+    kerberos = Kerberos(busnum=BUSNUM)
     LIDAR_INTERVAL = 0.05
 
     try:
