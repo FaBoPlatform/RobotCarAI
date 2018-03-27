@@ -296,6 +296,7 @@ result_*.jpg が検出結果の画像になります。<br>
 Classificationは画像1枚で判断します。<br>
 Object Detectionは画像の特定の領域で判断します。<br>
 Segmentationは画像の1画素単位で判断します。<br>
+Semantic Segmentationは1ピクセル毎のクラス分類ですが、Mask R-CNNではInstance Segmentationと呼ばれる物体のパーツ毎の識別になります。<br>
 Classificationの方が処理速度が速く、Segmentationになると処理速度が遅くなります。<br>
 
 今回はSSD300を使ったObject Detectionで道路標識をの検出します。<br>

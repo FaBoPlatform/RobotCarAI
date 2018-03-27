@@ -10,8 +10,7 @@ from fabolib import Servo
 
 print("start")
 
-motor = Motor()
-handle = Servo()
+motor = Motor(busnum=1)
 
 try:
     for i in range(1,101):
@@ -26,20 +25,10 @@ try:
 
     motor.brake()
 
-    handle.set_angle(90)
-    time.sleep(1)
-    handle.set_angle(45)
-    time.sleep(1)
-    handle.set_angle(90)
-    time.sleep(1)
-    handle.set_angle(135)
-    time.sleep(1)
-    handle.set_angle(90)
 except:
     import traceback
     traceback.print_exc()
 finally:
     motor.stop()
-    handle.set_angle(90)
 
 print("end")
