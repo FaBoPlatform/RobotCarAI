@@ -78,5 +78,12 @@ class KerberosVL53L0X():
             distance3 = self.sensor3.get_distance()
 
             if distance1 > 0 and distance2 > 0 and distance3 > 0:
+                if distance1 > 2000:
+                    distance1 = 2000
+                if distance2 > 2000:
+                    distance2 = 2000
+                if distance3 > 2000:
+                    distance3 = 2000
+                    
                 return int(distance1/10),int(distance2/10),int(distance3/10)
             time.sleep(self.timing/1000000.00)
