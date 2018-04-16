@@ -15,7 +15,7 @@ class Vl53l0xAccuracyMode:
 
 class KerberosVL53L0X():
 
-    def __init__(self,busnum=busnum):
+    def __init__(self,busnum=1):
         pcal6408 = FaBoGPIO_PCAL6408.PCAL6408(busnum=busnum)
         mode = VL53L0X.Vl53l0xAccuracyMode.BEST
         ########################################
