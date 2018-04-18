@@ -252,7 +252,7 @@ sudo docker run -itd --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:
 
 * CPU版、開発用、SPIあり、USBカメラ付き、I2Cあり、TCP通信ポートあり(level2,3はこれを使う)
 ```
-sudo docker run -itd --device=/dev/video0:/dev/video0 --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 -p 8091:8091 naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
+sudo docker run -itd --device /dev/video0:/dev/video0 --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 -p 8091:8091 naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
 ```
 
 
