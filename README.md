@@ -2,6 +2,9 @@
 
 RobotCar AI Playground.
 
+## Install
+* [Raspberry Pi3のインストール方法](https://github.com/FaBoPlatform/RobotCarAI/tree/pull/install_raspberry_pi3)
+
 ## Level
 * [Level 1: Fabo TYPE1 ロボットカー制御](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level1_car/)
 * [Level 1: 距離センサーの値をニューラルネットワークで使う](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level1_sensors/)
