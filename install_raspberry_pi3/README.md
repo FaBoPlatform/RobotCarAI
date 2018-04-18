@@ -4,9 +4,6 @@
 # Raspberry Pi3のインストール方法
 <hr>
 
-【画像】
-![](./document/img1.jpg)
-
 【必要なもの】
 * Raspberry Pi3
 * 32 GB SDCARD
@@ -15,7 +12,7 @@
 
 <hr>
 
-【はじめに】
+【はじめに】<br>
 Stretch特有の問題回避などがあるので、他のOS(Jessie 2017等)ではOS周りの設定方法が異なります。<br>
 Dockerで用意しているRobotCarの環境には影響ないので、別のOSの場合はDocker部分だけ参考にしてください。<br>
 
