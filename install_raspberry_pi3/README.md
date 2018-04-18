@@ -241,6 +241,10 @@ sudo docker pull naisy/fabo-jupyter-armhf
 ## Dockerコンテナ作成
 * CPU版、SPIあり、I2Cあり(level1はこれを使う)
 ```
+docker run -itd --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
+
+* CPU版、SPIあり、I2Cあり、level1_demo走行用(start_button.pyを実行するコンテナを作成)
+```
 docker run -itd --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 naisy/fabo-jupyter-armhf /bin/bash -c "python /notebooks/github/RobotCarAI/level1_demo/start_button.py & jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
 ```
 
