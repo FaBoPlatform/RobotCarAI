@@ -133,7 +133,7 @@ git clone https://github.com/FaBoPlatform/RobotCarAI
 ## OS環境設定
 OSのアップデート、bashの設定、vim設定等を行います。動作には必須ではありませんが、少し見やすくなります。<br>
 ```
-cd /home/pi/notebooks/github/install_raspberry_pi3
+cd /home/pi/notebooks/github/RobotCarAI/install_raspberry_pi3
 # 改行コードがCRLF(DOS)になっている事があるので、LF(UNIX)に変更する
 find ./ -type f | xargs -n1 sed -i "s/\r//g"
 chmod 755 *.sh
