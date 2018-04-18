@@ -29,7 +29,7 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
   * WiFi国別コード設定
 * [RobotCar ソースコードダウンロード](#3)
 * [OS環境設定](#4)
-* [I2C Kernel修復](#5)
+* [I2C Kernel/smbus修正](#5)
 * [hostname変更](#6)
 * [Dockerインストール](#7)
 * [RobotCar Docker環境ダウンロード](#8)
@@ -87,7 +87,7 @@ RobotCarの距離センサー動作のためにI2Cを有効化します。<br>
 
 項目にあるI2Cを有効化します。<br>
 
-Raspbian Stretch Liteにはkernelに問題があり、I2Cが正常に利用出来ません。このため、後ほどKernelを修復します。
+Raspbian Stretch Liteにはkernelに問題があり、I2Cが正常に利用出来ません。このため、後ほどKernelを修正します。
 
 
 #### WiFi設定
@@ -150,7 +150,7 @@ sudo ./setup_package.sh
 
 <a name='5'>
 
-## I2C Kernel修復
+## I2C Kernel/smbus修正
 Raspbian Stretch Liteはraspi-configでI2Cを有効にしてもsmbusコード実行時にエラーが発生します。原因はKernelにあるようなので修正します。<br>
 
 ```
