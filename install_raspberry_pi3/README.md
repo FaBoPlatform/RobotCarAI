@@ -119,7 +119,9 @@ WiFiの国別コードを設定します。<br>
 ## RobotCar ソースコードダウンロード
 ```
 sudo apt-get update
-sudo apt-get install git
+sudo apt-get dist-upgrade -y
+sudo apt-get update
+sudo apt-get install -y git
 mkdir -p /home/pi/notebooks/github/
 cd /home/pi/notebooks/github
 git clone https://github.com/FaBoPlatform/RobotCarAI
@@ -166,6 +168,7 @@ sudo reboot
 ```
 
 参考： <br>
+* [https://github.com/raspberrypi/firmware/issues/867](https://github.com/raspberrypi/firmware/issues/867)
 * [https://www.raspberrypi.org/forums/viewtopic.php?t=192958](https://www.raspberrypi.org/forums/viewtopic.php?t=192958)
 * [https://github.com/raspberrypi/firmware/issues/828](https://github.com/raspberrypi/firmware/issues/828)
 
@@ -220,7 +223,7 @@ hostnamectl
 
 ## Dockerインストール
 ```
-sudo apt-get install docker.io
+sudo apt-get install -y docker.io
 sudo reboot
 ```
 
