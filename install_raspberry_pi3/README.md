@@ -159,7 +159,7 @@ wget -O i2c1-bcm2708.dtbo https://drive.google.com/uc\?export=download\&id=0B_P-
 sudo chmod 755 i2c1-bcm2708.dtbo
 sudo chown root:root i2c1-bcm2708.dtbo
 sudo mv i2c1-bcm2708.dtbo /boot/overlays/
-sudo echo "dtoverlay=i2c1-bcm2708" >> /boot/config.txt
+sudo sh -c 'echo "dtoverlay=i2c1-bcm2708" >> /boot/config.txt'
 sudo reboot
 # リブート後、Raspberry Pi3に再ログインしてから継続
 sudo sh -c '/bin/echo Y > /sys/module/i2c_bcm2708/parameters/combined'
