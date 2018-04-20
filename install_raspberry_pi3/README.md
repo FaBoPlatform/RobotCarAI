@@ -26,7 +26,6 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
   * SPI有効化
   * I2C有効化
   * WiFi設定
-  * WiFi国別コード設定
 * [RobotCar ソースコードダウンロード](#3)
 * [OS環境設定](#4)
 * [I2C Kernel/smbus修正](#5)
@@ -41,7 +40,11 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
 <a name='1'>
 
 ## Stretch Liteインストール
-Raspberry Pi3の2018年4月時点での最新OSはRaspbian Stretchなので、Stretch Lite 2018-03-13をベースとしたインストール方法を記載します。<br>
+Raspberry Pi3の2018年4月時点での最新OSはRaspbian Stretchなので、Stretch Lite 2018-04-18をベースとしたインストール方法を記載します。<br>
+
+Raspbianの[リリースノート](http://downloads.raspberrypi.org/raspbian/release_notes.txt)でOS更新情報を確認してください。<br>
+多くの変更があるバージョンはWiFi、I2C、SPI等の設定方法が変わっている可能性があります。最新のOSをベースに使う時はそれに合わせて設定してください。<br>
+ベースOSのI2C、SPI有効化が正常に行えれば、Dockerで用意しているRobotCar環境は動作するかと思います。<br>
 
 デスクトップ機能は不要なので、容量の少ないRASPBIAN STRETCH LITEをダウンロードします。<br>
 ダウンロードURL:[https://www.raspberrypi.org/downloads/raspbian/](https://www.raspberrypi.org/downloads/raspbian/)<br>
@@ -94,17 +97,8 @@ Raspbian Stretch Liteにはkernelに問題があり、I2Cが正常に利用出�
 Raspberry Pi3をWiFiに接続します。<br>
 > Network Options
 
-項目から、WiFiのSSID、パスワードを入力してください。<br>
-この設定は、<br>
-> /etc/wpa_supplicant/wpa_supplicant.conf
-
-ここに保存されます。
-
-#### WiFi国別コード設定
-WiFiの国別コードを設定します。<br>
-> Localisation Options
-
-この項目から、WiFiの国別コードとしてJPを設定します。<br>
+項目から、WiFiの国別コードとしてJPを設定します。<br>
+次に、WiFiのSSID、パスワードを入力してください。<br>
 この設定は、<br>
 > /etc/wpa_supplicant/wpa_supplicant.conf
 
