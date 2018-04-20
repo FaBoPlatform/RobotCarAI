@@ -104,6 +104,11 @@ Raspberry Pi3をWiFiに接続します。<br>
 
 ここに保存されます。
 
+パスワードを暗号化する場合は、以下のコマンド実行で表示されるpsk=xxxxxxxxの部分でpskを書き換えてください。
+```
+wpa_passphrase 'SSID' 'PASSWORD'
+```
+
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
