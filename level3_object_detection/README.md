@@ -299,7 +299,8 @@ Segmentationは画像の1画素単位で判断します。<br>
 Semantic Segmentationは1ピクセル毎のクラス分類ですが、Mask R-CNNではInstance Segmentationと呼ばれる物体のパーツ毎の識別になります。<br>
 Classificationの方が処理速度が速く、Segmentationになると処理速度が遅くなります。<br>
 
-今回はSSD300を使ったObject Detectionで道路標識をの検出します。<br>
+今回はSSD300を使ったObject Detectionで道路標識を検出します。<br>
+SSDのデメリットとして、小さい物体は検出出来ない問題があります。SSDではアスペクト比を変更して学習するため、ボックスが潰れてしまうために発生します。<br>
 
 #### [OpenCV] テンプレートマッチング
 昔からある方法としては、黒枠などのテンプレート画像を検索する方法があり、OpenCVで使う事が出来ます。<br>
@@ -315,7 +316,13 @@ Classificationの方が処理速度が速く、Segmentationになると処理速
 
 #### [Neural Networks] SSD: Single Shot MultiBox Detection
 VGG16を内部に持ち、DeepLearningによる物体検出と識別を行います。<br>
-TensorFlowでのコードが公開されていますので、今回はこれを使うことにします。
+TensorFlowでのコードが公開されていますので、今回はこれを使うことにします。<br>
+
+リアルタイムに物体検出が可能となるssd_movilenet_v1もありますが、ここは少し古い内容なので紹介だけにしておきます。<br>
+オリジナル：[realtime_object_detection](https://github.com/GustavZ/realtime_object_detection)<br>
+道路標識版：[realtime_object_detection](https://github.com/naisy/realtime_object_detection)<br>
+ssd_mobilenet_v1の学習方法[train_ssd_mobilenet](https://github.com/naisy/train_ssd_mobilenet)<br>
+
 <hr>
 
 #### [Python/TensorFlow] TensorFlow Object Detection API
