@@ -318,16 +318,17 @@ SSDのデメリットとして、小さい物体は検出出来ない問題が�
 VGG16を内部に持ち、DeepLearningによる物体検出と識別を行います。<br>
 TensorFlowでのコードが公開されていますので、今回はこれを使うことにします。<br>
 
-リアルタイムに物体検出が可能となるssd_movilenet_v1もありますが、ここは少し古い内容なので紹介だけにしておきます。<br>
-オリジナル：[realtime_object_detection](https://github.com/GustavZ/realtime_object_detection)<br>
-道路標識版：[realtime_object_detection](https://github.com/naisy/realtime_object_detection)<br>
-ssd_mobilenet_v1の学習方法[train_ssd_mobilenet](https://github.com/naisy/train_ssd_mobilenet)<br>
-
 <hr>
 
 #### [Python/TensorFlow] TensorFlow Object Detection API
 TensorFlow公式で用意されている物体検出APIです。<br>
-様々なモデルを使うことが出来ますが、バージョンアップに伴うトラブルもあるため、今後に期待します。
+様々なモデルを使うことが出来ますが、バージョンアップに伴うトラブルもあるため、今後に期待します。<br>
+
+おすすめの物体検出として、TensorFlow Object Detection APIの実行効率を大幅に改修したssd_movilenet_v1があります。<br>
+オリジナル：[realtime_object_detection](https://github.com/GustavZ/realtime_object_detection)<br>
+道路標識版：[realtime_object_detection](https://github.com/naisy/realtime_object_detection)<br>
+ssd_mobilenet_v1の学習方法：[train_ssd_mobilenet](https://github.com/naisy/train_ssd_mobilenet)<br>
+
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
