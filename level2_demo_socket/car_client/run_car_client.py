@@ -7,7 +7,6 @@ import logging
 import threading
 import numpy as np
 import cv2
-from fabolib import Kerberos
 from fabolib import Car
 from lib import SPI
 from lib import Camera

@@ -6,7 +6,6 @@ import time
 import logging
 import threading
 import numpy as np
-from fabolib import Kerberos
 from fabolib import Car
 from lib import SPI
 from lib import LaneDetection
