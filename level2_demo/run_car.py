@@ -159,6 +159,8 @@ def main():
             ########################################
             car.set_angle(HANDLE_NEUTRAL + handle_angle)
             car.forward(speed)
+            # サーボを高速動作させるとRPに電力遮断されてカメラが動作不能になるため、車両制御にsleepを入れる
+            time.sleep(0.2)
         except:
             import traceback
             traceback.print_exc()
