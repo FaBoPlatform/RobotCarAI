@@ -71,8 +71,9 @@ def do_analyze():
     speed = None
 
     # 映像準備
-    camera = Camera()
+    camera = WebcamVideoStream()
     cols,rows,fps,fourcc = camera.init_webcam()
+    camera.start()
     fps = 1
     if IS_SAVE:
         out = cv2.VideoWriter(os.path.join(OUTPUT_DIR, OUTPUT_FILENAME), int(fourcc), fps, (int(cols), int(rows)))
@@ -82,28 +83,17 @@ def do_analyze():
     ########################################
     ld = LaneDetection(X_METER,Y_METER,cols=cols,rows=rows)
 
-    ########################################
-    # 最初に映像バッファを削除する
-    ########################################
-    for i in range(300):
-        res = camera.webcam_capture()
     while is_analyze_running:
         frame_start_time = time.time()
         #time.sleep(0.2)
         ########################################
         # 映像取得
         ########################################
-        for i in range(30): # 処理が遅くてバッファに蓄積されてくる古いフレームを除去
-            res = camera.webcam_capture()
-            if not res:
-                break
+        cv_bgr = camera.read()
         frame_counter += 1
         ########################################
         # 物体認識
         ########################################
-        cv_bgr = camera.cv_bgr
-        if cv_bgr is None:
-            continue
         # avi動画に保存する
         if IS_SAVE:
             out.write(cv_bgr)
