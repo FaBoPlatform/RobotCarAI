@@ -249,6 +249,27 @@ server.pyのHOST,PORTを確認してください。<br>
 ファイアーウォールは通常、内部IPに対して設定していないので通信可能ですが、設定している場合はサーバ側でTCPポート番号の通信を許可してください。<br>
 <hr>
 
+#### サーバが起動しない　その2
+>`demux_wavpack: (open_wv_file:127) open_wv_file: non-seekable inputs aren't supported yet.`
+
+ロボットカーからカメラ映像が送信されていない時に発生します。<br>
+ffmpegでストリーミング配信しているdockerのステータスと送信先IPアドレスを確認してください。<br>
+
+dockerステータス確認：
+```
+docker ps -a
+```
+>`CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                    PORTS                                                                    NAMES`<br>
+>`9cad14b4a151        ffmpeg                     "/bin/bash -c 'ffm..."   4 days ago          Up 6 minutes              8090/tcp, 8090/udp                                                       happy_meitner`<br>
+
+
+ffmpegストリーミング配信：
+```
+docker run -itd --device=/dev/video0:/dev/video0 ffmpeg /bin/bash -c "ffmpeg -thread_queue_size 1024 -r 30 -video_size 160x120 -input_format yuyv422 -i /dev/video0 -pix_fmt yuv422p -threads 4 -f mpegts udp://192.168.0.76:8090"
+```
+
+<hr>
+
 #### 走行開始ボタンを押してもすぐ終了する
 run_car.pyのHOST,PORTを確認してください。(サーバのIPアドレス、ポート番号を設定します)<br>
 サーバが起動していることを確認してください。<br>
