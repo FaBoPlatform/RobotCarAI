@@ -634,28 +634,41 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const):
     return cv_rgb_ellipse,cv_rgb_tilt
 
 
-def draw_text(cv_rgb,strings,colors,tx=10,ty=20):
+def draw_text(cv_rgb,display_str,color,start_x,start_y,fontFace, fontScale, fontThickness):
     '''
     画面に文字を描く
     args:
         cv_rgb: 描画対象のOpenCV RGB画像データ
         strings: 文字配列
-        colors: 色配列
-        tx: テキスト描画x座標
-        ty: テキスト描画y座標
+        color: 色配列
+        start_x: テキスト描画x座標
+        start_y: テキスト描画y座標
+        fontFace: fontFace
+        fontScale: fontScale
+        fontThickness: fontThickness
     return:
-        ty: テキスト描画y座標
+        end_x: テキスト描画x座標
+        end_y: テキスト描画y座標
     '''
-    length = len(strings)
-    for i in range(length):
-        cv2.putText(cv_rgb,
-                    strings[i],
-                    (tx,ty),
-                    cv2.FONT_HERSHEY_PLAIN,
-                    1,
-                    colors[i])
-        ty += 20
-    return ty
+
+    max_text_width = 0
+    max_text_height = 0
+    [(text_width, text_height), baseLine] = cv2.getTextSize(text=display_str[0], fontFace=fontFace, fontScale=fontScale, thickness=fontThickness)
+    x_left = int(baseLine)
+    y_top = int(baseLine)
+    for i in range(len(display_str)):
+        [(text_width, text_height), baseLine] = cv2.getTextSize(text=display_str[i], fontFace=fontFace, fontScale=fontScale, thickness=fontThickness)
+        if max_text_width < text_width:
+            max_text_width = text_width
+        if max_text_height < text_height:
+            max_text_height = text_height
+
+    for i in range(len(display_str)):
+        cv2.putText(cv_rgb, display_str[i], org=(start_x, start_y + int(max_text_height*1.2 + (max_text_height*1.2 * i))), fontFace=fontFace, fontScale=fontScale, thickness=fontThickness, color=color)
+    end_x = int(x_left + max_text_width + 2)
+    end_y = start_y + int(max_text_height*1.2 + (max_text_height*1.2 * i))
+
+    return end_x, end_y
 
 
 def sliding_windows(cv_bin):

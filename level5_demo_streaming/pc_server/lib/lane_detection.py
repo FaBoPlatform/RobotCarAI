@@ -1,3 +1,4 @@
+# coding: utf-8
 import cv2
 import numpy as np
 from lib.functions import *
@@ -5,7 +6,7 @@ from lib.functions import *
 lineType=cv2.LINE_AA
 MAX_HANDLE_ANGLE = 42
 
-def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
+def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontFace, fontScale, fontThickness):
 
     is_pass = False
     tilt1_deg = None
@@ -42,14 +43,14 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
     ########################################
     cv_bgr = to_ipm(cv_bgr,ipm_vertices)
     ########################################
-    # 白色抽出
+    # WHITE DETECTION
     ########################################
     cv_bgr = to_white(cv_bgr)
     cv_bgr_white = cv_bgr
 
 
     ########################################
-    # 画像を2値化する
+    # BINARY
     ########################################
     cv_bin = to_bin(cv_bgr)
     cv_rgb_bin = bin_to_rgb(cv_bin)
@@ -88,13 +89,13 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
             = draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const)
 
         # 白線画像にレーンを描画する
-        cv2.polylines(cv_rgb_bin,[pts_line],False,(255,0,0))
+        cv2.polylines(cv_rgb_bin,[pts_line],False,(255,0,0), thickness=10)
         # 白線道路領域をIPM逆変換する
         cv_rgb_bin = reverse_ipm(cv_rgb_bin,ipm_vertices)
 
         # 道路にラインを描画する
         cv_rgb_road = new_rgb(rows,cols)
-        cv2.polylines(cv_rgb_road,[pts_line],False,(255,0,0))
+        cv2.polylines(cv_rgb_road,[pts_line],False,(255,0,0), thickness=10)
         # 道路をIPM変換する
         cv_rgb_road = reverse_ipm(cv_rgb_road,ipm_vertices)
 
@@ -174,8 +175,11 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
     else:
         cv_rgb = to_rgb(cv_bgr_detection)
 
-    # 道路をリサイズする
-    cv_rgb_row1 = cv2.resize(cv_rgb, (cols*3,rows*3), interpolation = cv2.INTER_LINEAR)
+    # row1画面を作成する
+    left_rgb_row1 = new_rgb(rows, cols)
+    right_rgb_row1 = new_rgb(rows, cols)
+    cv_rgb_row1 = cv2.hconcat([left_rgb_row1,cv_rgb])
+    cv_rgb_row1 = cv2.hconcat([cv_rgb_row1,right_rgb_row1])
 
 
     if is_pass:
@@ -186,65 +190,57 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
         meters_from_center: -が右にいる、+が左にいる
         handle_angle: +が右、-が左
         '''
+        """ DRAW TEXT """
+        sample_str='Sample strings'
+        [(text_width, text_height), baseLine] = cv2.getTextSize(text=sample_str, fontFace=fontFace, fontScale=fontScale, thickness=fontThickness)
+        x_left = int(baseLine)
+        y_top = int(baseLine)
+
         ########################################
         # row1に文字を書く
         ########################################
-        tx=10
-        ty=40
-        strings = []
-        colors = []
         if is_meter_ellipse_success:
-            strings = []
-            colors = []
-            strings += ["Far"]
-            colors += [(0,255,255)]
+            display_str = []
+            color = (0,255,255)
+            display_str.append("Far")
             if tilt2_deg < 0:
-                strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg right"]
-                colors += [(0,255,255)]
+                display_str.append("tilt2:"+str(round(tilt2_deg,2))+"deg right")
             else:
-                strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg left"]
-                colors += [(0,255,255)]
-    
+                display_str.append("tilt2:"+str(round(tilt2_deg,2))+"deg left")
             if angle2_deg < 0:
-                strings += ["angle2:"+str(round(angle2_deg,2))+"deg left"]
-                colors += [(0,255,255)]
+                display_str.append("angle2:"+str(round(angle2_deg,2))+"deg left")
             else:
-                strings += ["angle2:"+str(round(angle2_deg,2))+"deg right"]
-                colors += [(0,255,255)]
-            strings += ["r2:"+str(round(curve2_r,2))+"m"]
-            colors += [(0,255,255)]
-    
-            strings += ["Near"]
-            colors += [(255,0,0)]
+                display_str.append("angle2:"+str(round(angle2_deg,2))+"deg right")
+            display_str.append("r2:"+str(round(curve2_r,2))+"m")
+            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+
+            display_str = []
+            display_str.append("Near")
+            color = (255,0,0)
             if tilt1_deg < 0:
-                strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg right"]
-                colors += [(255,0,0)]
+                display_str.append("tilt1:"+str(round(tilt1_deg,2))+"deg right")
             else:
-                strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg left"]
-                colors += [(255,0,0)]
-    
+                display_str.append("tilt1:"+str(round(tilt1_deg,2))+"deg left")
             if angle1_deg < 0:
-                strings += ["angle1:"+str(round(angle1_deg,2))+"deg left"]
-                colors += [(255,0,0)]
+                display_str.append("angle1:"+str(round(angle1_deg,2))+"deg left")
             else:
-                strings += ["angle1:"+str(round(angle1_deg,2))+"deg right"]
-                colors += [(255,0,0)]
-            strings += ["r1:"+str(round(curve1_r,2))+"m"]
-            colors += [(255,0,0)]
+                display_str.append("angle1:"+str(round(angle1_deg,2))+"deg right")
+            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+
+            display_str = []
+            display_str.append("r1:"+str(round(curve1_r,2))+"m")
+            color = (255,0,0)
+            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
-            ty = draw_text(cv_rgb_row1,strings,colors,tx=tx,ty=ty)
-    
-        strings = []
-        colors = []
-        ty += 20
         if meters_from_center is not None:
+            display_str = []
             if meters_from_center >= 0:
-                strings += ["center:"+str(round(meters_from_center*100,2))+"cm right"]
-                colors += [(0,255,0)]
+                display_str.append("center:"+str(round(meters_from_center*100,2))+"cm right")
+                color = (0,255,0)
             else:
-                strings +=["center:"+str(round(meters_from_center*100,2))+"cm left"]
-                colors += [(0,0,255)]
-            ty = draw_text(cv_rgb_row1,strings,colors,tx=tx,ty=ty)
+                display_str.append("center:"+str(round(meters_from_center*100,2))+"cm left")
+                color = (255,20,147)
+            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
             ####################
             # cv_rgb_row1に矢印を描く
@@ -252,7 +248,8 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
             arrow_x = int(cv_rgb_row1.shape[1]/2-35)
             arrow_y = int(cv_rgb_row1.shape[0]/2-35)
             handle_angle = -1*tilt1_deg
-            strings = [str(round(handle_angle,2))+"deg"]
+            display_str = []
+            display_str.append(str(round(handle_angle,2))+"deg")
             if meters_from_center >= 0:
                 # 左にいる
                 if np.abs(meters_from_center)*100 > 20:
@@ -299,111 +296,104 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows):
                 arrow_type = 2
                 arrow_color=(0,255-(255*ratio),0)
                 arrow_text_color=(0,255,0)
-                strings = [str(round(handle_angle,2))+"deg"]
-                arrow_text_color=(0,255,0)
             elif handle_angle > 5:
                 arrow_type = 1
                 arrow_color=(255-(255*ratio),255-(255*ratio),255)
-                arrow_text_color=(0,0,255)
-                strings = [str(round(handle_angle,2))+"deg"]
                 arrow_text_color=(0,0,255)
             else:
                 arrow_type = 3
                 arrow_color=(255,255-(255*ratio),255-(255*ratio))
                 arrow_text_color=(255,0,0)
-                strings = [str(round(handle_angle,2))+"deg"]
-                arrow_text_color=(255,0,0)
     
             draw_arrow(cv_rgb_row1,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
             
-            colors = [arrow_text_color]
-            draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-10)
+            end_x, end_y = draw_text(cv_rgb_row1,display_str,arrow_color,start_x=arrow_x,start_y=arrow_y-10,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
             ####################
             # 奥のカーブ角度が大きい時、slow downを表示する
             ####################
             if np.abs(tilt2_deg) > np.abs(tilt1_deg) and np.abs(tilt2_deg) >= 15.0:
-                strings = ["slow down"]
-                colors = [(0,0,255)]
-                draw_text(cv_rgb_row1,strings,colors,arrow_x,arrow_y-30)
+                display_str = ["slow down"]
+                color = (0,0,255)
+                end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=arrow_x,start_y=arrow_y-30,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
         ########################################
         # cv_bgr_white に文字を描く
         ########################################
-        strings = ["white filter"]
-        colors = [(255,255,255)]
-        draw_text(cv_bgr_white,strings,colors)
+        display_str = ["white filter"]
+        color = (255,255,255)
+        end_x, end_y = draw_text(cv_bgr_white,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
         ########################################
         # histogram に文字を描く
         ########################################
-        strings = ["histogram"]
-        colors = [(255,255,255)]
-        draw_text(cv_rgb_histogram,strings,colors)
+        display_str = ["histogram"]
+        color = (255,255,255)
+        end_x, end_y = draw_text(cv_rgb_histogram,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
         ########################################
         # sliding windows に文字を描く
         ########################################
-        strings = ["sliding windows"]
-        colors = [(255,255,255)]
-        draw_text(cv_rgb_sliding_windows,strings,colors)
+        display_str = ["sliding windows"]
+        color = (255,255,255)
+        end_x, end_y = draw_text(cv_rgb_sliding_windows,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
         ########################################
         # cv_rgb_bin に文字を描く
         ########################################
-        strings = ["road"]
-        colors = [(255,255,255)]
-        draw_text(cv_rgb_bin,strings,colors)
+        display_str = ["road"]
+        color = (255,255,255)
+        end_x, end_y = draw_text(cv_rgb_bin,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
         ########################################
         # tilt に文字を描く
         ########################################
-        strings = ["tilts"]
-        colors = [(255,255,255)]
+        display_str = ["tilts"]
+        color = (255,255,255)
+        end_x, end_y = draw_text(cv_rgb_tilt,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+
         if is_meter_ellipse_success:
-            strings += ["Far"]
-            colors += [(0,255,255)]
+            display_str = ["Far"]
+            color = (0,255,255)
             if tilt2_deg < 0:
-                strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg right"]
-                colors += [(0,255,255)]
+                display_str.append("tilt2:"+str(round(tilt2_deg,2))+"deg right")
             else:
-                strings += ["tilt2:"+str(round(tilt2_deg,2))+"deg left"]
-                colors += [(0,255,255)]
+                display_str.append("tilt2:"+str(round(tilt2_deg,2))+"deg left")
+            end_x, end_y = draw_text(cv_rgb_tilt,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
-            strings += ["Near"]
-            colors += [(255,0,0)]
+            display_str = ["Near"]
+            color = (255,0,0)
             if tilt1_deg < 0:
-                strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg right"]
-                colors += [(255,0,0)]
+                display_str.append("tilt1:"+str(round(tilt1_deg,2))+"deg right")
             else:
-                strings += ["tilt1:"+str(round(tilt1_deg,2))+"deg left"]
-                colors += [(255,0,0)]
-            draw_text(cv_rgb_tilt,strings,colors)
+                display_str.append("tilt1:"+str(round(tilt1_deg,2))+"deg left")
+            end_x, end_y = draw_text(cv_rgb_tilt,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
         ########################################
         # curve に文字を描く
         ########################################
-        strings = ["curve"]
-        colors = [(255,255,255)]
+        display_str = ["curve"]
+        color = (255,255,255)
+        end_x, end_y = draw_text(cv_rgb_ellipse,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
         if is_meter_ellipse_success:
+            display_str = []
             # Far
             if angle2_deg < 0:
-                strings += ["angle2:"+str(round(angle2_deg,2))+"deg left"]
-                colors += [(0,200,200)]
+                display_str.append("angle2:"+str(round(angle2_deg,2))+"deg left")
             else:
-                strings += ["angle2:"+str(round(angle2_deg,2))+"deg right"]
-                colors += [(0,200,200)]
-            strings += ["r2:"+str(round(curve2_r,2))+"m"]
-            colors += [(0,200,200)]
+                display_str.append("angle2:"+str(round(angle2_deg,2))+"deg right")
+            display_str.append("r2:"+str(round(curve2_r,2))+"m")
+            color = (0,200,200)
+            end_x, end_y = draw_text(cv_rgb_ellipse,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+
+            display_str = []
             # Near
             if angle1_deg < 0:
-                strings += ["angle1:"+str(round(angle1_deg,2))+"deg left"]
-                colors += [(200,0,0)]
+                display_str.append("angle1:"+str(round(angle1_deg,2))+"deg left")
             else:
-                strings += ["angle1:"+str(round(angle1_deg,2))+"deg right"]
-                colors += [(200,0,0)]
-            strings += ["r1:"+str(round(curve1_r,2))+"m"]
-            colors += [(200,0,0)]
-        draw_text(cv_rgb_ellipse,strings,colors)
+                display_str.append("angle1:"+str(round(angle1_deg,2))+"deg right")
+            display_str.append("r1:"+str(round(curve1_r,2))+"m")
+            color = (200,0,0)
+            end_x, end_y = draw_text(cv_rgb_ellipse,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
 
     # 画像を結合する
     cv_rgb_row2 = to_rgb(cv_bgr_white)
