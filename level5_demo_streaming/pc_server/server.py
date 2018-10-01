@@ -22,21 +22,28 @@ import numpy as np
 from lib.mpfps import FPS
 from lib.functions import *
 from lib.lane_detection import lane_detection
+import copy
 
 import numpy as np
 from tf_utils import visualization_utils_cv2 as vis_util
-from lib.webcam import WebcamVideoStream
 from lib.session_worker import SessionWorker
-from lib.load_graph import LoadFrozenGraph
 from lib.load_label_map import LoadLabelMap
 from lib.mpvariable import MPVariable
-from lib.functions import draw_text
+from lib.mpvisualizeworker import MPVisualizeWorker, visualization
+from lib.mpio import start_sender
 import time
 import sys
 import cv2
 import tensorflow as tf
 import yaml
 
+import sys
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
+if PY2:
+    import Queue
+elif PY3:
+    import queue as Queue
 
 
 # ログ設定
@@ -72,36 +79,19 @@ def without_visualization(category_index, boxes, scores, classes, cur_frame, det
 
 def min_class(category_index, scores, classes):
     # check minimum detected class number
-    min_class = 100000
+    min_class = np.Inf
     for score, _class in zip(np.squeeze(scores), np.squeeze(classes)):
         if score > 0.5:
             if _class < min_class:
                 min_class = _class
-    if min_class == 100000:
+    if min_class == np.Inf:
         return 0
     else:
         return int(min_class)
 
-def visualization(category_index, image, boxes, scores, classes, debug_mode, vis_text, fps_interval):
-    # Visualization of the results of a detection.
-    vis_util.visualize_boxes_and_labels_on_image_array(
-        image,
-        np.squeeze(boxes),
-        np.squeeze(classes).astype(np.int32),
-        np.squeeze(scores),
-        category_index,
-        use_normalized_coordinates=True,
-        line_thickness=8)
-    return image
-
-def detection_loop():
+def detection_loop(cfg):
     global is_analyze_running
     global sock
-
-    """
-    LOAD SETUP VARIABLES
-    """
-    cfg = load_config()
 
     """
     START FPS, FPS PRINT
@@ -113,9 +103,10 @@ def detection_loop():
     """ """ """ """ """ """ """ """ """ """ """
     GET CONFIG
     """ """ """ """ """ """ """ """ """ """ """
-    VIDEO_INPUT          = cfg['video_input']
     FORCE_GPU_COMPATIBLE = cfg['force_gpu_compatible']
+    SAVE_TO_FILE         = cfg['save_to_file']
     VISUALIZE            = cfg['visualize']
+    VIS_WORKER           = cfg['vis_worker']
     VIS_TEXT             = cfg['vis_text']
     MAX_FRAMES           = cfg['max_frames']
     WIDTH                = cfg['width']
@@ -126,14 +117,37 @@ def detection_loop():
     SPLIT_MODEL          = cfg['split_model']
     LOG_DEVICE           = cfg['log_device']
     ALLOW_MEMORY_GROWTH  = cfg['allow_memory_growth']
-    SSD_SHAPE            = cfg['ssd_shape']
+    SPLIT_SHAPE          = cfg['split_shape']
     DEBUG_MODE           = cfg['debug_mode']
     LABEL_PATH           = cfg['label_path']
     NUM_CLASSES          = cfg['num_classes']
     X_METER              = cfg['x_meter']
     Y_METER              = cfg['y_meter']
+    MODEL_TYPE           = cfg['model_type']
+    SRC_FROM             = cfg['src_from']
+    CAMERA = 0
+    MOVIE  = 1
+    IMAGE  = 2
+    if SRC_FROM == 'camera':
+        SRC_FROM = CAMERA
+        VIDEO_INPUT = cfg['camera_input']
+    elif SRC_FROM == 'movie':
+        SRC_FROM = MOVIE
+        VIDEO_INPUT = cfg['movie_input']
+    elif SRC_FROM == 'image':
+        SRC_FROM = IMAGE
+        VIDEO_INPUT = cfg['image_input']
+    """ """
+
     cur_frame = 0
     """ """
+
+    if MODEL_TYPE == 'nms_v1':
+        from lib.load_graph_nms_v1 import LoadFrozenGraph
+    elif MODEL_TYPE == 'nms_v2':
+        from lib.load_graph_nms_v2 import LoadFrozenGraph
+    else:
+        raise IOError(("Unknown model_type."))
 
     """ """ """ """ """ """ """ """ """ """ """
     LOAD FROZEN_GRAPH
@@ -168,12 +182,13 @@ def detection_loop():
     detection_scores = graph.get_tensor_by_name('detection_scores:0')
     detection_classes = graph.get_tensor_by_name('detection_classes:0')
     num_detections = graph.get_tensor_by_name('num_detections:0')
-
     if SPLIT_MODEL:
-        score_out = graph.get_tensor_by_name('Postprocessor/convert_scores:0')
-        expand_out = graph.get_tensor_by_name('Postprocessor/ExpandDims_1:0')
-        score_in = graph.get_tensor_by_name('Postprocessor/convert_scores_1:0')
-        expand_in = graph.get_tensor_by_name('Postprocessor/ExpandDims_1_1:0')
+        SPLIT_TARGET_NAME = load_frozen_graph.SPLIT_TARGET_NAME
+        split_out = []
+        split_in = []
+        for stn in SPLIT_TARGET_NAME:
+            split_out += [graph.get_tensor_by_name(stn+':0')]
+            split_in += [graph.get_tensor_by_name(stn+'_1:0')]
     """ """
 
     """ """ """ """ """ """ """ """ """ """ """
@@ -184,23 +199,35 @@ def detection_loop():
     cpu_tag = 'CPU'
     gpu_worker = SessionWorker(gpu_tag, graph, config)
     if SPLIT_MODEL:
-        gpu_opts = [score_out, expand_out]
+        gpu_opts = split_out
         cpu_worker = SessionWorker(cpu_tag, graph, config)
         cpu_opts = [detection_boxes, detection_scores, detection_classes, num_detections]
     else:
         gpu_opts = [detection_boxes, detection_scores, detection_classes, num_detections]
     """ """
 
+    """
+    START VISUALIZE WORKER
+    """
+    if VISUALIZE and VIS_WORKER:
+        q_out = Queue.Queue()
+        vis_worker = MPVisualizeWorker(cfg, MPVariable.vis_in_con)
+        """ """ """ """ """ """ """ """ """ """ """
+        START SENDER THREAD
+        """ """ """ """ """ """ """ """ """ """ """
+        start_sender(MPVariable.det_out_con, q_out)
+    proc_frame_counter = 0
+    vis_proc_time = 0
+
+    
     """ """ """ """ """ """ """ """ """ """ """
     WAIT UNTIL THE FIRST DUMMY IMAGE DONE
     """ """ """ """ """ """ """ """ """ """ """
     print('Loading...')
-    loss = 0
     sleep_interval = 0.1
     """
     PUT DUMMY DATA INTO GPU WORKER
     """
-    is_dummy_gpu = True
     gpu_feeds = {image_tensor:  [np.zeros((300, 300, 3))]}
     gpu_extras = {}
     gpu_worker.put_sess_queue(gpu_opts, gpu_feeds, gpu_extras)
@@ -208,15 +235,13 @@ def detection_loop():
         """
         PUT DUMMY DATA INTO CPU WORKER
         """
-        is_dummy_cpu = True
-        if SSD_SHAPE == 600:
-            shape = 7326
-        else:
-            shape = 1917
-
-        score = np.zeros((1, shape, NUM_CLASSES))
-        expand = np.zeros((1, shape, 1, 4))
-        cpu_feeds = {score_in: score, expand_in: expand}
+        if MODEL_TYPE == 'nms_v1':
+            cpu_feeds = {split_in[0]: np.zeros((1, SPLIT_SHAPE, NUM_CLASSES)),
+                         split_in[1]: np.zeros((1, SPLIT_SHAPE, 1, 4))}
+        elif MODEL_TYPE == 'nms_v2':
+            cpu_feeds = {split_in[0]: np.zeros((1, SPLIT_SHAPE, NUM_CLASSES)),
+                         split_in[1]: np.zeros((1, SPLIT_SHAPE, 1, 4)),
+                         split_in[2]: [[0., 0., 1., 1.]]}
         cpu_extras = {}
         cpu_worker.put_sess_queue(cpu_opts, cpu_feeds, cpu_extras)
     """
@@ -242,15 +267,37 @@ def detection_loop():
     """ """ """ """ """ """ """ """ """ """ """
     START CAMERA
     """ """ """ """ """ """ """ """ """ """ """
-    video_stream = WebcamVideoStream(VIDEO_INPUT, WIDTH, HEIGHT).start()
+    if SRC_FROM == CAMERA:
+        from lib.webcam import WebcamVideoStream as VideoReader
+    elif SRC_FROM == MOVIE:
+        from lib.video import VideoReader
+    elif SRC_FROM == IMAGE:
+        from lib.image import ImageReader as VideoReader
+    video_reader = VideoReader()
+
+    if SRC_FROM == IMAGE:
+        video_reader.start(VIDEO_INPUT, save_to_file=SAVE_TO_FILE)
+    else: # CAMERA, MOVIE
+        video_reader.start(VIDEO_INPUT, WIDTH, HEIGHT, save_to_file=SAVE_TO_FILE)
+        frame_cols, frame_rows = video_reader.getSize()
+        """ STATISTICS FONT """
+        fontScale = frame_rows/1000.0
+        if fontScale < 0.4:
+            fontScale = 0.4
+        fontThickness = 1 + int(fontScale)
+    fontFace = cv2.FONT_HERSHEY_SIMPLEX
+    if SRC_FROM == MOVIE:
+        dir_path, filename = os.path.split(VIDEO_INPUT)
+        filepath_prefix = filename
+    elif SRC_FROM == CAMERA:
+        filepath_prefix = 'frame'
     """ """
 
 
     """ """ """ """ """ """ """ """ """ """ """
     PREPARE LANE DETECTION
     """ """ """ """ """ """ """ """ """ """ """
-    cols = video_stream.cols
-    rows = video_stream.rows
+    cols, rows = video_reader.getSize()
 
     """ """ """ """ """ """ """ """ """ """ """
     CAR PARAMETER
@@ -266,41 +313,60 @@ def detection_loop():
     """ """ """ """ """ """ """ """ """ """ """
     print('Starting Detection')
     sleep_interval = 0.005
+    top_in_time = None
+    frame_in_processing_counter = 0
 
     try:
-        while video_stream.running and is_analyze_running:
-            top_in_time = time.time()
+        if not video_reader.running:
+            raise IOError(("Input src error."))
+        while MPVariable.running.value:
+            if top_in_time is None:
+                top_in_time = time.time()
             """
             SPRIT/NON-SPLIT MODEL CAMERA TO WORKER
             """
-            if gpu_worker.is_sess_empty(): # must need for speed
-                cap_in_time = time.time()
-                frame = video_stream.read()
-                image_expanded = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), axis=0) # np.expand_dims is faster than []
-                #image_expanded = np.expand_dims(frame, axis=0) # BGR image for input. Of couse, bad accuracy in RGB trained model, but speed up.
-                cap_out_time = time.time()
-                # put new queue
-                gpu_feeds = {image_tensor: image_expanded}
-                if VISUALIZE:
-                    gpu_extras = {'image':frame, 'top_in_time':top_in_time, 'cap_in_time':cap_in_time, 'cap_out_time':cap_out_time} # for visualization frame
-                else:
-                    gpu_extras = {'top_in_time':top_in_time, 'cap_in_time':cap_in_time, 'cap_out_time':cap_out_time}
-                gpu_worker.put_sess_queue(gpu_opts, gpu_feeds, gpu_extras)
+            if video_reader.running:
+                if gpu_worker.is_sess_empty(): # must need for speed
+                    cap_in_time = time.time()
+                    if SRC_FROM == IMAGE:
+                        frame, filepath = video_reader.read()
+                        if frame is not None:
+                            frame_in_processing_counter += 1
+                    else:
+                        frame = video_reader.read()
+                        if frame is not None:
+                            filepath = filepath_prefix+'_'+str(proc_frame_counter)+'.png'
+                            frame_in_processing_counter += 1
+                    if frame is not None:
+                        image_expanded = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), axis=0) # np.expand_dims is faster than []
+                        #image_expanded = np.expand_dims(frame, axis=0) # BGR image for input. Of couse, bad accuracy in RGB trained model, but speed up.
+                        cap_out_time = time.time()
+                        # put new queue
+                        gpu_feeds = {image_tensor: image_expanded}
+                        gpu_extras = {'image':frame, 'top_in_time':top_in_time, 'cap_in_time':cap_in_time, 'cap_out_time':cap_out_time, 'filepath': filepath} # always image draw.
+                        gpu_worker.put_sess_queue(gpu_opts, gpu_feeds, gpu_extras)
+            elif frame_in_processing_counter <= 0:
+                MPVariable.running.value = False
+                break
 
             g = gpu_worker.get_result_queue()
             if SPLIT_MODEL:
                 # if g is None: gpu thread has no output queue. ok skip, let's check cpu thread.
-                if g:
+                if g is not None:
                     # gpu thread has output queue.
-                    score, expand, extras = g['results'][0], g['results'][1], g['extras']
+                    result_slice_out, extras = g['results'], g['extras']
 
                     if cpu_worker.is_sess_empty():
                         # When cpu thread has no next queue, put new queue.
                         # else, drop gpu queue.
-                        cpu_feeds = {score_in: score, expand_in: expand}
+                        cpu_feeds = {}
+                        for i in range(len(result_slice_out)):
+                            cpu_feeds.update({split_in[i]:result_slice_out[i]})
                         cpu_extras = extras
                         cpu_worker.put_sess_queue(cpu_opts, cpu_feeds, cpu_extras)
-                    # else: cpu thread is busy. don't put new queue. let's check cpu result queue.
+                    else:
+                        # else: cpu thread is busy. don't put new queue. let's check cpu result queue.
+                        frame_in_processing_counter -= 1
                 # check cpu thread.
                 q = cpu_worker.get_result_queue()
             else:
@@ -316,18 +382,32 @@ def detection_loop():
                 time.sleep(sleep_interval)
                 continue
 
+            frame_in_processing_counter -= 1
+            boxes, scores, classes, num, extras = q['results'][0], q['results'][1], q['results'][2], q['results'][3], q['extras']
+            det_out_time = time.time()
+
             """
-            VISUALIZATION
+            ALWAYS BOX DRAW ON IMAGE
             """
             vis_in_time = time.time()
-            boxes, scores, classes, num, extras = q['results'][0], q['results'][1], q['results'][2], q['results'][3], q['extras']
-
             image = extras['image']
-            str_control = None
+            if SRC_FROM == IMAGE:
+                filepath = extras['filepath']
+                frame_rows, frame_cols = image.shape[:2]
+                """ STATISTICS FONT """
+                fontScale = frame_rows/1000.0
+                if fontScale < 0.4:
+                    fontScale = 0.4
+                fontThickness = 1 + int(fontScale)
+            else:
+                filepath = extras['filepath']
+            detected_image = visualization(category_index, image, boxes, scores, classes, DEBUG_MODE, VIS_TEXT, FPS_INTERVAL,
+                                           fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
 
             """
             DETECTION RESULT
             """
+            str_control = None
             detected_min_class = min_class(category_index, scores, classes)
             if detected_min_class == 1:
                 # stop
@@ -345,25 +425,17 @@ def detection_loop():
                 max_speed = 100
 
 
-            if VISUALIZE:
-                # Visualization of the results of a detection.
-                detected_image = visualization(category_index, image, boxes, scores, classes, DEBUG_MODE, VIS_TEXT, FPS_INTERVAL)
-            else:
-                """
-                NO VISUALIZE
-                """
-                without_visualization(category_index, boxes, scores, classes, cur_frame, DET_INTERVAL, DET_TH)
-
-
             """
             LANE DETECTION
             """
             handle_angle = 0
             is_pass = False
+            lane_image = None
             try:
                 # detect lane
                 is_pass, lane_image, tilt1_deg,tilt2_deg,angle1_deg,angle2_deg,curve1_r,curve2_r, \
-                meters_from_center = lane_detection(image, detected_image, X_METER, Y_METER, cols, rows)
+                meters_from_center = lane_detection(image, detected_image, X_METER, Y_METER, cols, rows, \
+                                                    fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
                 ########################################
                 # speed control
                 ########################################
@@ -379,8 +451,8 @@ def detection_loop():
                     speed = 40
 
             except:
-                #import traceback
-                #traceback.print_exc()
+                import traceback
+                traceback.print_exc()
                 pass
             if not is_pass and str_control is None:
                 # Lane detection failed.
@@ -388,35 +460,47 @@ def detection_loop():
                 str_control='0,0,'
                 sock.sendall(("CONTROL,"+ str_control).encode('ascii'))
 
-            if VIS_TEXT:
-                strings = ["fps: {:.1f}".format(MPVariable.fps.value)]
-                colors = [(77, 255, 9)]
-                if DEBUG_MODE:
-                    """ FOR PERFORMANCE DEBUG """
-                    strings += ["fps: {:.1f} 0.2sec".format(MPVariable.fps_snapshot.value)]
-                    colors += [(77, 255, 9)]
-                if lane_image is not None:
-                    draw_text(lane_image, strings, colors)
-                else:
-                    draw_text(detected_image, strings, colors)
+            if lane_image is None:
+                lane_image = copy.deepcopy(detected_image)
 
             """
-            SHOW
+            VISUALIZATION
             """
-            if lane_image is not None:
-                cv2.imshow("Object Detection", lane_image)
-                # Press q to quit
-                if cv2.waitKey(1) & 0xFF == 113: #ord('q'):
-                    MPVariable.running.value = False
-                    break
+            if VISUALIZE:
+                if (MPVariable.vis_skip_rate.value == 0) or (proc_frame_counter % MPVariable.vis_skip_rate.value < 1):
+                    if VIS_WORKER:
+                        q_out.put({'image':lane_image, 'vis_in_time':vis_in_time})
+                    else:
+                        """
+                        SHOW
+                        """
+                        cv2.imshow("Camera", lane_image)
+                        # Press q to quit
+                        if cv2.waitKey(1) & 0xFF == 113: #ord('q'):
+                            break
+                        MPVariable.vis_frame_counter.value += 1
+                        vis_out_time = time.time()
+                        """
+                        PROCESSING TIME
+                        """
+                        vis_proc_time = vis_out_time - vis_in_time
+                        MPVariable.vis_proc_time.value += vis_proc_time
             else:
-                cv2.imshow("Object Detection", detected_image)
-                # Press q to quit
-                if cv2.waitKey(1) & 0xFF == 113: #ord('q'):
-                    MPVariable.running.value = False
-                    break
+                """
+                NO VISUALIZE
+                """
+                without_visualization(category_index, boxes, scores, classes, cur_frame, DET_INTERVAL, DET_TH)
+                vis_out_time = time.time()
+                """
+                PROCESSING TIME
+                """
+                vis_proc_time = vis_out_time - vis_in_time
 
-            vis_out_time = time.time()
+            if SAVE_TO_FILE:
+                if SRC_FROM == IMAGE:
+                    video_reader.save(image, filepath)
+                else:
+                    video_reader.save(image)
 
             if str_control is None:
                 '''
@@ -477,6 +561,9 @@ def detection_loop():
                 sock.sendall(("CONTROL,"+ str_control).encode('ascii'))
 
 
+            proc_frame_counter += 1
+            if proc_frame_counter > 100000:
+                proc_frame_counter = 0
             """
             PROCESSING TIME
             """
@@ -487,41 +574,37 @@ def detection_loop():
                 cpu_proc_time = extras[cpu_tag+'_out_time'] - extras[cpu_tag+'_in_time']
             else:
                 cpu_proc_time = 0
-            vis_proc_time = vis_out_time - vis_in_time
-            lost_proc_time = vis_out_time - top_in_time - cap_proc_time - gpu_proc_time - cpu_proc_time - vis_proc_time
-            total_proc_time = vis_out_time - top_in_time
+            lost_proc_time = det_out_time - top_in_time - cap_proc_time - gpu_proc_time - cpu_proc_time
+            total_proc_time = det_out_time - top_in_time
             MPVariable.cap_proc_time.value += cap_proc_time
             MPVariable.gpu_proc_time.value += gpu_proc_time
             MPVariable.cpu_proc_time.value += cpu_proc_time
-            MPVariable.vis_proc_time.value += vis_proc_time
             MPVariable.lost_proc_time.value += lost_proc_time
             MPVariable.total_proc_time.value += total_proc_time
 
             if DEBUG_MODE:
                 if SPLIT_MODEL:
-                    sys.stdout.write('snapshot FPS:{: ^5.1f} total:{: ^10.5f} cap:{: ^10.5f} gpu:{: ^10.5f} cpu:{: ^10.5f} vis:{: ^10.5f} lost:{: ^10.5f}\n'.format(
-                        MPVariable.fps.value, total_proc_time, cap_proc_time, gpu_proc_time, cpu_proc_time, vis_proc_time, lost_proc_time))
+                    sys.stdout.write('snapshot FPS:{: ^5.1f} total:{: ^10.5f} cap:{: ^10.5f} gpu:{: ^10.5f} cpu:{: ^10.5f} lost:{: ^10.5f} | vis:{: ^10.5f}\n'.format(
+                        MPVariable.fps.value, total_proc_time, cap_proc_time, gpu_proc_time, cpu_proc_time, lost_proc_time, vis_proc_time))
                 else:
-                    sys.stdout.write('snapshot FPS:{: ^5.1f} total:{: ^10.5f} cap:{: ^10.5f} gpu:{: ^10.5f}  vis:{: ^10.5f} lost:{: ^10.5f}\n'.format(
-                        MPVariable.fps.value, total_proc_time, cap_proc_time, gpu_proc_time, vis_proc_time, lost_proc_time))
-            """ """
-
+                    sys.stdout.write('snapshot FPS:{: ^5.1f} total:{: ^10.5f} cap:{: ^10.5f} gpu:{: ^10.5f} lost:{: ^10.5f} | vis:{: ^10.5f}\n'.format(
+                        MPVariable.fps.value, total_proc_time, cap_proc_time, gpu_proc_time, lost_proc_time, vis_proc_time))
             """
             EXIT WITHOUT GUI
             """
-            if not VISUALIZE:
-                if cur_frame >= MAX_FRAMES:
+            if not VISUALIZE and MAX_FRAMES > 0:
+                if proc_frame_counter >= MAX_FRAMES:
                     MPVariable.running.value = False
                     break
-                cur_frame += 1
+
             """
             CHANGE SLEEP INTERVAL
             """
             if MPVariable.frame_counter.value == 0 and MPVariable.fps.value > 0:
-                sleep_interval = 1.0 / MPVariable.fps.value / 10.0
+                sleep_interval = 0.1 / MPVariable.fps.value
                 MPVariable.sleep_interval.value = sleep_interval
-
             MPVariable.frame_counter.value += 1
+            top_in_time = None
         """
         END while
         """
@@ -533,17 +616,16 @@ def detection_loop():
         """ """ """ """ """ """ """ """ """ """ """
         CLOSE
         """ """ """ """ """ """ """ """ """ """ """
+        if VISUALIZE and VIS_WORKER:
+            q_out.put(None)
         MPVariable.running.value = False
         gpu_worker.stop()
         if SPLIT_MODEL:
             cpu_worker.stop()
-        video_stream.stop()
+        video_reader.stop()
 
         if VISUALIZE:
             cv2.destroyAllWindows()
-
-        fps_counter_proc.join()
-        fps_console_proc.join()
         """ """
 
     return
@@ -555,17 +637,24 @@ def main():
     global sock
     global out
 
-    # 通信設定
-    HOST = '192.168.0.76' # Server IP Address
-    PORT = 6666 # Server TCP Port
-    #HOST = 'a32158c3da9f' # AWS Docker
-    #PORT = 8091 # AWS TCP Port
-    #HOST = '2204f9b0e871' # PC Docker
-    #PORT = 8091 # PC TCP Port
+    """
+    LOAD SETUP VARIABLES
+    """
+    cfg = load_config()
 
-    ########################################
-    # 通信準備
-    ########################################
+    """ """ """ """ """ """ """ """ """ """ """
+    GET CONFIG
+    """ """ """ """ """ """ """ """ """ """ """
+    HOST                 = cfg['host']
+    PORT                 = cfg['port']
+    """
+    LOAD SETUP VARIABLES
+    """
+    cfg.update({'src_from': 'camera'})
+
+    """ """ """ """ """ """ """ """ """ """ """
+    PREPARE CONNECTION
+    """ """ """ """ """ """ """ """ """ """ """
     connected_clients_sockets = []
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -577,8 +666,8 @@ def main():
 
     print("Server start")
     try:
-
         while True:
+            print("Connection waiting...")
             ########################################
             # 受信待ち
             ########################################
@@ -601,7 +690,7 @@ def main():
                             print('packet True')
                             if packet == 'START':
                                 is_analyze_running = True
-                                t = threading.Thread(target=detection_loop)
+                                t = threading.Thread(target=detection_loop, args=(cfg,))
                                 t.setDaemon(True)
                                 t.start()
                             elif packet.startswith('BYE'):
