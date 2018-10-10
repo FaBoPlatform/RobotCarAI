@@ -1,5 +1,6 @@
 # coding: utf-8
 import cv2
+import math
 import numpy as np
 from lib.functions import *
 
@@ -65,6 +66,7 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
     is_pixel_ellipse_success = False
     is_meter_pts_success = False
     is_meter_ellipse_success = False
+    tilt_deg = 0
 
     ########################################
     # レーンを検出する
@@ -89,13 +91,13 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
             = draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const)
 
         # 白線画像にレーンを描画する
-        cv2.polylines(cv_rgb_bin,[pts_line],False,(255,0,0), thickness=10)
+        cv2.polylines(cv_rgb_bin,[pts_line],False,(255,0,0), thickness=fontThickness*20)
         # 白線道路領域をIPM逆変換する
         cv_rgb_bin = reverse_ipm(cv_rgb_bin,ipm_vertices)
 
         # 道路にラインを描画する
         cv_rgb_road = new_rgb(rows,cols)
-        cv2.polylines(cv_rgb_road,[pts_line],False,(255,0,0), thickness=10)
+        cv2.polylines(cv_rgb_road,[pts_line],False,(255,0,0), thickness=fontThickness*20)
         # 道路をIPM変換する
         cv_rgb_road = reverse_ipm(cv_rgb_road,ipm_vertices)
 
@@ -119,20 +121,27 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
         # 下半分を計算する
         y0 = np.max(plot_ym) - 2*quarter_y
         y1 = np.max(plot_ym)
-        curve1_x,curve1_y,curve1_r, \
+        x0,x1, \
+            curve1_x,curve1_y,curve1_r, \
             rotate1_deg,angle1_deg, \
             tilt1_deg = calc_curve(y0,y1,line_polyfit_const)
         # 上半分を計算する
         quarter_y = (np.max(plot_ym) - np.min(plot_ym))/4
-        y0 = np.min(plot_ym)
-        y1 = np.max(plot_ym) - 2*quarter_y
-        curve2_x,curve2_y,curve2_r, \
+        y2 = np.min(plot_ym)
+        y3 = np.max(plot_ym) - 2*quarter_y
+        x2,x3, \
+            curve2_x,curve2_y,curve2_r, \
             rotate2_deg,angle2_deg, \
-            tilt2_deg = calc_curve(y0,y1,line_polyfit_const)
+            tilt2_deg = calc_curve(y2,y3,line_polyfit_const)
         is_meter_ellipse_success = True
 
+        # 画面最下部中央とライン最上部のtiltを実世界の角度で求める
+        # 実世界の角度なのでx,y座標はcm座標に変換して計算する
+        tilt_rad = math.atan((cols*xm_per_pix/2-x0)/(rows*ym_per_pix-y3))
+        tilt_deg = math.degrees(tilt_rad)
+
         # 中央線までの距離を計算する
-        # 最も下の位置で計算する
+        # 最下部の位置で計算する
         bottom_y = np.max(plot_ym)
         bottom_x = line_polyfit_const[0]*bottom_y**2 + line_polyfit_const[1]*bottom_y + line_polyfit_const[2]
         meters_from_center = bottom_x - (cols/2)*xm_per_pix
@@ -176,11 +185,16 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
         cv_rgb = to_rgb(cv_bgr_detection)
 
     # row1画面を作成する
-    left_rgb_row1 = new_rgb(rows, cols)
-    right_rgb_row1 = new_rgb(rows, cols)
-    cv_rgb_row1 = cv2.hconcat([left_rgb_row1,cv_rgb])
-    cv_rgb_row1 = cv2.hconcat([cv_rgb_row1,right_rgb_row1])
+    panel_left_row1 = new_rgb(int(rows/3), int(cols/3))
+    main_rgb = cv_rgb
 
+    # パネル用画像を小さくする
+    cv_bgr_white = cv2.resize(cv_bgr_white, (int(cols/3), int(rows/3)))
+    cv_rgb_histogram = cv2.resize(cv_rgb_histogram, (int(cols/3), int(rows/3)))
+    cv_rgb_sliding_windows = cv2.resize(cv_rgb_sliding_windows, (int(cols/3), int(rows/3)))
+    cv_rgb_bin = cv2.resize(cv_rgb_bin, (int(cols/3), int(rows/3)))
+    cv_rgb_tilt = cv2.resize(cv_rgb_tilt, (int(cols/3), int(rows/3)))
+    cv_rgb_ellipse = cv2.resize(cv_rgb_ellipse, (int(cols/3), int(rows/3)))
 
     if is_pass:
         '''
@@ -197,7 +211,7 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
         y_top = int(baseLine)
 
         ########################################
-        # row1に文字を書く
+        # row1 leftに文字を書く
         ########################################
         if is_meter_ellipse_success:
             display_str = []
@@ -212,7 +226,7 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
             else:
                 display_str.append("angle2:"+str(round(angle2_deg,2))+"deg right")
             display_str.append("r2:"+str(round(curve2_r,2))+"m")
-            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+            end_x, end_y = draw_text(panel_left_row1,display_str,color,start_x=x_left,start_y=y_top,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
 
             display_str = []
             display_str.append("Near")
@@ -225,28 +239,19 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
                 display_str.append("angle1:"+str(round(angle1_deg,2))+"deg left")
             else:
                 display_str.append("angle1:"+str(round(angle1_deg,2))+"deg right")
-            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+            end_x, end_y = draw_text(panel_left_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
 
             display_str = []
             display_str.append("r1:"+str(round(curve1_r,2))+"m")
             color = (255,0,0)
-            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+            end_x, end_y = draw_text(panel_left_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
     
-        if meters_from_center is not None:
-            display_str = []
-            if meters_from_center >= 0:
-                display_str.append("center:"+str(round(meters_from_center*100,2))+"cm right")
-                color = (0,255,0)
-            else:
-                display_str.append("center:"+str(round(meters_from_center*100,2))+"cm left")
-                color = (255,20,147)
-            end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
-    
+            """
             ####################
-            # cv_rgb_row1に矢印を描く
+            # main_rgbに矢印を描く
             ####################
-            arrow_x = int(cv_rgb_row1.shape[1]/2-35)
-            arrow_y = int(cv_rgb_row1.shape[0]/2-35)
+            arrow_x = int(main_rgb.shape[1]/2-35)
+            arrow_y = int(main_rgb.shape[0]/2-35)
             handle_angle = -1*tilt1_deg
             display_str = []
             display_str.append(str(round(handle_angle,2))+"deg")
@@ -305,16 +310,20 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
                 arrow_color=(255,255-(255*ratio),255-(255*ratio))
                 arrow_text_color=(255,0,0)
     
-            draw_arrow(cv_rgb_row1,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
+            draw_arrow(main_rgb,arrow_x,arrow_y,arrow_color,size=2,arrow_type=arrow_type,lineType=lineType)
             
-            end_x, end_y = draw_text(cv_rgb_row1,display_str,arrow_color,start_x=arrow_x,start_y=arrow_y-10,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+            end_x, end_y = draw_text(main_rgb,display_str,arrow_color,start_x=arrow_x,start_y=arrow_y-10,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+            """
+
+            """
             ####################
             # 奥のカーブ角度が大きい時、slow downを表示する
             ####################
             if np.abs(tilt2_deg) > np.abs(tilt1_deg) and np.abs(tilt2_deg) >= 15.0:
                 display_str = ["slow down"]
                 color = (0,0,255)
-                end_x, end_y = draw_text(cv_rgb_row1,display_str,color,start_x=arrow_x,start_y=arrow_y-30,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+                end_x, end_y = draw_text(main_rgb,display_str,color,start_x=arrow_x,start_y=arrow_y-30,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+            """
     
         ########################################
         # cv_bgr_white に文字を描く
@@ -396,15 +405,16 @@ def lane_detection(cv_bgr, cv_bgr_detection, x_meter, y_meter, cols, rows, fontF
             end_x, end_y = draw_text(cv_rgb_ellipse,display_str,color,start_x=x_left,start_y=end_y,fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
 
     # 画像を結合する
-    cv_rgb_row2 = to_rgb(cv_bgr_white)
-    cv_rgb_row2 = cv2.hconcat([cv_rgb_row2,cv_rgb_sliding_windows])
-    cv_rgb_row2 = cv2.hconcat([cv_rgb_row2,cv_rgb_tilt])
-    cv_rgb_row3 = cv_rgb_histogram
-    cv_rgb_row3 = cv2.hconcat([cv_rgb_row3,cv_rgb_bin])
-    cv_rgb_row3 = cv2.hconcat([cv_rgb_row3,cv_rgb_ellipse])
-    cv_rgb_debug = cv2.vconcat([cv_rgb_row2,cv_rgb_row3])
-    cv_rgb_debug = cv2.vconcat([cv_rgb_row1,cv_rgb_debug])
+    panel_rgb_row2 = to_rgb(cv_bgr_white)
+    panel_rgb_row2 = cv2.hconcat([panel_rgb_row2,cv_rgb_sliding_windows])
+    panel_rgb_row2 = cv2.hconcat([panel_rgb_row2,cv_rgb_tilt])
+    panel_rgb_row3 = cv_rgb_histogram
+    panel_rgb_row3 = cv2.hconcat([panel_rgb_row3,cv_rgb_bin])
+    panel_rgb_row3 = cv2.hconcat([panel_rgb_row3,cv_rgb_ellipse])
+    panel_rgb_rows = cv2.vconcat([panel_rgb_row2,panel_rgb_row3])
 
-
-    return is_pass, to_bgr(cv_rgb_debug), tilt1_deg,tilt2_deg,angle1_deg,angle2_deg,curve1_r,curve2_r, \
-        meters_from_center
+    return is_pass, \
+        to_bgr(panel_rgb_rows), to_bgr(panel_left_row1), to_bgr(main_rgb), \
+        tilt1_deg,tilt2_deg,angle1_deg,angle2_deg,curve1_r,curve2_r, \
+        meters_from_center, \
+        tilt_deg

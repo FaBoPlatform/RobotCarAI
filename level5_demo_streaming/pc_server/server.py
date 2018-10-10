@@ -124,6 +124,7 @@ def detection_loop(cfg):
     X_METER              = cfg['x_meter']
     Y_METER              = cfg['y_meter']
     MODEL_TYPE           = cfg['model_type']
+    STEERING_ICON        = cfg['steering_icon']
     SRC_FROM             = cfg['src_from']
     CAMERA = 0
     MOVIE  = 1
@@ -162,6 +163,11 @@ def detection_loop(cfg):
     llm = LoadLabelMap()
     category_index = llm.load_label_map(cfg)
     """ """
+
+    """ """ """ """ """ """ """ """ """ """ """
+    LOAD FACE IMAGE
+    """ """ """ """ """ """ """ """ """ """ """
+    steering_icon = cv2.imread(STEERING_ICON, -1)
 
     """ """ """ """ """ """ """ """ """ """ """
     PREPARE TF CONFIG OPTION
@@ -275,6 +281,7 @@ def detection_loop(cfg):
         from lib.image import ImageReader as VideoReader
     video_reader = VideoReader()
 
+    fontFace = cv2.FONT_HERSHEY_SIMPLEX
     if SRC_FROM == IMAGE:
         video_reader.start(VIDEO_INPUT, save_to_file=SAVE_TO_FILE)
     else: # CAMERA, MOVIE
@@ -285,7 +292,10 @@ def detection_loop(cfg):
         if fontScale < 0.4:
             fontScale = 0.4
         fontThickness = 1 + int(fontScale)
-    fontFace = cv2.FONT_HERSHEY_SIMPLEX
+        sample_str='Sample strings'
+        [(text_width, text_height), baseLine] = cv2.getTextSize(text=sample_str, fontFace=fontFace, fontScale=fontScale, thickness=fontThickness)
+        x_left = int(baseLine)
+        y_top = int(baseLine)
     if SRC_FROM == MOVIE:
         dir_path, filename = os.path.split(VIDEO_INPUT)
         filepath_prefix = filename
@@ -295,14 +305,10 @@ def detection_loop(cfg):
 
 
     """ """ """ """ """ """ """ """ """ """ """
-    PREPARE LANE DETECTION
-    """ """ """ """ """ """ """ """ """ """ """
-    cols, rows = video_reader.getSize()
-
-    """ """ """ """ """ """ """ """ """ """ """
     CAR PARAMETER
     """ """ """ """ """ """ """ """ """ """ """
     MAX_HANDLE_ANGLE = 42
+    detection_speed = 40
     max_speed = 40
     str_control = None
     speed = 40
@@ -399,6 +405,10 @@ def detection_loop(cfg):
                 if fontScale < 0.4:
                     fontScale = 0.4
                 fontThickness = 1 + int(fontScale)
+                sample_str='Sample strings'
+                [(text_width, text_height), baseLine] = cv2.getTextSize(text=sample_str, fontFace=fontFace, fontScale=fontScale, thickness=fontThickness)
+                x_left = int(baseLine)
+                y_top = int(baseLine)
             else:
                 filepath = extras['filepath']
             detected_image = visualization(category_index, image, boxes, scores, classes, DEBUG_MODE, VIS_TEXT, FPS_INTERVAL,
@@ -407,61 +417,127 @@ def detection_loop(cfg):
             """
             DETECTION RESULT
             """
+            handle_angle = 0
             str_control = None
             detected_min_class = min_class(category_index, scores, classes)
             if detected_min_class == 1:
                 # stop
+                max_speed = 0
                 is_need_header_receive = True
-                str_control='0,0,'
+                if speed > 0:
+                    speed -= 3
+                if speed <0:
+                    speed = 0
+                str_control=str(speed)+','+str(handle_angle)+','
                 sock.sendall(("CONTROL,"+ str_control).encode('ascii'))
             elif detected_min_class == 2:
                 # 10
+                detection_speed =40
                 max_speed = 40
             elif detected_min_class == 3:
                 # 20
+                detection_speed =70
                 max_speed = 70
             elif detected_min_class == 4:
                 # 30
+                detection_speed =100
                 max_speed = 100
-
+            elif max_speed == 0:
+                max_speed = detection_speed
 
             """
             LANE DETECTION
             """
-            handle_angle = 0
             is_pass = False
             lane_image = None
             try:
                 # detect lane
-                is_pass, lane_image, tilt1_deg,tilt2_deg,angle1_deg,angle2_deg,curve1_r,curve2_r, \
-                meters_from_center = lane_detection(image, detected_image, X_METER, Y_METER, cols, rows, \
-                                                    fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+                is_pass, \
+                panel_rows, panel_left_row1, lane_image, \
+                tilt1_deg,tilt2_deg,angle1_deg,angle2_deg,curve1_r,curve2_r, \
+                meters_from_center, \
+                tilt_deg = lane_detection(image, detected_image, X_METER, Y_METER, frame_cols, frame_rows, \
+                                          fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
                 ########################################
                 # speed control
                 ########################################
-                if np.abs(tilt2_deg) > np.abs(tilt1_deg) and np.abs(tilt2_deg) >= 15.0:
-                    speed += -1
-                else:
-                    speed += 1
-                if speed > max_speed:
-                    speed = max_speed
-                elif speed < max_speed - 30:
-                    speed = max_speed - 30
-                if speed < 40:
-                    speed = 40
+                if is_pass:
+                    if np.abs(tilt2_deg) > np.abs(tilt1_deg) and np.abs(tilt2_deg - tilt1_deg) >= 15.0 and max_speed > 0 and speed > 40:
+                        speed -= 1
+                    elif speed > max_speed:
+                        speed -= 1
+                    elif speed < max_speed:
+                        speed += 1
 
             except:
                 import traceback
                 traceback.print_exc()
                 pass
             if not is_pass and str_control is None:
+                max_speed = 0
                 # Lane detection failed.
                 is_need_header_receive = True
-                str_control='0,0,'
+                if speed > 0:
+                    speed -= 3
+                if speed <0:
+                    speed = 0
+                str_control=str(speed)+','+str(handle_angle)+','
+                sock.sendall(("CONTROL,"+ str_control).encode('ascii'))
+
+            if str_control is None:
+                '''
+                左右について
+                tilt_deg: -が右、+が左
+                angle_deg: +が右、-が左
+                meters_from_center: -が右にいる、+が左にいる
+                handle_angle: +が右、-が左
+                '''
+                ########################################
+                # ハンドル角調整を行う
+                ########################################
+                handle_angle = -1*tilt_deg
+
+                # 動作可能な角度内に調整する
+                if handle_angle > MAX_HANDLE_ANGLE:
+                    handle_angle = MAX_HANDLE_ANGLE
+                if handle_angle < -1*MAX_HANDLE_ANGLE:
+                    handle_angle = -1*MAX_HANDLE_ANGLE
+
+                # 車両制御送信
+                str_control=str(speed)+','+str(handle_angle)+','
+                #print("speed={},handle_angle={},CONTROL,{}".format(speed,handle_angle,str_control))
                 sock.sendall(("CONTROL,"+ str_control).encode('ascii'))
 
             if lane_image is None:
+                panel_rows = new_rgb(frame_rows, frame_cols)
+                lane_image = cv2.hconcat([panel_rows,detected_image])
                 lane_image = copy.deepcopy(detected_image)
+            else:
+                # panel_center_row1に文字を描く
+                panel_center_row1 = new_rgb(int(frame_rows/3), int(frame_cols/3))
+                display_str = []
+                display_str.append("HANDLE:{:.1f}".format(handle_angle))
+                display_str.append("MAX_POWER:{}".format(max_speed))
+                display_str.append("POWER:{}".format(speed))
+                end_x, end_y = draw_text(panel_center_row1, display_str, color=(0,255,255), start_x=x_left, start_y=y_top, fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+                if meters_from_center is not None:
+                    display_str = []
+                    if meters_from_center >= 0:
+                        display_str.append("center:"+str(round(meters_from_center*100,2))+"cm right")
+                        color = (0,255,0)
+                    else:
+                        display_str.append("center:"+str(round(meters_from_center*100,2))+"cm left")
+                        color = (255,20,147)
+                    end_x, end_y = draw_text(panel_center_row1, display_str, color, start_x=x_left, start_y=end_y, fontFace=fontFace, fontScale=fontScale, fontThickness=fontThickness)
+                # panel_right_1に絵を描く
+                panel_right_row1 = draw_steering(steering_icon, handle_angle, speed, frame_cols, frame_rows)
+                panel_right_row1 = draw_speed(panel_right_row1, speed, min_value=0, max_value=100)
+                panel_row1 = cv2.hconcat([panel_left_row1,panel_center_row1])
+                panel_row1 = cv2.hconcat([panel_row1,panel_right_row1])
+                panel_rows = cv2.vconcat([panel_row1,panel_rows])
+                panel_rows = cv2.resize(panel_rows, (frame_cols, frame_rows))
+                lane_image = cv2.hconcat([panel_rows,lane_image])
+
 
             """
             VISUALIZATION
@@ -498,68 +574,9 @@ def detection_loop(cfg):
 
             if SAVE_TO_FILE:
                 if SRC_FROM == IMAGE:
-                    video_reader.save(image, filepath)
+                    video_reader.save(lane_image, filepath)
                 else:
-                    video_reader.save(image)
-
-            if str_control is None:
-                '''
-                左右について
-                tilt_deg: -が右、+が左
-                angle_deg: +が右、-が左
-                meters_from_center: -が右にいる、+が左にいる
-                handle_angle: +が右、-が左
-                '''
-                ########################################
-                # ハンドル角調整を行う
-                ########################################
-                handle_angle = -1*tilt1_deg
-                if meters_from_center >= 0:
-                    # 左にいる
-                    if np.abs(meters_from_center)*100 > 20:
-                        # とても離れて左にいる：
-                        if tilt2_deg > 0:
-                            # 先は左に曲がる：少し左に曲がる
-                            handle_angle = -1*MAX_HANDLE_ANGLE/2
-                        else:
-                            # 先は右に曲がる：右に全開で曲がる
-                            handle_angle = 1*MAX_HANDLE_ANGLE
-                    elif np.abs(meters_from_center)*100 > 10:
-                        if tilt2_deg > 0 :
-                            # 離れて左いる、奥は左カーブ：右に少し曲がる
-                            handle_angle=MAX_HANDLE_ANGLE/2
-                        else:
-                            # 離れて左いる、奥は右カーブ：右に全開で曲がる
-                            handle_angle=MAX_HANDLE_ANGLE
-                else:
-                    # 右にいる
-                    if np.abs(meters_from_center)*100 > 20:
-                        # とても離れて右にいる
-                        if tilt2_deg < 0:
-                            # 先は右に曲がる：少し右に曲がる
-                            handle_angle = 1*MAX_HANDLE_ANGLE/2
-                        else:
-                            # 先は左に曲がる：左に全開で曲がる
-                            handle_angle = -1*MAX_HANDLE_ANGLE
-                    elif np.abs(meters_from_center)*100 > 10:
-                        if tilt2_deg < 0 :
-                            # 離れて右いる、奥は右カーブ：左に少し曲がる
-                            handle_angle=-1*MAX_HANDLE_ANGLE/2
-                        else:
-                            # 離れて右いる、奥は左カーブ、左に全開で曲がる
-                            handle_angle=-1*MAX_HANDLE_ANGLE
-
-                # 動作可能な角度内に調整する
-                if handle_angle > MAX_HANDLE_ANGLE:
-                    handle_angle = MAX_HANDLE_ANGLE
-                if handle_angle < -1*MAX_HANDLE_ANGLE:
-                    handle_angle = -1*MAX_HANDLE_ANGLE
-
-                # 車両制御送信
-                str_control=str(speed)+','+str(handle_angle)+','
-                #print("speed={},handle_angle={},CONTROL,{}".format(speed,handle_angle,str_control))
-                sock.sendall(("CONTROL,"+ str_control).encode('ascii'))
-
+                    video_reader.save(lane_image)
 
             proc_frame_counter += 1
             if proc_frame_counter > 100000:

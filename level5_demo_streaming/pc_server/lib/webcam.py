@@ -63,7 +63,7 @@ class WebcamVideoStream:
             self.mkdir(output_movie_dir)
             fps = self.vid.get(cv2.CAP_PROP_FPS)
             fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-            self.out = cv2.VideoWriter(output_file, int(fourcc), fps, (int(self.real_width), int(self.real_height)))
+            self.out = cv2.VideoWriter(output_file, int(fourcc), fps, (int(self.real_width*2), int(self.real_height)))
 
         # start the thread to read frames from the video stream
         t = threading.Thread(target=self.update, args=())

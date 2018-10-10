@@ -469,7 +469,8 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const):
     ########################################
     y0 = np.max(plot_y) - 2*quarter_y
     y1 = np.max(plot_y)
-    x,y,r, \
+    _x0,_x1, \
+        x,y,r, \
         rotate_deg,angle_deg, \
         tilt_deg = calc_curve(y0,y1,line_polyfit_const)
     '''
@@ -555,7 +556,8 @@ def draw_ellipse_and_tilt(cols,rows,plot_y,pts_line,line_polyfit_const):
     quarter_y = (np.max(plot_y) - np.min(plot_y))/4
     y0 = np.min(plot_y)
     y1 = np.max(plot_y) - 2*quarter_y
-    x,y,r, \
+    _x0,_x1, \
+        x,y,r, \
         rotate_deg,angle_deg, \
         tilt_deg = calc_curve(y0,y1,line_polyfit_const)
     # 弧を描画する
@@ -829,6 +831,8 @@ def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
         curve_y1: 曲線下y座標
         curve_ployfit_const: 曲線の定数
     returns:
+        curve_x0: 曲線上y座標に対するx座標
+        curve_x1: 曲線下y座標に対するx座標
         x: 円の中心x座標
         y: 円の中心y座標
         r: 円の半径r (曲率半径r)
@@ -863,7 +867,7 @@ def calc_curve(curve_y0,curve_y1,curve_polyfit_const):
     curve_tilt_deg = math.degrees(curve_tilt_rad)
     #print("curve_tilt_deg={}".format(curve_tilt_deg))
 
-    return x,y,r,rotate_deg,angle_deg,curve_tilt_deg
+    return curve_x0,curve_x1,x,y,r,rotate_deg,angle_deg,curve_tilt_deg
 
 
 def calc_curvature_radius(const,y):
@@ -981,3 +985,99 @@ def calc_line(x1,y1,x2,y2,x):
     y = (x*y1 - x*y2 + x1*y2 - x2*y1)/(x1 - x2)
     return y
 
+def draw_steering(handle_icon, handle_angle, speed, cols, rows):
+    handle_angle = handle_angle*2 
+    cols = int(cols/3)
+    rows = int(rows/3)
+    cv_bgr = new_rgb(rows, cols)
+    center_x = int(cols*(3/4))
+    center_y = int(rows*(1/2))
+    box_x = center_x - int(cols*(1/5))
+    box_y = center_y - int(cols*(1/5))
+    box_w = int(cols*(2/5))
+    box_h = int(cols*(2/5))
+    handle_icon = cv2.resize(handle_icon, (box_w, box_h))
+    handle_icon = rotate(handle_icon, -1*handle_angle)
+    clip_alpha_image(cv_bgr, handle_icon, box_x, box_y, box_w, box_h, mask_size=1.0)
+    return cv_bgr
+
+def clip_alpha_image(background, foreground, box_x, box_y, box_w, box_h, mask_size=1.0):
+    """
+    resize foreground image with keep aspect ratio
+    """
+    # Select the pasting position with x, y
+    f_h, f_w, _ = foreground.shape
+    # aspect ratio
+    a_h = float(box_h)/float(f_h)
+    a_w = float(box_w)/float(f_w)
+    if a_h > a_w:
+        a_ratio = a_h
+    else:
+        a_ratio = a_w
+    a_ratio = a_ratio*mask_size
+    # resize foreground
+    foreground = cv2.resize(foreground, ((int)(f_h*a_ratio), int(f_w*a_ratio)))
+
+    """
+    ajust to center
+    """
+    b_h, b_w, _ = background.shape
+    f_h, f_w, _ = foreground.shape
+
+    f_y = int(box_y - (f_h/4) - ((f_h/4) - box_h/2))
+    f_x = int(box_x - (f_w/4) - ((f_w/4) - box_w/2))
+
+    del_y = 0
+    del_x = 0
+    if f_y < 0:
+        del_y = -1*f_y
+        f_y = 0
+    if f_x < 0:
+        del_x = -1*f_x
+        f_x = 0
+
+    if f_y + f_h - del_y > b_h:
+        f_h = b_h - f_y + del_y
+    if f_x + f_w - del_x > b_w:
+        f_w = b_w - f_x + del_x
+    foreground = foreground[del_y:f_h, del_x:f_w] # cut overflow pixels
+    f_h, f_w, _ = foreground.shape
+    # Make a mask with transparent part 0 and opaque part 1
+    alpha_mask = np.ones((f_h, f_w)) - np.clip(cv2.split(foreground)[3], 0, 1)
+    # The background part of the pasting position
+    target_background = background[f_y:f_y+f_h, f_x:f_x+f_w]
+    #print("({},{}) ({},{}) {} {} {} {}".format(f_y, f_x, f_h, f_w, background.shape, foreground.shape, alpha_mask.shape, target_background.shape))
+    # By multiplying each BRG channel by alpha_mask, the opaque part of the foreground creates new_background of [0, 0, 0]
+    new_background = cv2.merge(list(map(lambda f_x:f_x * alpha_mask, cv2.split(target_background))))
+    # Combine images by converting BGRA to BGR and new_background
+    background[f_y:f_y+f_h, f_x:f_x+f_w] = cv2.merge(cv2.split(foreground)[:3]) + new_background
+    return background
+
+def rotate(image, angle):
+    size = tuple([image.shape[1], image.shape[0]])
+    center = tuple([int(size[0]/2), int(size[1]/2)])
+    scale = 1.0
+    rotation_matrix = cv2.getRotationMatrix2D(center, angle, scale)
+    image = cv2.warpAffine(image, rotation_matrix, size, flags=cv2.INTER_CUBIC)
+    return image
+
+def draw_speed(image, speed, min_value, max_value):
+    rows, cols = image.shape[:2]
+    center_x = int(cols*(1/4))
+    center_y = int(rows*(1/2))
+    p1_x = center_x - int(cols*(1/16))
+    p1_y = center_y - int(rows*(3/8))
+    box_w = int(cols*(2/16))
+    box_h = int(rows*(6/8))
+    p2_x = p1_x+box_w
+    p2_y = p1_y+box_h
+    color = (0,255,0)
+    # empty box
+    cv2.rectangle(image,(p1_x,p1_y),(p2_x,p2_y),color, 1)
+
+    speed = conv_range(speed, max_value, min_value, p1_y, p2_y)
+    cv2.rectangle(image,(p1_x,p2_y),(p2_x,speed),color, -1)
+    return image
+
+def conv_range(x, in_min, in_max, out_min, out_max):
+    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
