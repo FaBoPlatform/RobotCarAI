@@ -7,5 +7,5 @@ handle_neutral: 95            # Steering neutral position.
 max_handle_angle: 42          # Steering left/right max angle.
 
 # NETWORK SETTING
-host: '192.168.0.22'          # Server IP Address.
+host: '192.168.0.48'          # Server IP Address.
 port: 6666                    # Server TCP Port.
