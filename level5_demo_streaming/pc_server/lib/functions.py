@@ -723,7 +723,7 @@ def sliding_windows(cv_bin):
     nonzeroy = np.array(nonzero[0])
     nonzerox = np.array(nonzero[1])
     # window幅のマージン
-    margin = int(cols/5)
+    margin = int(cols/10)
     # windowをセンタリングするための最小ピクセル数
     minpix = margin/2
     # ラインピクセルindexを持つための配列

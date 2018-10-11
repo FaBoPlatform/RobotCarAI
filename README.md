@@ -31,7 +31,7 @@ RobotCar AI Playground.
 [![出力動画](https://img.youtube.com/vi/xAi_31IcyZ0/1.jpg)](https://www.youtube.com/watch?v=xAi_31IcyZ0)<br>
 
 #### Level 5
-[![走行デモ動画](https://img.youtube.com/vi/7mbsRl0Oc74/1.jpg)](https://www.youtube.com/watch?v=7mbsRl0Oc74)<br>
+[![走行デモ動画](https://img.youtube.com/vi/7pc5TTGPQwA/3.jpg)](https://www.youtube.com/watch?v=7pc5TTGPQwA)<br>
 
 
 ## Component
