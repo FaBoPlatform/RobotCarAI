@@ -8,7 +8,7 @@
 #### level3 demo走行を高速化すること
 
 【動画】<br>
-走行動画：[![走行動画](https://img.youtube.com/vi/7mbsRl0Oc74/1.jpg)](https://www.youtube.com/watch?v=7mbsRl0Oc74)<br>
+走行動画：[![走行動画](https://img.youtube.com/vi/7pc5TTGPQwA/3.jpg)](https://www.youtube.com/watch?v=7pc5TTGPQwA)<br>
 
 【実行環境】
 * Fabo TYPE1 ロボットカー
@@ -25,19 +25,19 @@
       * Tensorflow r1.1.0
       * FaBoPWM-PCA9685-Python
       * FaBoGPIO-PCAL6408-Python
-* Jetson TX2
-  * JetPack 3.1
+* Jetson Xavier
+  * JetPack 4.1
     * Ubuntu
-    * Python 3.6.5
+    * Python 3.6.6
     * OpenCV 3.4.1
-    * Tensorflow r1.6.1
+    * Tensorflow r1.10.1
 
 <a name='0'>
 
 【実行】
 * [インストール方法](#a)
 * [コースの準備](#course)
-* [Jetson TX2/PC] [サーバ起動](#b)
+* [Jetson Xavier/PC] [サーバ起動](#b)
 * [Raspberry Pi3] [ロボットカー FFMPEG UDP Streaming起動](#c)
 * [Raspberry Pi3] [ロボットカー起動](#d)
 
@@ -54,7 +54,7 @@
 <a name='a'>
 
 ## インストール方法
-インストール済みのロボットカー/Jetson TX2を用意しているので省略します。<br>
+ロボットカーはcar_client/ディレクトリ、Jetson Xavierはpc_server/ディレクトリが必要になります。
 <br>
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -73,13 +73,13 @@
 
 <a name='b'>
 
-## [Jetson TX2/PC] サーバ起動
-#### 1. Jetson TX2にログインします
+## [Jetson Xavier/PC] サーバ起動
+#### 1. Jetson Xavierにログインします
 USER:ubuntu<br>
 PASSWORD:ubuntu<br>
 > `ssh -C -Y ubuntu@192.168.xxx.xxx`<br>
 
-用意してあるJetson TX2はDockerを使っていないので、Raspberry Pi3の時のようなdockerコンテナへのログインはありません。<br>
+用意してあるJetson XavierはDockerを使っていないので、Raspberry Pi3の時のようなdockerコンテナへのログインはありません。<br>
 
 #### 2. ロボットカーのディレクトリに移動します
 > `cd ~/notebooks/github/RobotCarAI/level5_demo_streaming/pc_server`<br>
