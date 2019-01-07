@@ -987,15 +987,15 @@ def calc_line(x1,y1,x2,y2,x):
 
 def draw_steering(handle_icon, handle_angle, speed, cols, rows):
     handle_angle = handle_angle*2 
-    cols = int(cols/3)
-    rows = int(rows/3)
+    cols = int(cols/3.0)
+    rows = int(rows/3.0)
     cv_bgr = new_rgb(rows, cols)
-    center_x = int(cols*(3/4))
-    center_y = int(rows*(1/2))
-    box_x = center_x - int(cols*(1/5))
-    box_y = center_y - int(cols*(1/5))
-    box_w = int(cols*(2/5))
-    box_h = int(cols*(2/5))
+    center_x = int(cols*(3.0/4))
+    center_y = int(rows*(1.0/2))
+    box_x = center_x - int(cols*(1.0/5))
+    box_y = center_y - int(cols*(1.0/5))
+    box_w = int(cols*(2.0/5))
+    box_h = int(cols*(2.0/5))
     handle_icon = cv2.resize(handle_icon, (box_w, box_h))
     handle_icon = rotate(handle_icon, -1*handle_angle)
     clip_alpha_image(cv_bgr, handle_icon, box_x, box_y, box_w, box_h, mask_size=1.0)
@@ -1063,12 +1063,12 @@ def rotate(image, angle):
 
 def draw_speed(image, speed, min_value, max_value):
     rows, cols = image.shape[:2]
-    center_x = int(cols*(1/4))
-    center_y = int(rows*(1/2))
-    p1_x = center_x - int(cols*(1/16))
-    p1_y = center_y - int(rows*(3/8))
-    box_w = int(cols*(2/16))
-    box_h = int(rows*(6/8))
+    center_x = int(cols*(1.0/4))
+    center_y = int(rows*(1.0/2))
+    p1_x = center_x - int(cols*(1.0/16))
+    p1_y = center_y - int(rows*(3.0/8))
+    box_w = int(cols*(2.0/16))
+    box_h = int(rows*(6.0/8))
     p2_x = p1_x+box_w
     p2_y = p1_y+box_h
     color = (0,255,0)
