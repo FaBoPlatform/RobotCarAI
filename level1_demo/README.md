@@ -17,15 +17,16 @@
   * Fabo #902 Kerberos ver 1.0.0
   * Fabo #1202 Robot Car Rev. 1.0.1
   * Fabo #103 Button
-  * Lidar Lite v3
+  * VL53L0X or Lidar Lite v3
   * Tower Pro SG90
   * Raspberry Pi3
-    * Jessie Lite
+    * Stretch Lite or Jessie Lite
     * docker
       * Ubuntu
       * Python 2.7
       * FaBoPWM-PCA9685-Python
       * FaBoGPIO-PCAL6408-Python
+      * VL53L0X_rasp_python
       * Tensorflow r1.1.0
 
 【動画】<br>

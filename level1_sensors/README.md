@@ -13,9 +13,9 @@
 【実行環境】
 * Fabo TYPE1 ロボットカー
   * Fabo #902 Kerberos ver 1.0.0
-  * Lidar Lite v3
+  * VL53L0X or Lidar Lite v3
   * Raspberry Pi3
-    * Jessie Lite
+    * Stretch Lite or Jessie Lite
     * docker
       * Ubuntu
       * Python 2.7
