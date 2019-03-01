@@ -5,8 +5,8 @@
 import time
 import threading
 import logging
-from .motor import Motor
-from .servo import Servo
+from motor import Motor
+from servo import Servo
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,

@@ -5,9 +5,9 @@ import time
 import logging
 import threading
 import numpy as np
-#from fabolib import Kerberos
-from fabolib import KerberosVL53L0X as Kerberos
-from lib import AI
+#from fabolib.kerberos import Kerberos
+from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
+from lib.ai import AI
 
 import sys
 # ログ設定
@@ -48,11 +48,12 @@ def main():
     # 距離センサー準備
     kerberos = Kerberos()
     # Lidar取得間隔(秒)
-    LIDAR_INTERVAL = 0.05
+    LIDAR_INTERVAL = 0.05 # 距離センサー取得間隔 sec
 
     # 予測結果を文字列で保持する
     result = None
     try:
+        # モデルの学習ステップ数を表示する
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
 

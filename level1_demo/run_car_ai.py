@@ -5,12 +5,13 @@ import time
 import logging
 import threading
 import numpy as np
-#from fabolib import Kerberos
-from fabolib import KerberosVL53L0X as Kerberos
-from fabolib import Car
-from lib import SPI
-from lib import AI
-#from generator import LabelGenerator
+#from fabolib.kerberos import Kerberos
+from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
+from fabolib.car import Car
+from fabolib.config import CarConfig
+from lib.spi import SPI
+from lib.ai import AI
+#from generator.labelgenerator import LabelGenerator
 import copy
 
 import sys
@@ -71,15 +72,15 @@ def main():
     LEFT=1
     FORWARD=2
     RIGHT=3
-    HANDLE_NEUTRAL = 95 # ステアリングニュートラル位置
-    HANDLE_ANGLE = 42 # 左右最大アングル
+    HANDLE_NEUTRAL = CarConfig.HANDLE_NEUTRAL
+    HANDLE_ANGLE = CarConfig.HANDLE_ANGLE
     car = Car(busnum=BUSNUM)
     speed = 0
     angle = HANDLE_NEUTRAL
     ratio = 1.0 # 角度制御率
 
-    N_BACK_FOWARD = 5 # バック時、真っ直ぐバックする回数
-    MAX_LOG_LENGTH = 20 # ハンドル操作ログの保持数 MAX_LOG_LENGTH > N_BACK_FOWARD
+    N_BACK_FOWARD = CarConfig.N_BACK_FOWARD
+    MAX_LOG_LENGTH = CarConfig.MAX_LOG_LENGTH
     log_queue = Queue.Queue(maxsize=MAX_LOG_LENGTH) # バック時に使うために行動結果を保持する
     copy_log_queue = Queue.Queue(maxsize=MAX_LOG_LENGTH) # 連続バック動作のためのlog_queueバックアップキュー
     back_queue = Queue.LifoQueue(maxsize=MAX_LOG_LENGTH) # バック方向キュー
@@ -91,9 +92,10 @@ def main():
     #generator = LabelGenerator()
     # 近接センサー準備
     kerberos = Kerberos(busnum=BUSNUM)
-    LIDAR_INTERVAL = 0.05
+    LIDAR_INTERVAL = 0.05 # 距離センサー取得間隔 sec
 
     try:
+        # モデルの学習ステップ数を表示する
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
 
@@ -129,9 +131,11 @@ def main():
             # 速度調整を行う
             ########################################
             if distance2 >= 100:
+                # 前方障害物までの距離が100cm以上ある時、速度を最大にする
                 speed = 100
             else:
-                speed = int(distance2 + (100 - distance2)/2)
+                # 前方障害物までの距離が100cm未満の時、速度を調整する
+                speed = int(distance2)
                 if speed < 40:
                     speed = 40
 
@@ -270,7 +274,7 @@ def main():
                 speed = 0
                 time.sleep(0.5) # 停止後0.5秒待つ
                 car.set_angle(HANDLE_NEUTRAL)
-                time.sleep(0.5) # 停止後ハンドル修正0.2秒待つ
+                time.sleep(0.5) # 停止後ハンドル修正0.5秒待つ
                 if not stop_thread_running: break # 強制停止ならループを抜ける
             else:
                 if not stop_thread_running: break # 強制停止ならループを抜ける

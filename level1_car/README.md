@@ -130,12 +130,12 @@ Ctrl + c でstart_button.pyを終了します
 ソースコード：[./run_car_if.py](./run_car_if.py)<br>
 ```python
 # 書き換え前 シンプルな判断処理を読み込む
-from generator import SimpleLabelGenerator as LabelGenerator
-#from generator import LabelGenerator
+from generator.simplelabelgenerator import SimpleLabelGenerator as LabelGenerator
+#from generator.labelgenerator import LabelGenerator
 
 # 書き換え後 複雑な判断処理を読み込むように、#を入れ替えてコメントアウトを変更
-#from generator import SimpleLabelGenerator as LabelGenerator
-from generator import LabelGenerator
+#from generator.simplelabelgenerator import SimpleLabelGenerator as LabelGenerator
+from generator.labelgenerator import LabelGenerator
 ```
 走行は5.6.7.の手順になります。<br>
 
@@ -251,13 +251,16 @@ print("--- batch data ---\n{}".format(csvdata))
 #### モーターの速度制御
 車両動作確認コード：[./test/car_test.py](./test/car_test.py)<br>
 ```python
-from fabolib import Car
+from fabolib.car import Car
 car = Car()
 try:
     for i in range(1,101):
         car.forward(i)
         time.sleep(0.1)
     car.stop()
+
+    #モーターが惰性を含めて回転中は逆回転にすることが出来ないため、sleepを入れておく
+    time.sleep(1)
 
     for i in range(1,101):
         car.back(i)
@@ -266,14 +269,15 @@ try:
 ```
 モーターの速度は1から100までの値で制御できます。<br>
 しかし、値が低いとモーターが動作しないため、進む際は40以上の値を設定します。<br>
-前進、後進、停止が可能です。
+前進、後進、停止が可能です。<br>
+急に逆回転にするとモーターが回らなくなるため、逆回転にする場合は、モーターの回転が止まるまでsleepを入れておきます。
 
 <hr>
 
 #### ハンドル制御
 車両動作確認コード：[./test/car_test.py](./test/car_test.py)<br>
 ```python
-from fabolib import Car
+from fabolib.car import Car
 car = Car()
 try:
     car.set_angle(90)
@@ -290,8 +294,9 @@ try:
 0-180度まで動作するサーボを使っていますが、真ん中の90度の位置でロボットカーを組み立てる必要があります。<br>
 ここは車両に合わせて微調整が必要になります。<br>
 
-車両自走コード：[./run_car_if.py](./run_car_if.py)<br>
+パラメータ設定：[./fablib/config.py](./fablib/config.py)<br>
 ```python
+class CarConfig():
     HANDLE_NEUTRAL = 95 # ステアリングニュートラル位置
     HANDLE_ANGLE = 42 # 左右最大アングル
 ```
@@ -310,7 +315,7 @@ try:
 距離センサーLidarLite v3用ライブラリ：[./fabolib/kerberos.py](./fabolib/kerberos.py)<br>
 距離取得確認コード：[./test/fabolib_kerberos_test.py](./test/fabolib_kerberos_test.py)<br>
 ```python
-from fabolib import KerberosVL53L0X as Kerberos
+from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
 kerberos = Kerberos()
 try:
     for i in range(0,300):
@@ -319,8 +324,8 @@ try:
 このコードを実行するには、Fabo #902 Kerberos基板とFabo #224 Distanceが必要になります。<br>
 LidarLite v3を使っている場合は、import部分を以下のように変更してください。<br>
 ```python
-from fabolib import Kerberos
-#from fabolib import KerberosVL53L0X as Kerberos
+from fabolib.kerberos import Kerberos
+#from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
 ```
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -335,7 +340,7 @@ from fabolib import Kerberos
 ```python
     # 近接センサー準備
     kerberos = Kerberos()
-    LIDAR_INTERVAL = 0.05
+    LIDAR_INTERVAL = 0.05 # 距離センサー取得間隔 sec
 ...
     try:
         while main_thread_running:
@@ -355,8 +360,8 @@ from fabolib import Kerberos
 #### 進行方向を判断する
 車両自走コード：[./run_car_if.py](./run_car_if.py)<br>
 ```python
-from generator import SimpleLabelGenerator as LabelGenerator
-#from generator import LabelGenerator
+from generator.simplelabelgenerator import SimpleLabelGenerator as LabelGenerator
+#from generator.labelgenerator import LabelGenerator
 ...
     # IF準備 (学習ラベル ジェネレータ)
     generator = LabelGenerator()
@@ -366,12 +371,12 @@ from generator import SimpleLabelGenerator as LabelGenerator
             ########################################
             # 今回の結果を取得する
             generator_result = generator.get_label(sensors)
-            ai_value = np.argmax(generator_result)
+            if_value = np.argmax(generator_result)
 ```
 簡単なIF文を判定に使っていますが、level1_sensorsのIF文も使うことが出来ます。<br>
 ```python
-#from generator import SimpleLabelGenerator as LabelGenerator
-from generator import LabelGenerator
+#from generator.simplelabelgenerator import SimpleLabelGenerator as LabelGenerator
+from generator.labelgenerator import LabelGenerator
 ```
 <hr>
 
@@ -385,9 +390,11 @@ from generator import LabelGenerator
             # 速度調整を行う
             ########################################
             if distance2 >= 100:
+                # 前方障害物までの距離が100cm以上ある時、速度を最大にする
                 speed = 100
             else:
-                speed = int(distance2 + (100 - distance2)/2)
+                # 前方障害物までの距離が100cm未満の時、速度を調整する
+                speed = int(distance2)
                 if speed < 40:
                     speed = 40
 ```
@@ -401,7 +408,7 @@ from generator import LabelGenerator
             ########################################
             # ハンドル角調整を行う
             ########################################
-            if ai_value == 1: # 左に行くけど、左右スペース比で舵角を制御する
+            if if_value == 1: # 左に行くけど、左右スペース比で舵角を制御する
                 if distance1 > 100: # 左空間が非常に大きい時、ratio制御向けに最大値を設定する
                     distance1 = 100
                 if distance3 > distance1: # raitoが1.0を超えないように確認する
@@ -409,7 +416,7 @@ from generator import LabelGenerator
                 ratio = (float(distance1)/(distance1 + distance3) -0.5) * 2 # 角度をパーセント減にする
                 if distance2 < 100:
                     ratio = 1.0
-            elif ai_value == 3: # 右に行くけど、左右スペース比で舵角を制御する
+            elif if_value == 3: # 右に行くけど、左右スペース比で舵角を制御する
                 if distance3 > 100: # 右空間が非常に大きい時、ratio制御向けに最大値を設定する
                     distance3 = 100
                 if distance1 > distance3: # raitoが1.0を超えないように確認する
@@ -430,16 +437,16 @@ from generator import LabelGenerator
             ########################################
             # ロボットカーを 前進、左右、停止 する
             ########################################
-            if ai_value == STOP:
+            if if_value == STOP:
                 car.stop()
                 car.set_angle(HANDLE_NEUTRAL)
-            elif ai_value == LEFT:
+            elif if_value == LEFT:
                 car.set_angle(HANDLE_NEUTRAL - (HANDLE_ANGLE * ratio))
                 car.forward(speed)
-            elif ai_value == FORWARD:
+            elif if_value == FORWARD:
                 car.forward(speed)
                 car.set_angle(HANDLE_NEUTRAL)
-            elif ai_value == RIGHT:
+            elif if_value == RIGHT:
                 car.set_angle(HANDLE_NEUTRAL + (HANDLE_ANGLE * ratio))
                 car.forward(speed)
 ```
@@ -460,7 +467,7 @@ from generator import LabelGenerator
             バック時、直前のハンドルログからN件分を真っ直ぐバックし、M件分を逆ハンドルでバックする
             その後、狭い方にハンドルを切ってバックする
             '''
-            if ai_value == STOP:
+            if if_value == STOP:
                 time.sleep(1) # 停止後1秒、車体が安定するまで待つ
                 if not stop_thread_running: break # 強制停止ならループを抜ける
 
@@ -483,7 +490,7 @@ from generator import LabelGenerator
                 if qsize >= MAX_LOG_LENGTH:
                     log_queue.get(block=False)
                     qsize = log_queue.qsize()
-                log_queue.put(ai_value)
+                log_queue.put(if_value)
 ```
 <hr>
 
@@ -530,7 +537,7 @@ if __name__ == '__main__':
 
 開始ボタンコード：[./start_button.py](./start_button.py)
 ```python
-from lib import SPI
+from lib.spi import SPI
 # 開始ボタンのSPI接続コネクタ番号
 A1 = 1
 START_BUTTON_SPI_PIN = A1
@@ -566,7 +573,7 @@ try:
   * test/ Fabo基板動作確認関連
 * ファイルについて
   * README.md このファイル
-  * run_ai_if.py 自動走行コード
+  * run_car_if.py 自動走行コード
   * start_button.py 開始ボタンコード
 
 [<ページTOP>](#top)　[<目次>](#0)

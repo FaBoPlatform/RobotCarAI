@@ -135,8 +135,8 @@ AI判断を追加し、ジェネレータの判断は不要なのでコメント
 
 車両自走コード：[./run_car_ai.py](./run_car_ai.py)<br>
 ```python
-from lib import AI
-#from generator import LabelGenerator
+from lib.ai import AI
+#from generator.labelgenerator import LabelGenerator
 ...
     # AI準備
     ai = AI("car_model_100M.pb")
@@ -185,7 +185,7 @@ from lib import AI
   * lib/ SPI,AIライブラリ
 * ファイルについて
   * README.md このファイル
-  * run_ai_ai.py 自動走行コード
+  * run_car_ai.py 自動走行コード
   * start_button.py 開始ボタンコード
 
 [<ページTOP>](#top)　[<目次>](#0)

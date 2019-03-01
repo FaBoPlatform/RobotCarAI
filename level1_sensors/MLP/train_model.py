@@ -14,7 +14,7 @@ import threading
 from sklearn.utils import shuffle
 import sys
 sys.path.append(_FILE_DIR+'/..')
-from generator import LabelGenerator
+from generator.labelgenerator import LabelGenerator
 import numpy as np
 import logging
 
