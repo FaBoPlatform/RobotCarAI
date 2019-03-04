@@ -30,10 +30,11 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
 * [OS環境設定](#4)
 * [I2C Kernel/smbus修正](#5)
 * [hostname変更](#6)
-* [Dockerインストール](#7)
-* [RobotCar Docker環境ダウンロード](#8)
-* [Dockerコンテナ作成](#9)
-* [自動起動設定](#10)
+* [git clone RobotCarAI](#7)
+* [Dockerインストール](#8)
+* [RobotCar Docker環境ダウンロード](#9)
+* [Dockerコンテナ作成](#10)
+* [自動起動設定](#11)
 
 <hr>
 
@@ -220,6 +221,19 @@ hostnamectl
 
 <a name='7'>
 
+## git clone RobotCarAI
+このレポジトリをダウンロードします。<br>
+```
+mkdir -p /home/pi/notebooks/github
+cd /home/pi/notebooks/github
+git clone https://github.com/FaBoPlatform/RobotCarAI
+```
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+<a name='8'>
+
 ## Dockerインストール
 ```
 sudo apt-get install -y docker.io
@@ -229,9 +243,10 @@ sudo reboot
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='8'>
+<a name='9'>
 
 ## RobotCar Docker環境ダウンロード
+[Docker Hub](https://cloud.docker.com/repository/docker/naisy/fabo-jupyter-armhf)
 ```
 sudo docker pull naisy/fabo-jupyter-armhf
 ```
@@ -239,29 +254,39 @@ sudo docker pull naisy/fabo-jupyter-armhf
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='9'>
+<a name='10'>
 
 ## Dockerコンテナ作成
-* CPU版、SPIあり、I2Cあり(level1はこれを使う)
+* Jupyterのみ起動
 ```
-sudo docker run -itd --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
+sudo docker run \
+    -itd \
+    --privileged \
+    -p 6006:6006 -p 8888:8888 -p 8091:8091 \
+    -v /home/pi/notebooks:/notebooks \
+    -e "PASSWORD=robotcar" \
+naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
 ```
 
-* CPU版、SPIあり、I2Cあり、level1_demo走行用(start_button.pyを実行するコンテナを作成)
+* level1_car走行用(start_button.pyを実行するコンテナを作成)
 ```
-sudo docker run -itd --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 naisy/fabo-jupyter-armhf /bin/bash -c "python /notebooks/github/RobotCarAI/level1_demo/start_button.py & jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
+sudo docker run \
+    -itd \
+    --privileged \
+    -p 6006:6006 -p 8888:8888 -p 8091:8091 \
+    -v /home/pi/notebooks:/notebooks \
+    -e "PASSWORD=robotcar" \
+naisy/fabo-jupyter-armhf /bin/bash -c "python /notebooks/github/RobotCarAI/level1_car/start_button.py & jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
 ```
-
-* CPU版、開発用、SPIあり、USBカメラ付き、I2Cあり、TCP通信ポートあり(level2,3はこれを使う)
-```
-sudo docker run -itd --device /dev/video0:/dev/video0 --device /dev/spidev0.0:/dev/spidev0.0 --device /dev/i2c-1:/dev/i2c-1 -v /home/pi/notebooks:/notebooks -e "PASSWORD=gclue" -p 6006:6006 -p 8888:8888 -p 8091:8091 naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
-```
+jupyterのプロセスをkillするとdockerコンテナは終了してしまいますが、start_button.pyのプロセスをkillしても、dockerコンテナは終了しません。<br>
+このため、自動起動のコンテナにログインしてコードを実行する場合は、start_button.pyのプロセスをkillするとJupyterのみ起動したコンテナと同じように利用出来ます。<br>
+docker runで指定したコンテナの設定が変わる訳では無いため、コンテナを再起動するとstart_button.pyとjupyterのプロセスが起動した状態になります。<br>
 
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='10'>
+<a name='11'>
 
 ## 自動起動設定
 Raspberry Pi3が起動したら、RobotCarを自動起動するように設定します。<br>
