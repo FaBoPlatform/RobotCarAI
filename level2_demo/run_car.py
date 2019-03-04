@@ -6,10 +6,10 @@ import time
 import logging
 import threading
 import numpy as np
-from fabolib import Car
-from lib import SPI
-from lib import LaneDetection
-from lib import *
+from fabolib.car import Car
+from lib.spi import SPI
+from lib.functions import *
+from lib.opencv_lane_detection import LaneDetection
 
 import sys
 PY2 = sys.version_info[0] == 2

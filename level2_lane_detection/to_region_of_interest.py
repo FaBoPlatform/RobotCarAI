@@ -8,7 +8,7 @@ import time
 import os
 import sys
 import math
-from lib import *
+from lib.functions import *
 
 def main():
     FILE_DIR = './test_images'

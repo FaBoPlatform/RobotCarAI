@@ -1,6 +1,7 @@
 # coding: utf-8
 import Fabo_PCA9685
 import time
+from .config import ServoConfig
 
 import pkg_resources
 SMBUS='smbus'
@@ -18,16 +19,6 @@ elif SMBUS == 'smbus2':
 
 class ServoAngleError(Exception):
     pass
-
-class ServoConfig():
-    # サーボの限界軸角度
-    SERVO_MIN_PULSE = 650   # サーボの軸角度が0度になるHIGH時間のμ秒。サーボ毎に特性が異なる。
-    SERVO_MAX_PULSE = 2350  # サーボの軸角度が180度になるHIGH時間のμ秒。サーボ毎に特性が異なる。
-    # サーボの中央位置
-    SERVO_CENTER_PULSE = (SERVO_MIN_PULSE + SERVO_MAX_PULSE)/2
-    # サーボの角速度
-    SERVO_SPEED = 0
-
 
 class Servo():
     '''

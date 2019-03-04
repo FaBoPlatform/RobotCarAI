@@ -9,7 +9,7 @@ import time
 import os
 import sys
 import math
-from lib import *
+from lib.functions import *
 
 def main():
     np.set_printoptions(precision=5, suppress=True)  # suppress scientific float notation
