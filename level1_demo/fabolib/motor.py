@@ -1,5 +1,5 @@
 # coding: utf-8
-from config import MotorConfig
+from .config import MotorConfig
 
 import pkg_resources
 SMBUS='smbus'

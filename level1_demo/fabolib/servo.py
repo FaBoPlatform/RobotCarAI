@@ -1,7 +1,7 @@
 # coding: utf-8
 import Fabo_PCA9685
 import time
-from config import ServoConfig
+from .config import ServoConfig
 
 import pkg_resources
 SMBUS='smbus'
