@@ -30,11 +30,10 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
 * [OS環境設定](#4)
 * [I2C Kernel/smbus修正](#5)
 * [hostname変更](#6)
-* [git clone RobotCarAI](#7)
-* [Dockerインストール](#8)
-* [RobotCar Docker環境ダウンロード](#9)
-* [Dockerコンテナ作成](#10)
-* [自動起動設定](#11)
+* [Dockerインストール](#7)
+* [RobotCar Docker環境ダウンロード](#8)
+* [Dockerコンテナ作成](#9)
+* [自動起動設定](#10)
 
 <hr>
 
@@ -221,19 +220,6 @@ hostnamectl
 
 <a name='7'>
 
-## git clone RobotCarAI
-このレポジトリをダウンロードします。<br>
-```
-mkdir -p /home/pi/notebooks/github
-cd /home/pi/notebooks/github
-git clone https://github.com/FaBoPlatform/RobotCarAI
-```
-
-[<ページTOP>](#top)　[<目次>](#0)
-<hr>
-
-<a name='8'>
-
 ## Dockerインストール
 ```
 sudo apt-get install -y docker.io
@@ -243,7 +229,7 @@ sudo reboot
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='9'>
+<a name='8'>
 
 ## RobotCar Docker環境ダウンロード
 [Docker Hub](https://cloud.docker.com/repository/docker/naisy/fabo-jupyter-armhf)
@@ -254,7 +240,7 @@ sudo docker pull naisy/fabo-jupyter-armhf
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='10'>
+<a name='9'>
 
 ## Dockerコンテナ作成
 * Jupyterのみ起動
@@ -286,7 +272,7 @@ docker runで指定したコンテナの設定が変わる訳では無いため�
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='11'>
+<a name='10'>
 
 ## 自動起動設定
 Raspberry Pi3が起動したら、RobotCarを自動起動するように設定します。<br>
