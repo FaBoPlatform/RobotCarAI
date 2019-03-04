@@ -13,9 +13,9 @@
 【実行環境】
 * Fabo TYPE1 ロボットカー
   * Fabo #902 Kerberos ver 1.0.0
-  * Lidar Lite v3
+  * VL53L0X or Lidar Lite v3
   * Raspberry Pi3
-    * Jessie Lite
+    * Stretch Lite or Jessie Lite
     * docker
       * Ubuntu
       * Python 2.7
@@ -828,7 +828,7 @@ TensorFlow部分はAIクラスとして書いてあります。<br>
 AIライブラリ：[./lib/ai.py](./lib/ai.py)<br>
 予測実行コード：[./run_ai.py](./run_ai.py)<br>
 ```python
-from fabolib import KerberosVL53L0X as Kerberos
+from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
 ...
     # 距離センサー準備
     kerberos = Kerberos()
@@ -846,8 +846,8 @@ from fabolib import KerberosVL53L0X as Kerberos
 このコードを実行するには、Fabo #902 Kerberos基板とFabo #224 Distanceが必要になります。<br>
 LidarLite v3を使っている場合は、import部分を以下のように変更してください。<br>
 ```python
-from fabolib import Kerberos
-#from fabolib import KerberosVL53L0X as Kerberos
+from fabolib.kerberos import Kerberos
+#from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
 ```
 
 [<ページTOP>](#top)　[<目次>](#0)

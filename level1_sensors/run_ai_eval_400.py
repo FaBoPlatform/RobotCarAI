@@ -8,8 +8,8 @@ import time
 import logging
 import threading
 import numpy as np
-from lib import AI
-from generator import LabelGenerator
+from lib.ai import AI
+from generator.labelgenerator import LabelGenerator
 
 import sys
 # ログ設定
@@ -87,6 +87,7 @@ def main():
     MIN_RANGE = 0
     MAX_RANGE = 400
     try:
+        # モデルの学習ステップ数を表示する
         learned_step = ai.get_learned_step()
         print("learned_step:{}".format(learned_step))
 

@@ -9,7 +9,7 @@ import time
 import os
 import sys
 import math
-from lib import *
+from .functions import *
 import platform
 
 class LaneDetection():

@@ -5,7 +5,7 @@ _FILE_DIR=os.path.abspath(os.path.dirname(__file__))
 import time
 import sys
 sys.path.append(_FILE_DIR+'/..')
-from fabolib import Car
+from fabolib.car import Car
 
 print("start")
 
@@ -16,6 +16,9 @@ try:
         car.forward(i)
         time.sleep(0.1)
     car.stop()
+
+    #モーターが惰性を含めて回転中は逆回転にすることが出来ないため、sleepを入れておく
+    time.sleep(1)
 
     for i in range(1,101):
         car.back(i)
