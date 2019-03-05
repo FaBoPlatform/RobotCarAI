@@ -7,9 +7,8 @@ import logging
 import threading
 import numpy as np
 import cv2
-from fabolib import Car
-from lib import SPI
-from lib import *
+from fabolib.car import Car
+from lib.spi import SPI
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,

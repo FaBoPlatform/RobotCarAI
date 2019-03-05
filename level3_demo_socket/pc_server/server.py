@@ -21,7 +21,9 @@ import sys
 import logging
 import threading
 import numpy as np
-from lib import *
+from lib.functions import *
+from lib.object_detection import ObjectDetection
+from lib.opencv_lane_detection import LaneDetection
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG,

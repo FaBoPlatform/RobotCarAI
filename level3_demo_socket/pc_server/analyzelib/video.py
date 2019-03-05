@@ -6,7 +6,6 @@ import time
 import os
 import sys
 import math
-from analyzelib import *
 import platform
 
 class VideoReader():

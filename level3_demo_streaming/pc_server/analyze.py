@@ -9,7 +9,9 @@ import time
 import os
 import sys
 import math
-from analyzelib import *
+from analyzelib.functions import *
+from analyzelib.object_detection import ObjectDetection
+from analyzelib.video import VideoReader
 
 def main():
     np.set_printoptions(precision=5, suppress=True)  # suppress scientific float notation

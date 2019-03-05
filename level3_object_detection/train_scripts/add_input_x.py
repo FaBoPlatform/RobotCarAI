@@ -10,7 +10,7 @@ sys.path.append('../')
 
 from nets import ssd_vgg_300
 from preprocessing import ssd_vgg_preprocessing
-from lib import *
+from lib.ssd_params import *
 
 MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../output"
 OUTPUT_MODEL_DIR=os.path.abspath(os.path.dirname(__file__))+"/../model"
