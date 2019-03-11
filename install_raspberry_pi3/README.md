@@ -121,14 +121,14 @@ tls_disable_tlsv1_1=1
 opensslciphers=DEFAULT@SECLEVEL=2
 ```
 
-### ホスト名変更
+#### ホスト名変更
 Raspberry Pi3をたくさん使っていると、どれを使っているのかわからなくなることがあるので、ホスト名を変更します。<br>
 これは動作には必須ではありません。<br>
 
-### キーボードレイアウト変更
+#### キーボードレイアウト変更
 OSのデフォルトでは英語キーボードになっているため、日本語キーボードを使う場合はレイアウトをOADG 109Aに変更した方が使いやすくなります。<br>
 
-### TimeZone変更
+#### TimeZone変更
 OSのデフォルトではUTCになっているため、タイムゾーンをAsia/Tokyoに変更した方が時間がわかりやすくなります。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -188,7 +188,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='7'>
+<a name='5'>
 
 ## RobotCar Docker環境ダウンロード
 [Docker Hub](https://cloud.docker.com/repository/docker/naisy/fabo-jupyter-armhf)
