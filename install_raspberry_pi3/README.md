@@ -258,7 +258,6 @@ jupyterのプロセスをkillするとdockerコンテナは終了してしまい
 このため、自動起動のコンテナにログインしてコードを実行する場合は、start_button.pyのプロセスをkillするとJupyterのみ起動したコンテナと同じように利用出来ます。<br>
 docker runで指定したコンテナの設定が変わる訳では無いため、コンテナを再起動するとstart_button.pyとjupyterのプロセスが起動した状態になります。<br>
 
-
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -282,7 +281,9 @@ sudo vi /etc/rc.local
 
 <a name='tips'>
 
-## I2C Kernel/smbus修正
+## トラブルシューティング
+
+#### I2C Kernel/smbus修正
 * 2019/03/07 追記
 2018-11-13-raspbian-stretch-liteでは問題が解決しているのでここは不要です。<br>
 
@@ -308,8 +309,7 @@ sudo reboot
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-
-## hostname変更
+#### hostname変更
 `raspi-config`コマンドを使わずに設定ファイルを直接修正してホスト名を変更する場合、<br>
 /etc/hostnameを書き換えます。
 ```
