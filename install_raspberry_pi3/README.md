@@ -14,6 +14,7 @@
 
 【はじめに】<br>
 Stretch特有の問題回避などがあるので、他のOS(Jessie 2017等)ではOS周りの設定方法が異なります。<br>
+古いStretchにはI2Cに問題があります。2018-04-18や2018-06-27ではカーネル修正が必要になります。問題がある場合はトラブルシューティングを参照してください。<br>
 Dockerで用意しているRobotCarの環境には影響ないので、別のOSの場合はDocker部分だけ参考にしてください。<br>
 
 
@@ -26,21 +27,26 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
   * SPI有効化
   * I2C有効化
   * WiFi設定
+  * ホスト名変更
+  * キーボードレイアウト変更
+  * TimeZone変更
 * [RobotCar ソースコードダウンロード](#3)
 * [OS環境設定](#4)
-* [I2C Kernel/smbus修正](#5)
-* [hostname変更](#6)
-* [Dockerインストール](#7)
-* [RobotCar Docker環境ダウンロード](#8)
-* [Dockerコンテナ作成](#9)
-* [自動起動設定](#10)
+* [RobotCar Docker環境ダウンロード](#5)
+* [Dockerコンテナ作成](#6)
+* [自動起動設定](#7)
+* [トラブルシューティング](#tips)
+  * [I2C Kernel/smbus修正]
+  * [ホスト名変更]
+  * [WiFi設定]
+  * [i2c確認]
 
 <hr>
 
 <a name='1'>
 
 ## Stretch Liteインストール
-Raspberry Pi3の2018年4月時点での最新OSはRaspbian Stretchなので、Stretch Lite 2018-04-18をベースとしたインストール方法を記載します。<br>
+Raspberry Pi3の2019年3月時点での最新OSはRaspbian Stretchなので、Stretch Lite 2018-11-13をベースとしたインストール方法を記載します。<br>
 
 Raspbianの[リリースノート](http://downloads.raspberrypi.org/raspbian/release_notes.txt)でOS更新情報を確認してください。<br>
 多くの変更があるバージョンはWiFi、I2C、SPI等の設定方法が変わっている可能性があります。最新のOSをベースに使う時はそれに合わせて設定してください。<br>
@@ -106,7 +112,18 @@ Raspberry Pi3をWiFiに接続します。<br>
 
 パスワードを暗号化する場合は、以下のコマンド実行で表示されるpsk=xxxxxxxxの部分でpskを書き換えてください。
 ```
-wpa_passphrase 'SSID' 'PASSWORD'
+sudo wpa_passphrase 'SSID' 'PASSWORD'
+```
+
+# 2019/03/07 追記
+wpasupplicantはシステムのデフォルトセキュリティ設定を見ていません。<br>
+システムの現在の設定はTLS1.2とsecurity level 2です。<br>
+TLS1.2未満のネットワークに接続しないことを確信出来る場合は以下の設定を追加してください。<br>
+ルータ機器が古い場合は接続出来なくなる恐れがあるため、ここは設定しないでおいてください。<br>
+```
+tls_disable_tlsv1_0=1
+tls_disable_tlsv1_1=1
+opensslciphers=DEFAULT@SECLEVEL=2
 ```
 
 
@@ -132,7 +149,7 @@ git clone https://github.com/FaBoPlatform/RobotCarAI
 <a name='4'>
 
 ## OS環境設定
-OSのアップデート、bashの設定、vim設定等を行います。動作には必須ではありませんが、少し見やすくなります。<br>
+OSのアップデート、bashの設定、vim設定等を行います。動作には必須ではありませんが、ログインしなおすと少し見やすくなります。<br>
 ```
 cd /home/pi/notebooks/github/RobotCarAI/install_raspberry_pi3
 # 改行コードがCRLF(DOS)になっている事があるので、LF(UNIX)に変更する
@@ -144,7 +161,25 @@ sudo ./setup_bash.sh
 sudo ./setup_vim.sh
 sudo ./setup_ip_forward.sh
 sudo ./setup_package.sh
+sudo ./setup_docker-ce.sh
+sudo reboot
 ```
+dockerをインストールすると再起動が必要になります。<br>
+dockerインストール直後は以下のようなエラーが表示されますが、スルーして再起動してください。
+```
+Errors were encountered while processing:
+ docker-ce
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+```
+再起動後、dockerが利用可能かどうかを確認します。
+```
+sudo docker ps -a
+```
+まだdockerコンテナを作成していないため、dockerが利用可能であれば以下のような出力になります。
+```
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+```
+
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -152,6 +187,9 @@ sudo ./setup_package.sh
 <a name='5'>
 
 ## I2C Kernel/smbus修正
+# 2019/03/07 追記
+2018-11-13-raspbian-stretch-liteでは問題が解決しているのでここは不要です。<br>
+
 Raspbian Stretch Liteはraspi-configでI2Cを有効にしてもsmbusコード実行時にエラーが発生します。原因はKernelにあるようなので修正します。<br>
 
 ```
@@ -220,12 +258,6 @@ hostnamectl
 
 <a name='7'>
 
-## Dockerインストール
-```
-sudo apt-get install -y docker.io
-sudo reboot
-```
-
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
@@ -243,6 +275,36 @@ sudo docker pull naisy/fabo-jupyter-armhf
 <a name='9'>
 
 ## Dockerコンテナ作成
+
+### docker-ceの場合
+--network=hostの指定が可能になり、利用するポート番号指定を簡略化できます。<br>
+
+* Jupyterのみ起動
+```
+sudo docker run \
+    -itd \
+    --privileged \
+    --network=host \
+    -v /home/pi/notebooks:/notebooks \
+    -e "PASSWORD=robotcar" \
+naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root"
+```
+
+* level1_car走行用(start_button.pyを実行するコンテナを作成)
+```
+sudo docker run \
+    -itd \
+    --privileged \
+    --network=host \
+    -v /home/pi/notebooks:/notebooks \
+    -e "PASSWORD=robotcar" \
+naisy/fabo-jupyter-armhf /bin/bash -c "python /notebooks/github/RobotCarAI/level1_car/start_button.py & jupyter notebook --allow-root"
+```
+
+
+### docker.ioの場合(古いDockerバージョン)
+--networkオプションが使えないため、利用するポート番号を指定する必要があります。<br>
+
 * Jupyterのみ起動
 ```
 sudo docker run \
@@ -251,7 +313,7 @@ sudo docker run \
     -p 6006:6006 -p 8888:8888 -p 8091:8091 \
     -v /home/pi/notebooks:/notebooks \
     -e "PASSWORD=robotcar" \
-naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
+naisy/fabo-jupyter-armhf /bin/bash -c "jupyter notebook --allow-root"
 ```
 
 * level1_car走行用(start_button.pyを実行するコンテナを作成)
@@ -262,8 +324,9 @@ sudo docker run \
     -p 6006:6006 -p 8888:8888 -p 8091:8091 \
     -v /home/pi/notebooks:/notebooks \
     -e "PASSWORD=robotcar" \
-naisy/fabo-jupyter-armhf /bin/bash -c "python /notebooks/github/RobotCarAI/level1_car/start_button.py & jupyter notebook --allow-root --NotebookApp.iopub_data_rate_limit=10000000"
+naisy/fabo-jupyter-armhf /bin/bash -c "python /notebooks/github/RobotCarAI/level1_car/start_button.py & jupyter notebook --allow-root"
 ```
+
 jupyterのプロセスをkillするとdockerコンテナは終了してしまいますが、start_button.pyのプロセスをkillしても、dockerコンテナは終了しません。<br>
 このため、自動起動のコンテナにログインしてコードを実行する場合は、start_button.pyのプロセスをkillするとJupyterのみ起動したコンテナと同じように利用出来ます。<br>
 docker runで指定したコンテナの設定が変わる訳では無いため、コンテナを再起動するとstart_button.pyとjupyterのプロセスが起動した状態になります。<br>
