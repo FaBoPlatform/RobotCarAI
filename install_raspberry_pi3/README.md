@@ -110,7 +110,7 @@ Raspberry Pi3をWiFiに接続します。<br>
 sudo wpa_passphrase 'SSID' 'PASSWORD'
 ```
 
-# 2019/03/07 追記
+* 2019/03/07 追記
 wpasupplicantはシステムのデフォルトセキュリティ設定を見ていません。<br>
 システムの現在の設定はTLS1.2とsecurity level 2です。<br>
 TLS1.2未満のネットワークに接続しないことを確信出来る場合は以下の設定を追加してください。<br>
@@ -283,7 +283,7 @@ sudo vi /etc/rc.local
 <a name='tips'>
 
 ## I2C Kernel/smbus修正
-# 2019/03/07 追記
+* 2019/03/07 追記
 2018-11-13-raspbian-stretch-liteでは問題が解決しているのでここは不要です。<br>
 
 Raspbian Stretch Liteの古いOSではraspi-configでI2Cを有効にしてもsmbusコード実行時にエラーが発生します。原因はKernelにあるようなので修正します。<br>
