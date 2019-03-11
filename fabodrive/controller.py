@@ -74,17 +74,47 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class DriveHandler(tornado.web.RequestHandler):
 
+    def get(self):
+        # GETメソッドで車両制御アクセスを受付、処理を行う。何も返さない。
+        self.drive()
+        return
+
     def post(self):
         # POSTメソッドで車両制御アクセスを受付、処理を行う。何も返さない。
+        self.drive()
+        return
+
+    def drive(self):
+        # 車両制御処理を行う。何も返さない。
         angle = int(float(self.get_argument('angle')))
         speed = int(float(self.get_argument('speed')))
         if args.type == "fabo":
+            """
+            ステアリング角を制限する
+            servo.pyのサーボ制御は0-180度まで動作する。
+            しかし、ラジコンのステアリングは90度を基準に45度程度にしか曲げることが出来ないため、
+            サーボを壊さないようにここで制限する必要がある。
+            """
+            if angle < -45:
+                angle = 45
+            elif angle > 45:
+                angle = 45
             servo.set_angle(HANDLE_NEUTRAL - angle)
+
+            """
+            速度を制限する
+            motor.pyで100を超える場合は無視するようにしているので、制限は必要ないけれども、
+            ステアリング処理に合わせて制限を入れておく。
+            """
             if speed == 0:
                 motor.stop()
             elif speed > 0:
+                if speed > 100:
+                    speed = 100
                 motor.forward(speed)
             elif speed < 0:
+                if speed < -100:
+                    speed = -100
                 speed = -1 * speed
                 motor.back(speed)
             return
