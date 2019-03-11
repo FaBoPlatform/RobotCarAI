@@ -38,8 +38,6 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
 * [トラブルシューティング](#tips)
   * [I2C Kernel/smbus修正]
   * [ホスト名変更]
-  * [WiFi設定]
-  * [i2c確認]
 
 <hr>
 
@@ -96,9 +94,6 @@ RobotCarの距離センサー動作のためにI2Cを有効化します。<br>
 
 項目にあるI2Cを有効化します。<br>
 
-Raspbian Stretch Liteにはkernelに問題があり、I2Cが正常に利用出来ません。このため、後ほどKernelを修正します。
-
-
 #### WiFi設定
 Raspberry Pi3をWiFiに接続します。<br>
 > Network Options
@@ -115,7 +110,7 @@ Raspberry Pi3をWiFiに接続します。<br>
 sudo wpa_passphrase 'SSID' 'PASSWORD'
 ```
 
-# 2019/03/07 追記
+* 2019/03/07 追記
 wpasupplicantはシステムのデフォルトセキュリティ設定を見ていません。<br>
 システムの現在の設定はTLS1.2とsecurity level 2です。<br>
 TLS1.2未満のネットワークに接続しないことを確信出来る場合は以下の設定を追加してください。<br>
@@ -126,6 +121,15 @@ tls_disable_tlsv1_1=1
 opensslciphers=DEFAULT@SECLEVEL=2
 ```
 
+#### ホスト名変更
+Raspberry Pi3をたくさん使っていると、どれを使っているのかわからなくなることがあるので、ホスト名を変更します。<br>
+これは動作には必須ではありません。<br>
+
+#### キーボードレイアウト変更
+OSのデフォルトでは英語キーボードになっているため、日本語キーボードを使う場合はレイアウトをOADG 109Aに変更した方が使いやすくなります。<br>
+
+#### TimeZone変更
+OSのデフォルトではUTCになっているため、タイムゾーンをAsia/Tokyoに変更した方が時間がわかりやすくなります。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -186,83 +190,6 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 <a name='5'>
 
-## I2C Kernel/smbus修正
-# 2019/03/07 追記
-2018-11-13-raspbian-stretch-liteでは問題が解決しているのでここは不要です。<br>
-
-Raspbian Stretch Liteはraspi-configでI2Cを有効にしてもsmbusコード実行時にエラーが発生します。原因はKernelにあるようなので修正します。<br>
-
-```
-wget -O i2c1-bcm2708.dtbo https://drive.google.com/uc\?export=download\&id=0B_P-i4u-SLBXb3VlN0N5amVBb1k
-sudo chmod 755 i2c1-bcm2708.dtbo
-sudo chown root:root i2c1-bcm2708.dtbo
-sudo mv i2c1-bcm2708.dtbo /boot/overlays/
-sudo sh -c 'echo "dtoverlay=i2c1-bcm2708" >> /boot/config.txt'
-sudo reboot
-# リブート後、Raspberry Pi3に再ログインしてから継続
-sudo sh -c '/bin/echo Y > /sys/module/i2c_bcm2708/parameters/combined'
-sudo reboot
-```
-
-参考： <br>
-* [https://github.com/raspberrypi/firmware/issues/867](https://github.com/raspberrypi/firmware/issues/867)
-* [https://www.raspberrypi.org/forums/viewtopic.php?t=192958](https://www.raspberrypi.org/forums/viewtopic.php?t=192958)
-* [https://github.com/raspberrypi/firmware/issues/828](https://github.com/raspberrypi/firmware/issues/828)
-
-[<ページTOP>](#top)　[<目次>](#0)
-<hr>
-
-<a name='6'>
-
-## hostname変更
-Raspberry Pi3をたくさん使っていると、どれを使っているのかわからなくなることがあるので、ホスト名を変更します。<br>
-これは動作には必須ではありません。<br>
-
-/etc/hostnameを書き換えます。
-```
-sudo vi /etc/hostname
-```
->RobotCar  
-
-/etc/hostsを書き換えます。
-```
-sudo vi /etc/hosts
-```
->127.0.0.1	localhost  
->::1		localhost ip6-localhost ip6-loopback  
->ff02::1		ip6-allnodes  
->ff02::2		ip6-allrouters  
->  
->127.0.1.1	RobotCar  
-
-再起動します。
-```
-sudo reboot
-```
-
-再ログイン後、ホスト名を確認します。
-```
-hostnamectl 
-```
->    Static hostname: RobotCar  
->         Icon name: computer  
->        Machine ID: 86e73d2e6bbb41bf89537d5bcf63f676  
->           Boot ID: 598d925b7ba3449dbc0c614cfb761b37  
->  Operating System: Raspbian GNU/Linux 9 (stretch)  
->            Kernel: Linux 4.14.30-v7+  
->      Architecture: arm  
-
-
-[<ページTOP>](#top)　[<目次>](#0)
-<hr>
-
-<a name='7'>
-
-[<ページTOP>](#top)　[<目次>](#0)
-<hr>
-
-<a name='8'>
-
 ## RobotCar Docker環境ダウンロード
 [Docker Hub](https://cloud.docker.com/repository/docker/naisy/fabo-jupyter-armhf)
 ```
@@ -272,7 +199,7 @@ sudo docker pull naisy/fabo-jupyter-armhf
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='9'>
+<a name='6'>
 
 ## Dockerコンテナ作成
 
@@ -331,11 +258,10 @@ jupyterのプロセスをkillするとdockerコンテナは終了してしまい
 このため、自動起動のコンテナにログインしてコードを実行する場合は、start_button.pyのプロセスをkillするとJupyterのみ起動したコンテナと同じように利用出来ます。<br>
 docker runで指定したコンテナの設定が変わる訳では無いため、コンテナを再起動するとstart_button.pyとjupyterのプロセスが起動した状態になります。<br>
 
-
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='10'>
+<a name='7'>
 
 ## 自動起動設定
 Raspberry Pi3が起動したら、RobotCarを自動起動するように設定します。<br>
@@ -352,4 +278,74 @@ sudo vi /etc/rc.local
 
 
 [<ページTOP>](#top)　[<目次>](#0)
+
+<a name='tips'>
+
+## トラブルシューティング
+
+#### I2C Kernel/smbus修正
+* 2019/03/07 追記
+2018-11-13-raspbian-stretch-liteでは問題が解決しているのでここは不要です。<br>
+
+Raspbian Stretch Liteの古いOSではraspi-configでI2Cを有効にしてもsmbusコード実行時にエラーが発生します。原因はKernelにあるようなので修正します。<br>
+
+```
+wget -O i2c1-bcm2708.dtbo https://drive.google.com/uc\?export=download\&id=0B_P-i4u-SLBXb3VlN0N5amVBb1k
+sudo chmod 755 i2c1-bcm2708.dtbo
+sudo chown root:root i2c1-bcm2708.dtbo
+sudo mv i2c1-bcm2708.dtbo /boot/overlays/
+sudo sh -c 'echo "dtoverlay=i2c1-bcm2708" >> /boot/config.txt'
+sudo reboot
+# リブート後、Raspberry Pi3に再ログインしてから継続
+sudo sh -c '/bin/echo Y > /sys/module/i2c_bcm2708/parameters/combined'
+sudo reboot
+```
+
+参考： <br>
+* [https://github.com/raspberrypi/firmware/issues/867](https://github.com/raspberrypi/firmware/issues/867)
+* [https://www.raspberrypi.org/forums/viewtopic.php?t=192958](https://www.raspberrypi.org/forums/viewtopic.php?t=192958)
+* [https://github.com/raspberrypi/firmware/issues/828](https://github.com/raspberrypi/firmware/issues/828)
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
+
+#### hostname変更
+`raspi-config`コマンドを使わずに設定ファイルを直接修正してホスト名を変更する場合、<br>
+/etc/hostnameを書き換えます。
+```
+sudo vi /etc/hostname
+```
+>RobotCar  
+
+/etc/hostsを書き換えます。
+```
+sudo vi /etc/hosts
+```
+>127.0.0.1	localhost  
+>::1		localhost ip6-localhost ip6-loopback  
+>ff02::1		ip6-allnodes  
+>ff02::2		ip6-allrouters  
+>  
+>127.0.1.1	RobotCar  
+
+再起動します。
+```
+sudo reboot
+```
+
+再ログイン後、ホスト名を確認します。
+```
+hostnamectl 
+```
+>    Static hostname: RobotCar  
+>         Icon name: computer  
+>        Machine ID: 86e73d2e6bbb41bf89537d5bcf63f676  
+>           Boot ID: 598d925b7ba3449dbc0c614cfb761b37  
+>  Operating System: Raspbian GNU/Linux 9 (stretch)  
+>            Kernel: Linux 4.14.30-v7+  
+>      Architecture: arm  
+
+
+[<ページTOP>](#top)　[<目次>](#0)
+<hr>
 
