@@ -28,8 +28,8 @@ split_shape: 1917           # 1917, 3000, 3309, 5118, 7326, 51150. ExpandDims_1'
 debug_mode: False           # Show FPS spike value
 steering_icon: 'steering.png' # Steering image
 
-x_meter: 1.5                # IPM変換後の画像におけるxメートル(黒い部分も含む)
-y_meter: 1                  # IPM変換後の画像におけるyメートル(黒い部分も含む)
+x_meter: 1.5                # x meters of the image after IPM conversion. (including black area)
+y_meter: 1                  # y meters of the image after IPM conversion. (including black area)
 
 
 ########################################
