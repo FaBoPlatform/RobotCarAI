@@ -71,7 +71,7 @@ class Motor():
         speed = int(speed * self.conf.SPEED_RATIO)
         s = self.map(speed, 1, 100, 1, 63)
         value = (s<<2) + direction # スピード値を2ビット左シフトして下位2bitに前進ビットを設定した1Byteの送信データを作成
-        print("forward:{} {}".format(speed,value))
+        print("forward:{} value:{}".format(speed,value))
         self.bus.write_byte_data(self.MOTOR_ADDRESS,self.COMMAND0,value) #生成したデータを送信
 
     def stop(self):
@@ -88,7 +88,7 @@ class Motor():
         speed = int(speed * self.conf.SPEED_RATIO)
         s = self.map(speed, 1, 100, 1, 63)
         value = (s<<2) + direction # スピード値を2ビット左シフトして下位2bitに後進ビットを設定した1Byteの送信データを作成
-        print("forward:{} {}".format(speed,value))
+        print("back:{} value:{}".format(speed,value))
         self.bus.write_byte_data(self.MOTOR_ADDRESS,self.COMMAND0,value) #生成したデータを送信
 
     def brake(self):
