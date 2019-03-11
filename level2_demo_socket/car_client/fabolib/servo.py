@@ -96,7 +96,7 @@ class Servo():
         try:
             start_analog = self.get_analog()
             start_angle = self.analog_to_angle(start_analog)
-            print("servo set_angle:{}({}) -> {}({}) speed:{}".format(start_angle,start_analog,angle,target_analog,speed))
+            print("servo set_angle:{}({}) -> {}({}) delay:{}".format(start_angle,start_analog,angle,target_analog,speed))
             if start_analog == target_analog:
                 return
             if speed == 0:

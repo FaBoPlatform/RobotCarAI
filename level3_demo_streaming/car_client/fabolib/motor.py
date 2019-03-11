@@ -1,4 +1,6 @@
 # coding: utf-8
+from .config import MotorConfig
+
 import pkg_resources
 SMBUS='smbus'
 for dist in pkg_resources.working_set:
@@ -35,7 +37,8 @@ class Motor():
     CLOCK_HIGH = 1.0/0.6e-6 # 0.6 microsecond
     CLOCK_LOW = 1.0/1.3e-6 # 1.3 microsecond
 
-    def __init__(self, busnum=1, motor_address=None):
+    def __init__(self, busnum=1, motor_address=None, conf=MotorConfig()):
+        self.conf = conf
         if motor_address is None:
             motor_address = self.MOTOR_ADDR_L
         self.bus = smbus.SMBus(busnum)
@@ -65,9 +68,10 @@ class Motor():
             print("value is over 100,  must define 1-100 as speed.")
             return
         direction = self.FORWARD
+        speed = int(speed * self.conf.SPEED_RATIO)
         s = self.map(speed, 1, 100, 1, 63)
         value = (s<<2) + direction # スピード値を2ビット左シフトして下位2bitに前進ビットを設定した1Byteの送信データを作成
-        print("forward:{} {}".format(speed,value))
+        print("forward:{} value:{}".format(speed,value))
         self.bus.write_byte_data(self.MOTOR_ADDRESS,self.COMMAND0,value) #生成したデータを送信
 
     def stop(self):
@@ -81,9 +85,10 @@ class Motor():
             print("value is over 100,  must define 1-100 as speed.")
             return
         direction = self.BACK
+        speed = int(speed * self.conf.SPEED_RATIO)
         s = self.map(speed, 1, 100, 1, 63)
         value = (s<<2) + direction # スピード値を2ビット左シフトして下位2bitに後進ビットを設定した1Byteの送信データを作成
-        print("forward:{} {}".format(speed,value))
+        print("back:{} value:{}".format(speed,value))
         self.bus.write_byte_data(self.MOTOR_ADDRESS,self.COMMAND0,value) #生成したデータを送信
 
     def brake(self):

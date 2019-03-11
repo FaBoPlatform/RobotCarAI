@@ -11,7 +11,7 @@ import sys
 sys.path.append('/home/ubuntu/notebooks/github/SSD-Tensorflow/')
 
 from nets import ssd_vgg_300, np_methods
-from lib import *
+from lib.ssd_params import *
 
 def mkdir(PATH):
     '''
