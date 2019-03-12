@@ -115,7 +115,7 @@ speedは前進後進を切り替える場合は、モーターの回転が止ま
 -- | -- | --
 停止 | http://192.168.xxx.xxx:8080/drive?angle=0&speed=0 | GET/POST
 前進(speed = 50) | http://192.168.xxx.xxx:8080/drive?angle=0&speed=50 | GET/POST
-後進(speed = -50) | http://192.168.xxx.xxx:8080/drive?angle=0&speed=50 | GET/POST
+後進(speed = -50) | http://192.168.xxx.xxx:8080/drive?angle=0&speed=-50 | GET/POST
 右 | http://192.168.xxx.xxx:8080/drive?angle=-40&speed=50 | GET/POST
 左 | http://192.168.xxx.xxx:8080/drive?angle=40&speed=50 | GET/POST
 
