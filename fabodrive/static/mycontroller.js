@@ -81,14 +81,14 @@ if(is_keyboard) {
     // only on keydown
     keyboard.domElement.addEventListener('keydown', function(event){
         if(keyboard.eventMatches(event, 'a')) {
-            angle += 15
-            if(angle > 45) {
-                angle = 45
+            angle += 10
+            if(angle > 40) {
+                angle = 40
             }
         } else if(keyboard.eventMatches(event, 'd')) {
-            angle -= 15
-            if(angle < -45) {
-                angle = -45
+            angle -= 10
+            if(angle < -40) {
+                angle = -40
             }
         }
 
@@ -112,7 +112,7 @@ setInterval(function(){
     if(is_touchpad) {
         // 仮想Joystickの値を表示する。
         // 入力範囲を適切な制御範囲に変換する
-        angle = map(joystickL.deltaX(), -50, 50, -45, 45)
+        angle = map(joystickL.deltaX(), -50, 50, -40, 40)
         speed = map(joystickR.deltaY(), -50, 50, -100, 100)
         // 角度は左をプラスに、速度は前進をプラスにする
         angle = -1 * angle

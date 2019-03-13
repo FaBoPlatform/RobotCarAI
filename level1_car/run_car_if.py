@@ -10,8 +10,8 @@ from fabolib.kerberos_vl53l0x import KerberosVL53L0X as Kerberos
 from fabolib.car import Car
 from fabolib.config import CarConfig
 from lib.spi import SPI
-from generator.simplelabelgenerator import SimpleLabelGenerator as LabelGenerator
-#from generator.labelgenerator import LabelGenerator
+#from generator.simplelabelgenerator import SimpleLabelGenerator as LabelGenerator
+from generator.labelgenerator import LabelGenerator
 import copy
 
 import sys
