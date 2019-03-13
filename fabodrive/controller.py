@@ -12,8 +12,7 @@ import tornado.web
 import tornado.websocket
 import tornado.ioloop
 import webbrowser
-from fabolib.motor import Motor
-from fabolib.servo import Servo
+from fabolib.car import Car
 from fabolib.config import CarConfig
 import socket
 
@@ -35,10 +34,8 @@ HANDLE_ANGLE = CarConfig.HANDLE_ANGLE
 BUSNUM = 1
 
 if args.type == "fabo":
-    motor = Motor(busnum=BUSNUM)
-    servo = Servo(busnum=BUSNUM)
-    motor.stop()
-    servo.set_angle(HANDLE_NEUTRAL)
+    car = Car(busnum=BUSNUM)
+    car.stop()
 elif args.type == "1/6":
     print("1/6")
 
@@ -92,14 +89,14 @@ class DriveHandler(tornado.web.RequestHandler):
             """
             ステアリング角を制限する
             servo.pyのサーボ制御は0-180度まで動作する。
-            しかし、ラジコンのステアリングは90度を基準に45度程度にしか曲げることが出来ないため、
+            しかし、ラジコンのステアリングは90度を基準に40度程度にしか曲げることが出来ないため、
             サーボを壊さないようにここで制限する必要がある。
             """
-            if angle < -45:
-                angle = 45
-            elif angle > 45:
-                angle = 45
-            servo.set_angle(HANDLE_NEUTRAL - angle)
+            if angle < -40:
+                angle = 40
+            elif angle > 40:
+                angle = 40
+            car.set_angle(HANDLE_NEUTRAL - angle)
 
             """
             速度を制限する
@@ -107,16 +104,16 @@ class DriveHandler(tornado.web.RequestHandler):
             ステアリング処理に合わせて制限を入れておく。
             """
             if speed == 0:
-                motor.stop()
+                car.stop()
             elif speed > 0:
                 if speed > 100:
                     speed = 100
-                motor.forward(speed)
+                car.forward(speed)
             elif speed < 0:
                 if speed < -100:
                     speed = -100
                 speed = -1 * speed
-                motor.back(speed)
+                car.back(speed)
             return
         elif args.type == "1/6":
             return
