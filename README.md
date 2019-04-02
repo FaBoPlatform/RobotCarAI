@@ -8,7 +8,7 @@ RobotCar AI Playground.
 ## FaboDrive
 * [FaboDrive: Webコントローラ/API](https://github.com/FaBoPlatform/RobotCarAI/tree/master/fabodrive/)
 
-<img src="./fabodrive/document/controller.png" alt="controller" width="240" height="135"/>
+![](./fabodrive/document/controller-small.png)<br>
 
 ## Level
 * [Level 1: Fabo TYPE1 ロボットカー制御](https://github.com/FaBoPlatform/RobotCarAI/tree/master/level1_car/)
