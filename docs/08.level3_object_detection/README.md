@@ -15,54 +15,54 @@
 止まれを検出する動画：[./document/stop.mp4](./document/stop.mp4)<br>
 走行しながら道路標識を検出する動画：[./document/course160x120.mp4](./document/course160x120.mp4)<br>
 
-【実行環境】
-* Fabo TYPE1 ロボットカー
-  * USB Webcam
-  * Raspberry Pi3
-    * Jessie Lite
-    * docker
-      * Ubuntu
-      * Python 2.7
-      * OpenCV 2.4
-      * Tensorflow r1.1.0
-* Jetson TX2
-  * USB Webcam
-  * JetPack 3.1
-    * Ubuntu
-    * Python 3.6
-    * OpenCV 3.3
-    * Tensorflow r1.4.1
+【実行環境】<br>
+* Fabo TYPE1 ロボットカー<br>
+  * USB Webcam<br>
+  * Raspberry Pi3<br>
+    * Jessie Lite<br>
+    * docker<br>
+      * Ubuntu<br>
+      * Python 2.7<br>
+      * OpenCV 2.4<br>
+      * Tensorflow r1.1.0<br>
+* Jetson TX2<br>
+  * USB Webcam<br>
+  * JetPack 3.1<br>
+    * Ubuntu<br>
+    * Python 3.6<br>
+    * OpenCV 3.3<br>
+    * Tensorflow r1.4.1<br>
 
 <hr>
 
 <a name='0'>
 
-【実行】
-* [インストール方法](#a)
-* [コースの準備](#course)
-* [Raspberry Pi3での実行方法](#b)
-* [Jetson TX2での実行方法](#c)
+【実行】<br>
+* [インストール方法](#a)<br>
+* [コースの準備](#course)<br>
+* [Raspberry Pi3での実行方法](#b)<br>
+* [Jetson TX2での実行方法](#c)<br>
 
-【目次】
-* [物体検出の紹介](#1)
-  * object detection
-    * [OpenCV] [テンプレートマッチング]
-    * [Python] [Selective Search]
-    * [Neural Networks] [SSD: Single Shot MultiBox Detection]
-    * [Python/TensorFlow] [TensorFlow Object Detection API]
-* [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflowを使う](#2)
-  * インストール
-  * demo実行
-  * 扱える学習データフォーマット
-  * 学習データを作成する
-  * 学習コードの作成と学習実行
-  * 検出実行
-  * カメラ映像の読み込み
-  * ストリーミング配信
-  * ストリーミング解析実行
-  * 動画に保存
-* [ディレクトリとファイルについて](#3)
-* [開発/学習/実行環境について](#4)
+【目次】<br>
+* [物体検出の紹介](#1)<br>
+  * object detection<br>
+    * [OpenCV] [テンプレートマッチング]<br>
+    * [Python] [Selective Search]<br>
+    * [Neural Networks] [SSD: Single Shot MultiBox Detection]<br>
+    * [Python/TensorFlow] [TensorFlow Object Detection API]<br>
+* [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflowを使う](#2)<br>
+  * インストール<br>
+  * demo実行<br>
+  * 扱える学習データフォーマット<br>
+  * 学習データを作成する<br>
+  * 学習コードの作成と学習実行<br>
+  * 検出実行<br>
+  * カメラ映像の読み込み<br>
+  * ストリーミング配信<br>
+  * ストリーミング解析実行<br>
+  * 動画に保存<br>
+* [ディレクトリとファイルについて](#3)<br>
+* [開発/学習/実行環境について](#4)<br>
 <hr>
 
 
@@ -596,29 +596,29 @@ out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), in
 <a name='3'>
 
 ## [ディレクトリとファイルについて]
-* ディレクトリについて
-  * documment/ ドキュメント関連
-  * install_scripts/ インストールスクリプト
-  * roadsign_data/ 道路標識データ
-  * train_scripts/ 学習関連スクリプト
-* ファイルについて
-  * README.md このファイル
-  * scritp_define.conf ディレクトリパス等設定ファイル
-  * run_ssd.py 検出実行コード
-  * run_streaming.py Webcamストリーミング動画解析コード
-  * install_scripts/install.sh インストールスクリプト
-    * install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト
-    * install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト
-    * install_scripts/patch_to.sh ファイル修正スクリプト
-  * install_scripts/install_labelimg.sh LabelImg インストールスクリプト
-  * model/ssd_roadsign.pb 学習済みモデル
-  * train_scripts/setup_mytrain.sh 学習コード生成スクリプト
-  * train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト
-  * train_scripts/train_ssd.sh 学習実行スクリプト
-  * train_scripts/train_ssd_continue.sh 学習再開スクリプト
-  * train_scripts/freeze_graph.sh モデル凍結スクリプト
-  * train_scripts/add_input_x.py 学習済みcheckpointに入力名を追加するコード
-  * train_scripts/freeze_graph.py モデル凍結コード
+* ディレクトリについて<br>
+  * documment/ ドキュメント関連<br>
+  * install_scripts/ インストールスクリプト<br>
+  * roadsign_data/ 道路標識データ<br>
+  * train_scripts/ 学習関連スクリプト<br>
+* ファイルについて<br>
+  * README.md このファイル<br>
+  * scritp_define.conf ディレクトリパス等設定ファイル<br>
+  * run_ssd.py 検出実行コード<br>
+  * run_streaming.py Webcamストリーミング動画解析コード<br>
+  * install_scripts/install.sh インストールスクリプト<br>
+    * install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト<br>
+    * install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト<br>
+    * install_scripts/patch_to.sh ファイル修正スクリプト<br>
+  * install_scripts/install_labelimg.sh LabelImg インストールスクリプト<br>
+  * model/ssd_roadsign.pb 学習済みモデル<br>
+  * train_scripts/setup_mytrain.sh 学習コード生成スクリプト<br>
+  * train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト<br>
+  * train_scripts/train_ssd.sh 学習実行スクリプト<br>
+  * train_scripts/train_ssd_continue.sh 学習再開スクリプト<br>
+  * train_scripts/freeze_graph.sh モデル凍結スクリプト<br>
+  * train_scripts/add_input_x.py 学習済みcheckpointに入力名を追加するコード<br>
+  * train_scripts/freeze_graph.py モデル凍結コード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 
@@ -627,13 +627,13 @@ out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), in
 <a name='4'>
 
 ## [開発/学習/実行環境について]
-* 開発環境
-  * ラベル作成はGUIツールを使うため、画面のある環境が必要です。
-* 学習環境
-  * 学習環境はGPUが使える環境が必要です。
-* 実行環境
-  * 実行環境はUSBカメラが使える環境が必要です。
-  * クラウドで実行する場合は、PCかRaspberryPi3等にUSBカメラを付けてFFMPEGを使ってカメラ映像をクラウド実行環境にUDP Streaming配信する必要があります。
-  * USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの公式ドキュメントを参考にしてください。
+* 開発環境<br>
+  * ラベル作成はGUIツールを使うため、画面のある環境が必要です。<br>
+* 学習環境<br>
+  * 学習環境はGPUが使える環境が必要です。<br>
+* 実行環境<br>
+  * 実行環境はUSBカメラが使える環境が必要です。<br>
+  * クラウドで実行する場合は、PCかRaspberryPi3等にUSBカメラを付けてFFMPEGを使ってカメラ映像をクラウド実行環境にUDP Streaming配信する必要があります。<br>
+  * USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの公式ドキュメントを参考にしてください。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)

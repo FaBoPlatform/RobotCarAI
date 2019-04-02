@@ -21,31 +21,31 @@ Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://
 
 <a name='0'>
 
-【目次】
-* [Python/OpenCV] [Region Of Interst](#1)
-  * [Python/OpenCV] [座標を探す]
-  * [Python/OpenCV] [処理]
-  * 考察
-* [Python/OpenCV] [Inverse Perspective Mapping](#2)
-  * [Python/OpenCV] [座標を探す]
-  * [Python/OpenCV] [処理]
-  * [Python/OpenCV] [逆変換]
-  * 考察
-* [Python/OpenCV] [白色フィルタ](#3)
-  * [Python/OpenCV] [処理]
-  * 考察
-* [Python/OpenCV] [2値化](#4)
-  * [Python/OpenCV] [処理]
-* [Python/OpenCV] [histogram](#5)
-  * [Python/OpenCV] [処理]
-* [Python/OpenCV] [Sliding Windows](#6)
-* [Python/OpenCV] [ライン検出](#7)
-* [Python/OpenCV] [弧の角度と傾き角](#8)
-  * [Python/OpenCV] 円の中心座標の求め方
-* [Python/OpenCV] [ピクセル座標と実座標](#9)
-* [Python/OpenCV] [中央線までの距離](#10)
-* [Python/OpenCV] [描画](#11)
-* [ディレクトリとファイルについて](#12)
+【目次】<br>
+* [Python/OpenCV] [Region Of Interst](#1)<br>
+  * [Python/OpenCV] [座標を探す]<br>
+  * [Python/OpenCV] [処理]<br>
+  * 考察<br>
+* [Python/OpenCV] [Inverse Perspective Mapping](#2)<br>
+  * [Python/OpenCV] [座標を探す]<br>
+  * [Python/OpenCV] [処理]<br>
+  * [Python/OpenCV] [逆変換]<br>
+  * 考察<br>
+* [Python/OpenCV] [白色フィルタ](#3)<br>
+  * [Python/OpenCV] [処理]<br>
+  * 考察<br>
+* [Python/OpenCV] [2値化](#4)<br>
+  * [Python/OpenCV] [処理]<br>
+* [Python/OpenCV] [histogram](#5)<br>
+  * [Python/OpenCV] [処理]<br>
+* [Python/OpenCV] [Sliding Windows](#6)<br>
+* [Python/OpenCV] [ライン検出](#7)<br>
+* [Python/OpenCV] [弧の角度と傾き角](#8)<br>
+  * [Python/OpenCV] 円の中心座標の求め方<br>
+* [Python/OpenCV] [ピクセル座標と実座標](#9)<br>
+* [Python/OpenCV] [中央線までの距離](#10)<br>
+* [Python/OpenCV] [描画](#11)<br>
+* [ディレクトリとファイルについて](#12)<br>
 <hr>
 
 <a name='1'>
@@ -656,18 +656,16 @@ plt.show()
 <a name='12'>
 
 ## [ディレクトリとファイルについて]
-* ディレクトリについて
-  * documment/ ドキュメント関連
-  * demo_lane/ デモ用ディレクトリ
-  * lib/ 関数ライブラリ
-  * test_images/ ROI,IPM,白色フィルタの確認用ディレクトリ
-* ファイルについて
-  * README.md このファイル
-  * opencv_lane_detection.py レーン検出コード
-  * to_region_of_interest.py ROI座標確認コード
-  * to_inverse_perspective_mapping.py IPM座標確認コード
-  * to_white.py 白色フィルタ確認コード
+* ディレクトリについて<br>
+  * documment/ ドキュメント関連<br>
+  * demo_lane/ デモ用ディレクトリ<br>
+  * lib/ 関数ライブラリ<br>
+  * test_images/ ROI,IPM,白色フィルタの確認用ディレクトリ<br>
+* ファイルについて<br>
+  * README.md このファイル<br>
+  * opencv_lane_detection.py レーン検出コード<br>
+  * to_region_of_interest.py ROI座標確認コード<br>
+  * to_inverse_perspective_mapping.py IPM座標確認コード<br>
+  * to_white.py 白色フィルタ確認コード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
-
-

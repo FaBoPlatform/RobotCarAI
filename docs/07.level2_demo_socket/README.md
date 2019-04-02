@@ -12,41 +12,41 @@
 ![](./document/robotcar2.jpg)<br>
 ![](./document/robotcar3.jpg)<br>
 
-【実行環境】
-* Fabo TYPE1 ロボットカー
-  * USB Webcam
-  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1
-  * Fabo Robot Car #1202 Rev. 1.0.1
-  * Tower Pro SG90
-  * Raspberry Pi3
-    * Jessie Lite
-    * docker
-      * Ubuntu
-      * Python 2.7
-      * OpenCV 2.4
-      * FaBoPWM-PCA9685-Python
-      * FaBoGPIO-PCAL6408-Python
-* Jetson TX2
-  * JetPack 3.1
-    * Ubuntu
-    * Python 3.6
-    * OpenCV 3.3
+【実行環境】<br>
+* Fabo TYPE1 ロボットカー<br>
+  * USB Webcam<br>
+  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
+  * Fabo Robot Car #1202 Rev. 1.0.1<br>
+  * Tower Pro SG90<br>
+  * Raspberry Pi3<br>
+    * Jessie Lite<br>
+    * docker<br>
+      * Ubuntu<br>
+      * Python 2.7<br>
+      * OpenCV 2.4<br>
+      * FaBoPWM-PCA9685-Python<br>
+      * FaBoGPIO-PCAL6408-Python<br>
+* Jetson TX2<br>
+  * JetPack 3.1<br>
+    * Ubuntu<br>
+    * Python 3.6<br>
+    * OpenCV 3.3<br>
 
 <a name='0'>
 
-【実行】
-* [インストール方法](#a)
-* [コースの準備](#course)
-* [Jetson TX2/PC] [サーバ起動](#b)
-* [Raspberry Pi3] [ロボットカー起動](#c)
+【実行】<br>
+* [インストール方法](#a)<br>
+* [コースの準備](#course)<br>
+* [Jetson TX2/PC] [サーバ起動](#b)<br>
+* [Raspberry Pi3] [ロボットカー起動](#c)<br>
 
-【目次】
-* [トラブルシューティング](#2)
-  * Webcamが起動しない
-  * 走行中にハンドルが固まった
-  * Raspberry Pi3が起動しない
-  * サーバが起動しない
-* [ディレクトリとファイルについて](#3)
+【目次】<br>
+* [トラブルシューティング](#2)<br>
+  * Webcamが起動しない<br>
+  * 走行中にハンドルが固まった<br>
+  * Raspberry Pi3が起動しない<br>
+  * サーバが起動しない<br>
+* [ディレクトリとファイルについて](#3)<br>
 
 <hr>
 
@@ -188,17 +188,17 @@ run_car.pyのHOST,PORTを確認してください。(サーバのIPアドレス�
 <a name='3'>
 
 ## ディレクトリとファイルについて
-* ディレクトリについて
-  * car_client/ ロボットカー制御関連
-  * car_client/fabolib/ Fabo製基板関連
-  * car_client/lib/ SPI,カメラライブラリ
-  * pc_server/ サーバ解析関連
-  * pc_server/lib/ ライン検出関連
-* ファイルについて
-  * README.md このファイル
-  * car_client/run_car_client.py 自動走行コード
-  * car_client/start_button.py 開始ボタンコード
-  * pc_server/server.py サーバ起動コード
+* ディレクトリについて<br>
+  * car_client/ ロボットカー制御関連<br>
+  * car_client/fabolib/ Fabo製基板関連<br>
+  * car_client/lib/ SPI,カメラライブラリ<br>
+  * pc_server/ サーバ解析関連<br>
+  * pc_server/lib/ ライン検出関連<br>
+* ファイルについて<br>
+  * README.md このファイル<br>
+  * car_client/run_car_client.py 自動走行コード<br>
+  * car_client/start_button.py 開始ボタンコード<br>
+  * pc_server/server.py サーバ起動コード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
