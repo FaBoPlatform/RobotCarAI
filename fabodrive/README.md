@@ -188,8 +188,8 @@ i2cdetect -y 1
 新品のピニオンギアと交換してください。<br>
 見た目ではわかりづらいですが、亀裂が入っているとカラカラ異音がします。<br>
 プラスチック製のピニオンギアは走行しなくても2年位で亀裂が入るようです。<br>
-![](./fabodrive/document/pinion-small.png)<br>
-![](./fabodrive/document/pinion-mark-small.png)<br>
+![](./document/pinion-small.png)<br>
+![](./document/pinion-mark-small.png)<br>
 
 
 [<ページTOP>](#top)　[<目次>](#0)
