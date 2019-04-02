@@ -842,51 +842,51 @@
 <p>【動画】<br>
 止まれを検出する動画：<a href="document/stop.mp4">./document/stop.mp4</a><br>
 走行しながら道路標識を検出する動画：<a href="document/course160x120.mp4">./document/course160x120.mp4</a><br></p>
-<p>【実行環境】
-* Fabo TYPE1 ロボットカー
-  * USB Webcam
-  * Raspberry Pi3
-    * Jessie Lite
-    * docker
-      * Ubuntu
-      * Python 2.7
-      * OpenCV 2.4
-      * Tensorflow r1.1.0
-* Jetson TX2
-  * USB Webcam
-  * JetPack 3.1
-    * Ubuntu
-    * Python 3.6
-    * OpenCV 3.3
-    * Tensorflow r1.4.1</p>
+<p>【実行環境】<br>
+* Fabo TYPE1 ロボットカー<br>
+  * USB Webcam<br>
+  * Raspberry Pi3<br>
+    * Jessie Lite<br>
+    * docker<br>
+      * Ubuntu<br>
+      * Python 2.7<br>
+      * OpenCV 2.4<br>
+      * Tensorflow r1.1.0<br>
+* Jetson TX2<br>
+  * USB Webcam<br>
+  * JetPack 3.1<br>
+    * Ubuntu<br>
+    * Python 3.6<br>
+    * OpenCV 3.3<br>
+    * Tensorflow r1.4.1<br></p>
 <hr>
 
 <p><a name='0'></p>
-<p>【実行】
-* <a href="#a">インストール方法</a>
-* <a href="#course">コースの準備</a>
-* <a href="#b">Raspberry Pi3での実行方法</a>
-* <a href="#c">Jetson TX2での実行方法</a></p>
-<p>【目次】
-* <a href="#1">物体検出の紹介</a>
-  * object detection
-    * [OpenCV] [テンプレートマッチング]
-    * [Python] [Selective Search]
-    * [Neural Networks] [SSD: Single Shot MultiBox Detection]
-    * [Python/TensorFlow] [TensorFlow Object Detection API]
-* [Python/OpenCV/TensorFlow] <a href="#2">Balancap SSD-Tensorflowを使う</a>
-  * インストール
-  * demo実行
-  * 扱える学習データフォーマット
-  * 学習データを作成する
-  * 学習コードの作成と学習実行
-  * 検出実行
-  * カメラ映像の読み込み
-  * ストリーミング配信
-  * ストリーミング解析実行
-  * 動画に保存
-* <a href="#3">ディレクトリとファイルについて</a>
-* <a href="#4">開発/学習/実行環境について</a>
+<p>【実行】<br>
+* <a href="#a">インストール方法</a><br>
+* <a href="#course">コースの準備</a><br>
+* <a href="#b">Raspberry Pi3での実行方法</a><br>
+* <a href="#c">Jetson TX2での実行方法</a><br></p>
+<p>【目次】<br>
+* <a href="#1">物体検出の紹介</a><br>
+  * object detection<br>
+    * [OpenCV] [テンプレートマッチング]<br>
+    * [Python] [Selective Search]<br>
+    * [Neural Networks] [SSD: Single Shot MultiBox Detection]<br>
+    * [Python/TensorFlow] [TensorFlow Object Detection API]<br>
+* [Python/OpenCV/TensorFlow] <a href="#2">Balancap SSD-Tensorflowを使う</a><br>
+  * インストール<br>
+  * demo実行<br>
+  * 扱える学習データフォーマット<br>
+  * 学習データを作成する<br>
+  * 学習コードの作成と学習実行<br>
+  * 検出実行<br>
+  * カメラ映像の読み込み<br>
+  * ストリーミング配信<br>
+  * ストリーミング解析実行<br>
+  * 動画に保存<br>
+* <a href="#3">ディレクトリとファイルについて</a><br>
+* <a href="#4">開発/学習/実行環境について</a><br>
 <hr></p>
 <p><a name='a'></p>
 <h2 id="_2">インストール方法</h2>
@@ -1440,31 +1440,31 @@ Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等�
 <p><a name='3'></p>
 <h2 id="_16">[ディレクトリとファイルについて]</h2>
 <ul>
-<li>ディレクトリについて</li>
-<li>documment/ ドキュメント関連</li>
-<li>install_scripts/ インストールスクリプト</li>
-<li>roadsign_data/ 道路標識データ</li>
-<li>train_scripts/ 学習関連スクリプト</li>
-<li>ファイルについて</li>
-<li>README.md このファイル</li>
-<li>scritp_define.conf ディレクトリパス等設定ファイル</li>
-<li>run_ssd.py 検出実行コード</li>
-<li>run_streaming.py Webcamストリーミング動画解析コード</li>
-<li>install_scripts/install.sh インストールスクリプト<ul>
-<li>install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト</li>
-<li>install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト</li>
-<li>install_scripts/patch_to.sh ファイル修正スクリプト</li>
+<li>ディレクトリについて<br></li>
+<li>documment/ ドキュメント関連<br></li>
+<li>install_scripts/ インストールスクリプト<br></li>
+<li>roadsign_data/ 道路標識データ<br></li>
+<li>train_scripts/ 学習関連スクリプト<br></li>
+<li>ファイルについて<br></li>
+<li>README.md このファイル<br></li>
+<li>scritp_define.conf ディレクトリパス等設定ファイル<br></li>
+<li>run_ssd.py 検出実行コード<br></li>
+<li>run_streaming.py Webcamストリーミング動画解析コード<br></li>
+<li>install_scripts/install.sh インストールスクリプト<br><ul>
+<li>install_scripts/install_balancap_ssd-tensorflow.sh Balancap SSD-Tensorflow ダウンロードスクリプト<br></li>
+<li>install_scripts/setup_bugfix.sh Balancap SSD-Tensorflow バグ修正スクリプト<br></li>
+<li>install_scripts/patch_to.sh ファイル修正スクリプト<br></li>
 </ul>
 </li>
-<li>install_scripts/install_labelimg.sh LabelImg インストールスクリプト</li>
-<li>model/ssd_roadsign.pb 学習済みモデル</li>
-<li>train_scripts/setup_mytrain.sh 学習コード生成スクリプト</li>
-<li>train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト</li>
-<li>train_scripts/train_ssd.sh 学習実行スクリプト</li>
-<li>train_scripts/train_ssd_continue.sh 学習再開スクリプト</li>
-<li>train_scripts/freeze_graph.sh モデル凍結スクリプト</li>
-<li>train_scripts/add_input_x.py 学習済みcheckpointに入力名を追加するコード</li>
-<li>train_scripts/freeze_graph.py モデル凍結コード</li>
+<li>install_scripts/install_labelimg.sh LabelImg インストールスクリプト<br></li>
+<li>model/ssd_roadsign.pb 学習済みモデル<br></li>
+<li>train_scripts/setup_mytrain.sh 学習コード生成スクリプト<br></li>
+<li>train_scripts/convert_PascalVOC_to_TF-Records.sh 学習データ変換スクリプト<br></li>
+<li>train_scripts/train_ssd.sh 学習実行スクリプト<br></li>
+<li>train_scripts/train_ssd_continue.sh 学習再開スクリプト<br></li>
+<li>train_scripts/freeze_graph.sh モデル凍結スクリプト<br></li>
+<li>train_scripts/add_input_x.py 学習済みcheckpointに入力名を追加するコード<br></li>
+<li>train_scripts/freeze_graph.py モデル凍結コード<br></li>
 </ul>
 <p><a href="#top">&lt;ページTOP&gt;</a>　<a href="#0">&lt;目次&gt;</a></p>
 <hr>
@@ -1472,14 +1472,14 @@ Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等�
 <p><a name='4'></p>
 <h2 id="_17">[開発/学習/実行環境について]</h2>
 <ul>
-<li>開発環境</li>
-<li>ラベル作成はGUIツールを使うため、画面のある環境が必要です。</li>
-<li>学習環境</li>
-<li>学習環境はGPUが使える環境が必要です。</li>
-<li>実行環境</li>
-<li>実行環境はUSBカメラが使える環境が必要です。</li>
-<li>クラウドで実行する場合は、PCかRaspberryPi3等にUSBカメラを付けてFFMPEGを使ってカメラ映像をクラウド実行環境にUDP Streaming配信する必要があります。</li>
-<li>USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの公式ドキュメントを参考にしてください。</li>
+<li>開発環境<br></li>
+<li>ラベル作成はGUIツールを使うため、画面のある環境が必要です。<br></li>
+<li>学習環境<br></li>
+<li>学習環境はGPUが使える環境が必要です。<br></li>
+<li>実行環境<br></li>
+<li>実行環境はUSBカメラが使える環境が必要です。<br></li>
+<li>クラウドで実行する場合は、PCかRaspberryPi3等にUSBカメラを付けてFFMPEGを使ってカメラ映像をクラウド実行環境にUDP Streaming配信する必要があります。<br></li>
+<li>USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの公式ドキュメントを参考にしてください。<br></li>
 </ul>
 <p><a href="#top">&lt;ページTOP&gt;</a>　<a href="#0">&lt;目次&gt;</a></p>
                 
