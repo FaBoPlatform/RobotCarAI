@@ -1,0 +1,12 @@
+--- a/notebooks/github/SSD-Tensorflow/preprocessing/ssd_vgg_preprocessing.py	2018-01-15 13:21:05.871427969 +0900
++++ b/notebooks/github/SSD-Tensorflow/preprocessing/ssd_vgg_preprocessing.py	2018-01-18 15:17:14.861635603 +0900
+@@ -354,7 +354,8 @@
+                                           align_corners=False)
+ 
+         # Split back bounding boxes.
+-        bbox_img = bboxes[0]
++        with tf.variable_scope("my_bbox_img"):
++            bbox_img = bboxes[0]
+         bboxes = bboxes[1:]
+         # Remove difficult boxes.
+         if difficults is not None:
