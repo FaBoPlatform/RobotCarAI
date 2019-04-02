@@ -2,7 +2,7 @@
 
 
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja" class="no-js">
   <head>
     
@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-　、。，．]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.1.1">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.1.0">
     
     
       
@@ -40,12 +40,12 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.3020aac5.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.11e41852.css">
       
       
     
     
-      <script src="../assets/javascripts/modernizr.01ccdecf.js"></script>
+      <script src="../assets/javascripts/modernizr.20ef595d.js"></script>
     
     
       
@@ -60,9 +60,6 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     
       <link rel="stylesheet" href="../stylesheets/extra.css">
-    
-    
-      
     
     
   </head>
@@ -100,16 +97,20 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
-            <span class="md-header-nav__topic">
-              FaBo RobotCarAI Docs
-            </span>
-            <span class="md-header-nav__topic">
-              Index
-            </span>
+            
+              <span class="md-header-nav__topic">
+                FaBo RobotCarAI Docs
+              </span>
+              <span class="md-header-nav__topic">
+                Index
+              </span>
+            
           
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
         
       </div>
       
@@ -1328,29 +1329,29 @@
 
 <p><a name='0'></p>
 <p>【実行】<br>
-* <a href="#a">インストール方法</a><br>
-* <a href="#course">コースの準備</a><br>
+<em> <a href="#a">インストール方法</a><br>
+</em> <a href="#course">コースの準備</a><br>
 * <a href="#b">実行方法</a><br></p>
 <p>【目次】<br>
-* [Hardware] <a href="#1">距離センサーLidarLite v3について</a><br>
+<em> [Hardware] <a href="#1">距離センサーLidarLite v3について</a><br>
   * 取得できる距離、値、誤差、測定周期<br>
-* [Neural Networks] <a href="#2">学習データのフォーマットについて</a><br>
+</em> [Neural Networks] <a href="#2">学習データのフォーマットについて</a><br>
   * クラス分類<br>
   * one hot value<br>
   * データフォーマット<br>
-* [Python] <a href="#3">学習データ ジェネレータを作る</a><br>
+<em> [Python] <a href="#3">学習データ ジェネレータを作る</a><br>
   * 簡単なIF文での判定<br>
   * 車両旋回性能<br>
   * 曲がる、止まる判定<br>
-* [Neural Networks] <a href="#4">学習モデルについて</a><br>
+</em> [Neural Networks] <a href="#4">学習モデルについて</a><br>
   * Multi-Layer Perceptron<br>
-* [Python/TensorFlow] <a href="#5">学習用コードのコーディング</a><br>
+<em> [Python/TensorFlow] <a href="#5">学習用コードのコーディング</a><br>
   * 学習コード設計<br>
-* [Python/TensorFlow] <a href="#6">学習と保存</a><br>
+</em> [Python/TensorFlow] <a href="#6">学習と保存</a><br>
   * 学習実行<br>
   * 保存と読み込み<br>
-* [Python/TensorFlow] <a href="#7">予測を実行</a><br>
-* [Python/TensorFlow] <a href="#8">予測精度を評価</a><br>
+<em> [Python/TensorFlow] <a href="#7">予測を実行</a><br>
+</em> [Python/TensorFlow] <a href="#8">予測精度を評価</a><br>
 * <a href="#9">ディレクトリとファイルについて</a><br>
 <hr></p>
 <p><a name='a'></p>
@@ -1644,22 +1645,22 @@ CSVデータを人力で用意していってもよいのですが、IF文で書
 <p>旋回方向は左右のより空いている方向に曲がればよいのですが、左右どちらにも壁があり曲がれないことも考慮します。
 <img alt="" src="document/habadori.png" />
 分岐パターンを適当に決めます。3つの距離センサー値はそれぞれ以下の3パターンで考えることが出来ます。
-* パターン0： 障害物までの距離が遠いため、制御不要
-* パターン1： 障害物までの距離が近いため、制御必要
+<em> パターン0： 障害物までの距離が遠いため、制御不要
+</em> パターン1： 障害物までの距離が近いため、制御必要
 * パターン2： 障害物までの距離が近すぎるため、その方向には進めない</p>
 <p>左前右センサー値をそれぞれこのパターンのどれにあたるのかをIF文で判断し、次に進行方向を決定するための分岐を作成します。
-* コントロール1：前2 - 直進も旋回も出来ないため停止する
-* コントロール分岐：左01,前1,右01 - 前方障害物あり。左右旋回可能。左右の距離が遠い方に曲がる
+<em> コントロール1：前2 - 直進も旋回も出来ないため停止する
+</em> コントロール分岐：左01,前1,右01 - 前方障害物あり。左右旋回可能。左右の距離が遠い方に曲がる
   * コントロール2：右の方が距離が遠い場合。右に曲がる
   * コントロール3：左の方が距離が遠い場合。左に曲がる
-* コントロール4：右0前0左0 - 制御不要のため、直進する
-* コントロール5：左12右0 - 左は障害物までの距離が近いか近すぎるため、右に曲がる
-* コントロール6：左0右12 - 右は障害物までの距離が近いか近すぎるため、左に曲がる
-* コントロール7：左2右2 - 左も右も旋回不可能。前方はコントロール1を通過しているので進行可能。直進するが、もしかしたら壁にぶつかる可能性もある
-* コントロール分岐：左1右1 - 左右どちらも障害物に近いので、真ん中になるように幅調整をする
+<em> コントロール4：右0前0左0 - 制御不要のため、直進する
+</em> コントロール5：左12右0 - 左は障害物までの距離が近いか近すぎるため、右に曲がる
+<em> コントロール6：左0右12 - 右は障害物までの距離が近いか近すぎるため、左に曲がる
+</em> コントロール7：左2右2 - 左も右も旋回不可能。前方はコントロール1を通過しているので進行可能。直進するが、もしかしたら壁にぶつかる可能性もある
+<em> コントロール分岐：左1右1 - 左右どちらも障害物に近いので、真ん中になるように幅調整をする
   * コントロール8：右の方が距離が遠い場合。右に曲がる
   * コントロール9：左の方が距離が遠い場合。左に曲がる
-* コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
+</em> コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる</p>
 <p>制御分岐を通ったら<a href="#3-1">簡単なIF文での判定</a>と同様にone hot valueで値を返して学習データ ジェネレータは完成です。<br></p>
 <p>ラベル ジェネレータ：<a href="generator/labelgenerator.py">./generator/labelgenerator.py</a><br>
@@ -1897,10 +1898,10 @@ TARGET_STEPを増やすことで、さらに学習させることが出来ます
 <hr></p>
 <h4 id="_12">保存と読み込み</h4>
 <p>保存と読み込みには2種類の方法があります。<br>
-* 再学習可能な方法<br>
+<em> 再学習可能な方法<br>
   * checkpointに保存<br>
   * checkpointを読み込む<br>
-* 凍結する方法<br>
+</em> 凍結する方法<br>
   * pbファイルに保存<br>
   * pbファイルを読み込む<br></p>
 <p>checkpointに保存すると、学習・実行に必要な全てのモデル構成と変数値が保存されます。そのため、checkpointを読み込むことで学習を再開することが出来ます。<br>
@@ -2101,7 +2102,7 @@ pbファイル作成コード：<a href="MLP/freeze_graph.py">./MLP/freeze_graph
 <span class=o>...</span>
         <span class=c1># print operations</span>
         <span class=n>print_graph_operations</span><span class=p>(</span><span class=n>graph</span><span class=p>)</span>
-</pre></div></td></tr></table></div><input name=tab-group-21 type=radio id=tab-group-21-1_1u186mmsalzx2rn class=code-tab data-lang aria-controls=tab-group-21-1_1u186mmsalzx2rn-panel role=tab><label for=tab-group-21-1_1u186mmsalzx2rn class=code-tab-label data-lang id=tab-group-21-1_1u186mmsalzx2rn-label></label><div class=code-tabpanel role=tabpanel data-lang id=tab-group-21-1_1u186mmsalzx2rn-panel aria-labelledby=tab-group-21-1_1u186mmsalzx2rn-label><table class=codehilitetable><tr><td class=linenos><div class=linenodiv><pre> 1
+</pre></div></td></tr></table></div><input name=tab-group-21 type=radio id=tab-group-21-1_k3k3sv5ee83b57d class=code-tab data-lang aria-controls=tab-group-21-1_k3k3sv5ee83b57d-panel role=tab><label for=tab-group-21-1_k3k3sv5ee83b57d class=code-tab-label data-lang id=tab-group-21-1_k3k3sv5ee83b57d-label></label><div class=code-tabpanel role=tabpanel data-lang id=tab-group-21-1_k3k3sv5ee83b57d-panel aria-labelledby=tab-group-21-1_k3k3sv5ee83b57d-label><table class=codehilitetable><tr><td class=linenos><div class=linenodiv><pre> 1
  2
  3
  4
@@ -2266,10 +2267,10 @@ pbファイル作成コード：<a href="MLP/freeze_graph.py">./MLP/freeze_graph
 <h2 id="pythontensorflow_2">[Python/TensorFlow] 予測を実行</h2>
 <p><img alt="" src="document/prediction-design1.png" />
 <a href="#6-4">pbファイルを読み込む</a>で予測実行までを見ました。<br>
-* モデルの読み込み<br>
-* 入出力オペレーションの変数取得<br>
-* 読み込んだモデルでセッションを開始<br>
-* 入力値作成<br>
+<em> モデルの読み込み<br>
+</em> 入出力オペレーションの変数取得<br>
+<em> 読み込んだモデルでセッションを開始<br>
+</em> 入力値作成<br>
 * 予測実行<br></p>
 <p>最後に、予測結果から最も確率の高いものは何なのか？を知る必要があります。<br>
 予測実行コード：<a href="MLP/run_ai_test.py">./MLP/run_ai_test.py</a></p>
@@ -2964,13 +2965,15 @@ Neural Netwoksを使った学習では、学習の止め時も考えるポイン
           Material for MkDocs</a>
       </div>
       
+        
+      
     </div>
   </div>
 </footer>
       
     </div>
     
-      <script src="../assets/javascripts/application.dc02f8ce.js"></script>
+      <script src="../assets/javascripts/application.9e1f3b71.js"></script>
       
         
         
@@ -2979,6 +2982,10 @@ Neural Netwoksを使った学習では、学習の止め時も考えるポイン
           
             
               
+                <script src="../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../assets/javascripts/lunr/lunr.jp.js"></script>
               
             
           
@@ -2986,6 +2993,9 @@ Neural Netwoksを使った学習では、学習の止め時も考えるポイン
         
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+    
+    
       
     
   </body>

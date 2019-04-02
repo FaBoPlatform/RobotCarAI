@@ -2,7 +2,7 @@
 
 
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja" class="no-js">
   <head>
     
@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-　、。，．]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.1.1">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.1.0">
     
     
       
@@ -40,12 +40,12 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.3020aac5.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.11e41852.css">
       
       
     
     
-      <script src="../assets/javascripts/modernizr.01ccdecf.js"></script>
+      <script src="../assets/javascripts/modernizr.20ef595d.js"></script>
     
     
       
@@ -60,9 +60,6 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     
       <link rel="stylesheet" href="../stylesheets/extra.css">
-    
-    
-      
     
     
   </head>
@@ -100,16 +97,20 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
-            <span class="md-header-nav__topic">
-              FaBo RobotCarAI Docs
-            </span>
-            <span class="md-header-nav__topic">
-              Index
-            </span>
+            
+              <span class="md-header-nav__topic">
+                FaBo RobotCarAI Docs
+              </span>
+              <span class="md-header-nav__topic">
+                Index
+              </span>
+            
           
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
         
       </div>
       
@@ -843,7 +844,7 @@
 止まれを検出する動画：<a href="document/stop.mp4">./document/stop.mp4</a><br>
 走行しながら道路標識を検出する動画：<a href="document/course160x120.mp4">./document/course160x120.mp4</a><br></p>
 <p>【実行環境】<br>
-* Fabo TYPE1 ロボットカー<br>
+<em> Fabo TYPE1 ロボットカー<br>
   * USB Webcam<br>
   * Raspberry Pi3<br>
     * Jessie Lite<br>
@@ -852,7 +853,7 @@
       * Python 2.7<br>
       * OpenCV 2.4<br>
       * Tensorflow r1.1.0<br>
-* Jetson TX2<br>
+</em> Jetson TX2<br>
   * USB Webcam<br>
   * JetPack 3.1<br>
     * Ubuntu<br>
@@ -863,18 +864,18 @@
 
 <p><a name='0'></p>
 <p>【実行】<br>
-* <a href="#a">インストール方法</a><br>
-* <a href="#course">コースの準備</a><br>
-* <a href="#b">Raspberry Pi3での実行方法</a><br>
-* <a href="#c">Jetson TX2での実行方法</a><br></p>
+<em> <a href="#a">インストール方法</a><br>
+</em> <a href="#course">コースの準備</a><br>
+<em> <a href="#b">Raspberry Pi3での実行方法</a><br>
+</em> <a href="#c">Jetson TX2での実行方法</a><br></p>
 <p>【目次】<br>
-* <a href="#1">物体検出の紹介</a><br>
+<em> <a href="#1">物体検出の紹介</a><br>
   * object detection<br>
     * [OpenCV] [テンプレートマッチング]<br>
     * [Python] [Selective Search]<br>
     * [Neural Networks] [SSD: Single Shot MultiBox Detection]<br>
     * [Python/TensorFlow] [TensorFlow Object Detection API]<br>
-* [Python/OpenCV/TensorFlow] <a href="#2">Balancap SSD-Tensorflowを使う</a><br>
+</em> [Python/OpenCV/TensorFlow] <a href="#2">Balancap SSD-Tensorflowを使う</a><br>
   * インストール<br>
   * demo実行<br>
   * 扱える学習データフォーマット<br>
@@ -885,8 +886,8 @@
   * ストリーミング配信<br>
   * ストリーミング解析実行<br>
   * 動画に保存<br>
-* <a href="#3">ディレクトリとファイルについて</a><br>
-* <a href="#4">開発/学習/実行環境について</a><br>
+<em> <a href="#3">ディレクトリとファイルについて</a><br>
+</em> <a href="#4">開発/学習/実行環境について</a><br>
 <hr></p>
 <p><a name='a'></p>
 <h2 id="_2">インストール方法</h2>
@@ -1242,8 +1243,8 @@ Balancap SSD-Tensorflowでは、TF-Recordへのコンバート時は画像ファ
 <p>Balancap SSD-Tensorflowの学習コードは、元の学習コードをコピーしてスクリプトで修正して作成します。<br>
 <hr></p>
 <p>スクリプト設定ファイルで以下を設定します。
-* 学習データディレクトリ
-* ラベル</p>
+<em> 学習データディレクトリ
+</em> ラベル</p>
 <p>スクリプト設定ファイル：<a href="script_define.conf">./script_define.conf</a><br></p>
 <p> <table class=codehilitetable><tr><td class=linenos><div class=linenodiv><pre> 1
  2
@@ -1545,13 +1546,15 @@ Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等�
           Material for MkDocs</a>
       </div>
       
+        
+      
     </div>
   </div>
 </footer>
       
     </div>
     
-      <script src="../assets/javascripts/application.dc02f8ce.js"></script>
+      <script src="../assets/javascripts/application.9e1f3b71.js"></script>
       
         
         
@@ -1560,6 +1563,10 @@ Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等�
           
             
               
+                <script src="../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../assets/javascripts/lunr/lunr.jp.js"></script>
               
             
           
@@ -1567,6 +1574,9 @@ Jetson TX2はメモリが不足になりやすいため、OOM(Out Of Memory)等�
         
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+    
+    
       
     
   </body>
