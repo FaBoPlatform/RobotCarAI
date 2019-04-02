@@ -555,7 +555,7 @@ prefix/neural_network_model/Variable_1/read [<tf.Tensor 'prefix/neural_network_m
 ```
 
 prefixはpb読み込み時に追加した接頭辞<br>
-学習コード：[./MLP/run_ai.py](./MLP/run_ai.py)
+学習コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
 ```python
     with tf.Graph().as_default() as graph:
         tf.import_graph_def(

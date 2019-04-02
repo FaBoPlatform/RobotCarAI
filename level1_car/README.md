@@ -79,7 +79,7 @@
 道幅は直線なら狭くても大丈夫ですが、カーブでは側面にセンサーが付いていないため、内側を巻き込みやすくなっています。<br>
 そのため、カーブは広めに作り、狭い道への入り口も誘導しやすいように広めに作っておきます。<br>
 
-![](./document/course.jpg)<br>
+![](./document/img1.jpg)<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -295,7 +295,7 @@ try:
 0-180度まで動作するサーボを使っていますが、真ん中の90度の位置でロボットカーを組み立てる必要があります。<br>
 ここは車両に合わせて微調整が必要になります。<br>
 
-パラメータ設定：[./fablib/config.py](./fablib/config.py)<br>
+パラメータ設定：[./fabolib/config.py](./fabolib/config.py)<br>
 ```python
 class CarConfig():
     HANDLE_NEUTRAL = 95 # ステアリングニュートラル位置
