@@ -1,18 +1,17 @@
 <a name='top'>
 
-【タイトル】
 # レベル2：ロボットカー走行デモ TCP通信版
 <hr>
 
-【目標】
+## 目標
 #### カメラ映像をTCP通信でサーバに送り、サーバからの走行指示でロボットカーを自走させる
 
-【画像】<br>
+## 画像
 ![](./document/robotcar1.jpg)<br>
 ![](./document/robotcar2.jpg)<br>
 ![](./document/robotcar3.jpg)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * USB Webcam<br>
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
@@ -34,19 +33,19 @@
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [Jetson TX2/PC] [サーバ起動](#b)<br>
 * [Raspberry Pi3] [ロボットカー起動](#c)<br>
 
-【目次】<br>
-* [トラブルシューティング](#2)<br>
+## 目次
+* [トラブルシューティング](#l2)<br>
   * Webcamが起動しない<br>
   * 走行中にハンドルが固まった<br>
   * Raspberry Pi3が起動しない<br>
   * サーバが起動しない<br>
-* [ディレクトリとファイルについて](#3)<br>
+* [ディレクトリとファイルについて](#l3)<br>
 
 <hr>
 
@@ -144,7 +143,7 @@ Ctrl + c でstart_button.pyを終了します
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## トラブルシューティング
 #### Webcamが起動しない
@@ -185,7 +184,7 @@ run_car.pyのHOST,PORTを確認してください。(サーバのIPアドレス�
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>

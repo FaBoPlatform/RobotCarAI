@@ -1,21 +1,20 @@
 <a name='top'>
 
-【タイトル】
 # レベル3：ニューラルネットワークで道路標識を検出する
 <hr>
 
-【目標】
+## 目標
 #### カメラ映像を取得し、道路標識を検出する
 
-【画像】<br>
+## 画像
 ![](./document/jetson_tx2-stop.png)<br>
 ![](./document/course.jpg)<br>
 
-【動画】<br>
+## 動画
 止まれを検出する動画：[./document/stop.mp4](./document/stop.mp4)<br>
 走行しながら道路標識を検出する動画：[./document/course160x120.mp4](./document/course160x120.mp4)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * USB Webcam<br>
   * Raspberry Pi3<br>
@@ -37,20 +36,20 @@
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [Raspberry Pi3での実行方法](#b)<br>
 * [Jetson TX2での実行方法](#c)<br>
 
-【目次】<br>
-* [物体検出の紹介](#1)<br>
+## 目次
+* [物体検出の紹介](#l1)<br>
   * object detection<br>
     * [OpenCV] [テンプレートマッチング]<br>
     * [Python] [Selective Search]<br>
     * [Neural Networks] [SSD: Single Shot MultiBox Detection]<br>
     * [Python/TensorFlow] [TensorFlow Object Detection API]<br>
-* [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflowを使う](#2)<br>
+* [Python/OpenCV/TensorFlow] [Balancap SSD-Tensorflowを使う](#l2)<br>
   * インストール<br>
   * demo実行<br>
   * 扱える学習データフォーマット<br>
@@ -61,8 +60,8 @@
   * ストリーミング配信<br>
   * ストリーミング解析実行<br>
   * 動画に保存<br>
-* [ディレクトリとファイルについて](#3)<br>
-* [開発/学習/実行環境について](#4)<br>
+* [ディレクトリとファイルについて](#l3)<br>
+* [開発/学習/実行環境について](#l4)<br>
 <hr>
 
 
@@ -81,6 +80,8 @@
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
+
+<a name='b'>
 
 ## Raspberry Pi3での実行方法
 #### 1. ロボットカーのRaspberry Pi3にログインします
@@ -198,6 +199,8 @@ result_*.jpg が検出結果の画像になります。<br>
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
+<a name='c'>
+
 ## Jetson TX2での実行方法
 #### 1. Jetson TX2にログインします
 USER:ubuntu<br>
@@ -288,7 +291,7 @@ result_*.jpg が検出結果の画像になります。<br>
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## 物体検出の紹介
 画像ベースで識別する方法は大きくわけて3種類あります。<br>
@@ -333,7 +336,7 @@ ssd_mobilenet_v1の学習方法：[train_ssd_mobilenet](https://github.com/naisy
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## [Python/OpenCV/TensorFlow] Balancap SSD-Tensorflowを使う
 TensorFlowを使った物体検出として、Balancap SSD-Tensorflowを使って道路標識を学習し、Jetson TX2で実行してみます。
@@ -593,7 +596,7 @@ out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), in
 
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## [ディレクトリとファイルについて]
 * ディレクトリについて<br>
@@ -624,7 +627,7 @@ out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), in
 
 <hr>
 
-<a name='4'>
+<a name='l4'>
 
 ## [開発/学習/実行環境について]
 * 開発環境<br>
@@ -637,3 +640,4 @@ out = cv2.VideoWriter(OUTPUT_DIR+'/output.avi', int(fourcc), 2.1, (int(vidw), in
   * USBカメラの代わりに画像ファイル、動画ファイルの読み込みも可能です。その場合はOpenCVの公式ドキュメントを参考にしてください。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
+<hr>

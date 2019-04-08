@@ -1,16 +1,15 @@
 <a name='top'>
 
-【タイトル】
 # レベル1：距離センサーの値をニューラルネットワークで使う
 <hr>
 
-【目標】
-#### 3つの距離センサーから値を取得し、ロボットカーが走行可能な進行方向をニューラルネットワークモデルを用いて予測する
+## 目標
+3つの距離センサーから値を取得し、ロボットカーが走行可能な進行方向をニューラルネットワークモデルを用いて予測する
 
-【画像】<br>
+## 画像
 ![](./document/robotcar.jpg)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * Fabo #902 Kerberos ver 1.0.0<br>
   * VL53L0X or Lidar Lite v3<br>
@@ -25,32 +24,32 @@
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [実行方法](#b)<br>
 
-【目次】<br>
-* [Hardware] [距離センサーLidarLite v3について](#1)<br>
+## 目次
+* [Hardware] [距離センサーLidarLite v3について](#l1)<br>
   * 取得できる距離、値、誤差、測定周期<br>
-* [Neural Networks] [学習データのフォーマットについて](#2)<br>
+* [Neural Networks] [学習データのフォーマットについて](#l2)<br>
   * クラス分類<br>
   * one hot value<br>
   * データフォーマット<br>
-* [Python] [学習データ ジェネレータを作る](#3)<br>
+* [Python] [学習データ ジェネレータを作る](#l3)<br>
   * 簡単なIF文での判定<br>
   * 車両旋回性能<br>
   * 曲がる、止まる判定<br>
-* [Neural Networks] [学習モデルについて](#4)<br>
+* [Neural Networks] [学習モデルについて](#l4)<br>
   * Multi-Layer Perceptron<br>
-* [Python/TensorFlow] [学習用コードのコーディング](#5)<br>
+* [Python/TensorFlow] [学習用コードのコーディング](#l5)<br>
   * 学習コード設計<br>
-* [Python/TensorFlow] [学習と保存](#6)<br>
+* [Python/TensorFlow] [学習と保存](#l6)<br>
   * 学習実行<br>
   * 保存と読み込み<br>
-* [Python/TensorFlow] [予測を実行](#7)<br>
-* [Python/TensorFlow] [予測精度を評価](#8)<br>
-* [ディレクトリとファイルについて](#9)<br>
+* [Python/TensorFlow] [予測を実行](#l7)<br>
+* [Python/TensorFlow] [予測精度を評価](#l8)<br>
+* [ディレクトリとファイルについて](#l9)<br>
 <hr>
 
 <a name='a'>
@@ -114,7 +113,7 @@ CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca36
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## [Hardware] 距離センサーLidarLite v3について
 CLASS1 LASERで距離を計測する機器。
@@ -131,7 +130,7 @@ CLASS1 LASERで距離を計測する機器。
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## [Neural Networks] 学習データのフォーマットについて
 #### クラス分類
@@ -188,14 +187,14 @@ for i in range(n_classes):
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## [Python] 学習データ ジェネレータを作る
 学習データフォーマットが決まったので、実際に学習データを作っていきます。<br>
 CSVデータを人力で用意していってもよいのですが、IF文で書ける分岐条件なので関数で書いてしまうことにします。<br>
 <hr>
 
-<a name='3-1'>
+<a name='l3-1'>
 
 #### 簡単なIF文での判定
 level_carで作ったSimpleLabelGenerator。
@@ -255,7 +254,7 @@ print("--- batch data ---\n{}".format(csvdata))
 <hr>
 
 #### 車両旋回性能
-[簡単なIF文での判定](#3-1)のラベルジェネレータはlevel1_carで実際に使っていますが、車両の旋回性能に合わせたカスタマイズがあってもよいかもしれません。そこで、車両がどのように旋回するのかを考慮してみます。<br>
+[簡単なIF文での判定](#l3-1)のラベルジェネレータはlevel1_carで実際に使っていますが、車両の旋回性能に合わせたカスタマイズがあってもよいかもしれません。そこで、車両がどのように旋回するのかを考慮してみます。<br>
 (実際のところ、定常円を描けなかったり左右で旋回半径が異なったりする車両の足回りでは計算通りの旋回にならないので走行具合をみて調整が必要になります。)<br>
 <hr>
 
@@ -303,7 +302,7 @@ print("--- batch data ---\n{}".format(csvdata))
 * コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる
 
-制御分岐を通ったら[簡単なIF文での判定](#3-1)と同様にone hot valueで値を返して学習データ ジェネレータは完成です。<br>
+制御分岐を通ったら[簡単なIF文での判定](#l3-1)と同様にone hot valueで値を返して学習データ ジェネレータは完成です。<br>
 
 ラベル ジェネレータ：[./generator/labelgenerator.py](./generator/labelgenerator.py)<br>
 学習データ ジェネレータ：[./MLP/train_model.py](./MLP/train_model.py)<br>
@@ -335,7 +334,7 @@ def generate_random_train_data(n_rows):
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='4'>
+<a name='l4'>
 
 ## [Neural Networks] 学習モデルについて
 学習モデルはシンプルなMulti-Layer Perceptronで作成します。
@@ -349,7 +348,7 @@ Neural Networksではこのweightとbiasの値が学習成果となり、ノー�
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='5'>
+<a name='l5'>
 
 ## [Python/TensorFlow] 学習用コードのコーディング
 #### 学習コード設計
@@ -475,7 +474,7 @@ train_opがsess.run()で実行されると、loss_op->losses->prediction->layer_
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='6'>
+<a name='l6'>
 
 ## [Python/TensorFlow] 学習と保存
 #### 学習実行
@@ -724,7 +723,7 @@ pbファイル作成コード：[./MLP/freeze_graph.py](./MLP/freeze_graph.py)
 ```
 as_text=Trueにすると、テキストファイルで保存することが出来ます。
 
-<a name="6-4">
+<a name="l6-4">
 
 #### pbファイルを読み込む
 予測実行を行うアプリケーションでは、pbファイルを読み込んで予測を実行します。<br>
@@ -784,11 +783,11 @@ with tf.Session(graph=graph) as sess:
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='7'>
+<a name='l7'>
 
 ## [Python/TensorFlow] 予測を実行
 ![](./document/prediction-design1.png)
-[pbファイルを読み込む](#6-4)で予測実行までを見ました。<br>
+[pbファイルを読み込む](#l6-4)で予測実行までを見ました。<br>
 * モデルの読み込み<br>
 * 入出力オペレーションの変数取得<br>
 * 読み込んだモデルでセッションを開始<br>
@@ -853,7 +852,7 @@ from fabolib.kerberos import Kerberos
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='8'>
+<a name='l8'>
 
 ## [Python/TensorFlow] 予測精度を評価
 入力値はfor文で生成可能で、対応する正解ラベルはIF文で求めることが出来るため、網羅的に予測を実行し、IF文の結果と比較することで精度を評価してみることにします。<br>
@@ -1093,7 +1092,7 @@ Neural Netwoksを使った学習では、学習の止め時も考えるポイン
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='9'>
+<a name='l9'>
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>

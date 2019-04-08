@@ -3,25 +3,25 @@
 RobotCar AI Playground.
 
 ## Install
-* [Raspberry Pi3のインストール方法](./docs/00.install_raspberry_pi3/)
+* [Raspberry Pi3のインストール方法](./00.install_raspberry_pi3/)
 
 ## FaboDrive
-* [FaboDrive: Webコントローラ/API](./docs/01.fabodrive/)
+* [FaboDrive: Webコントローラ/API](./01.fabodrive/)
 
 ![](./01.fabodrive/document/controller-small.png)<br>
 
 ## Level
-* [Level 1: Fabo TYPE1 ロボットカー制御](./docs/02.level1_car/)
-* [Level 1: 距離センサーの値をニューラルネットワークで使う](./docs/03.level1_sensors/)
-* [Level 1: ロボットカー走行デモ](./docs/04.level1_demo/)
-* [Level 2: OpenCVでラインを検出する](./docs/05.level2_lane_detection/)
-* [Level 2: ロボットカー走行デモ](./docs/06.level2_demo/)
-* [Level 2: ロボットカー走行デモ TCP通信版](./docs/07.level2_demo_socket/)
-* [Level 3: ニューラルネットワークで道路標識を検出する](./docs/08.level3_object_detection/)
-* [Level 3: ロボットカー走行デモ TCP通信版](./docs/09.level3_demo_socket/)
-* [Level 3: ロボットカー走行デモ FFMPEG UDP Streaming/TCP通信版](./docs/10.level3_demo_streaming/)
-* [Level 4: OpenCVでレーンを検出する](./docs/11.level4_lane_detection/)
-* [Level 5: ロボットカー走行デモ Realtime Object Detection版](./docs/12.level5_demo_streaming/)
+* [Level 1: Fabo TYPE1 ロボットカー制御](./02.level1_car/)
+* [Level 1: 距離センサーの値をニューラルネットワークで使う](./03.level1_sensors/)
+* [Level 1: ロボットカー走行デモ](./04.level1_demo/)
+* [Level 2: OpenCVでラインを検出する](./05.level2_lane_detection/)
+* [Level 2: ロボットカー走行デモ](./06.level2_demo/)
+* [Level 2: ロボットカー走行デモ TCP通信版](./07.level2_demo_socket/)
+* [Level 3: ニューラルネットワークで道路標識を検出する](./08.level3_object_detection/)
+* [Level 3: ロボットカー走行デモ TCP通信版](./09.level3_demo_socket/)
+* [Level 3: ロボットカー走行デモ FFMPEG UDP Streaming/TCP通信版](./10.level3_demo_streaming/)
+* [Level 4: OpenCVでレーンを検出する](./11.level4_lane_detection/)
+* [Level 5: ロボットカー走行デモ Realtime Object Detection版](./12.level5_demo_streaming/)
 
 #### Level 1
 [![走行デモ動画](https://img.youtube.com/vi/0IXHXuacMEI/3.jpg)](https://www.youtube.com/watch?v=0IXHXuacMEI)<br>

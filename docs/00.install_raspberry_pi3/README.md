@@ -1,10 +1,9 @@
 <a name='top'>
 
-【タイトル】
 # Raspberry Pi3のインストール方法
 <hr>
 
-【必要なもの】<br>
+## 必要なもの
 * Raspberry Pi3<br>
 * 32 GB SDCARD<br>
 * HDMIモニタ<br>
@@ -12,7 +11,7 @@
 
 <hr>
 
-【はじめに】<br>
+## はじめに
 Stretch特有の問題回避などがあるので、他のOS(Jessie 2017等)ではOS周りの設定方法が異なります。<br>
 古いStretchにはI2Cに問題があります。2018-04-18や2018-06-27ではカーネル修正が必要になります。問題がある場合はトラブルシューティングを参照してください。<br>
 Dockerで用意しているRobotCarの環境には影響ないので、別のOSの場合はDocker部分だけ参考にしてください。<br>
@@ -20,9 +19,9 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
 
 <a name='0'>
 
-【目次】<br>
-* [Stretch Liteインストール](#1)<br>
-* [raspi-config](#2)<br>
+## 目次
+* [Stretch Liteインストール](#l1)<br>
+* [raspi-config](#l2)<br>
   * SSH有効化<br>
   * SPI有効化<br>
   * I2C有効化<br>
@@ -30,18 +29,18 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
   * ホスト名変更<br>
   * キーボードレイアウト変更<br>
   * TimeZone変更<br>
-* [RobotCar ソースコードダウンロード](#3)<br>
-* [OS環境設定](#4)<br>
-* [RobotCar Docker環境ダウンロード](#5)<br>
-* [Dockerコンテナ作成](#6)<br>
-* [自動起動設定](#7)<br>
+* [RobotCar ソースコードダウンロード](#l3)<br>
+* [OS環境設定](#l4)<br>
+* [RobotCar Docker環境ダウンロード](#l5)<br>
+* [Dockerコンテナ作成](#l6)<br>
+* [自動起動設定](#l7)<br>
 * [トラブルシューティング](#tips)<br>
   * [I2C Kernel/smbus修正]<br>
   * [ホスト名変更]<br>
 
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## Stretch Liteインストール
 Raspberry Pi3の2019年3月時点での最新OSはRaspbian Stretchなので、Stretch Lite 2018-11-13をベースとしたインストール方法を記載します。<br>
@@ -65,7 +64,7 @@ Raspberry Piのデフォルトログインユーザは、<br>
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## raspi-config
 ここではSSH/SPI/I2C/WiFiを有効にします。<br>
@@ -134,7 +133,7 @@ OSのデフォルトではUTCになっているため、タイムゾーンをAsi
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## RobotCar ソースコードダウンロード
 ```
@@ -150,7 +149,7 @@ git clone https://github.com/FaBoPlatform/RobotCarAI
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='4'>
+<a name='l4'>
 
 ## OS環境設定
 OSのアップデート、bashの設定、vim設定等を行います。動作には必須ではありませんが、ログインしなおすと少し見やすくなります。<br>
@@ -188,7 +187,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='5'>
+<a name='l5'>
 
 ## RobotCar Docker環境ダウンロード
 [Docker Hub](https://cloud.docker.com/repository/docker/naisy/fabo-jupyter-armhf)
@@ -199,7 +198,7 @@ sudo docker pull naisy/fabo-jupyter-armhf
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='6'>
+<a name='l6'>
 
 ## Dockerコンテナ作成
 
@@ -261,7 +260,7 @@ docker runで指定したコンテナの設定が変わる訳では無いため�
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='7'>
+<a name='l7'>
 
 ## 自動起動設定
 Raspberry Pi3が起動したら、RobotCarを自動起動するように設定します。<br>

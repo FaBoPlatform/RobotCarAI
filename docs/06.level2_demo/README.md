@@ -1,22 +1,21 @@
 <a name='top'>
 
-【タイトル】
 # レベル2：ロボットカー走行デモ
 <hr>
 
-【目標】
+## 目標
 #### ラインを検出してロボットカーを自走させる
 
-【画像】<br>
+## 画像
 ![](./document/robotcar1.jpg)<br>
 ![](./document/robotcar2.jpg)<br>
 ![](./document/robotcar3.jpg)<br>
 
-【動画】<br>
+## 動画
 level2解析動画：[![level2解析動画](https://img.youtube.com/vi/L7d6JyxL-sM/1.jpg)](https://www.youtube.com/watch?v=L7d6JyxL-sM)<br>
 走行デモ動画：[![走行デモ動画](https://img.youtube.com/vi/xJQaKHbWCOE/2.jpg)](https://www.youtube.com/watch?v=xJQaKHbWCOE)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * USB Webcam<br>
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
@@ -35,18 +34,18 @@ level2解析動画：[![level2解析動画](https://img.youtube.com/vi/L7d6JyxL-
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [Raspberry Pi3での実行方法](#b)<br>
 * [Jetson TX2での実行方法](#c)<br>
 
-【目次】<br>
-* [トラブルシューティング](#2)<br>
+## 目次
+* [トラブルシューティング](#l2)<br>
   * Webcamが起動しない<br>
   * 走行中にハンドルが固まった<br>
   * Raspberry Pi3が起動しない<br>
-* [ディレクトリとファイルについて](#3)<br>
+* [ディレクトリとファイルについて](#l3)<br>
 <hr>
 
 <a name='a'>
@@ -118,7 +117,7 @@ Jetson TX2での実行方法は今後追加予定です。<br>
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## トラブルシューティング
 #### Webcamが起動しない
@@ -147,7 +146,7 @@ Faboシールドの電源をRaspberry Pi3から取得している時に、サー
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>

@@ -1,20 +1,19 @@
 <a name='top'>
 
-【タイトル】
 # レベル1：Fabo TYPE1 ロボットカー制御
 <hr>
 
-【目標】
-#### 3つの距離センサーから値を取得し、IF文で進行方向を判断してロボットカーを自走させる
+## 目標
+3つの距離センサーから値を取得し、IF文で進行方向を判断してロボットカーを自走させる
 
-【画像】<br>
+## 画像
 ![](./document/img1.jpg)
 ![](./document/robotcar.jpg)
 
-【動画】<br>
+## 動画
 走行デモ動画：[![走行デモ動画](https://img.youtube.com/vi/aGF8QZeBsto/2.jpg)](https://www.youtube.com/watch?v=aGF8QZeBsto)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
   * Fabo #902 Kerberos ver 1.0.0<br>
@@ -35,22 +34,22 @@
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [実行方法](#b)<br>
 
-【目次】<br>
-* [Hardware] [距離センサーLidarLite v3について](#1)<br>
+## 目次
+* [Hardware] [距離センサーLidarLite v3について](#l1)<br>
   * 取得できる距離、値、誤差、測定周期<br>
-* [Python] [簡単なIF文での判定を作る](#2)<br>
+* [Python] [簡単なIF文での判定を作る](#l2)<br>
   * 簡単なIF文での判定<br>
-* [Python] [車両を制御する](#3)<br>
+* [Python] [車両を制御する](#l3)<br>
   * モーターの速度制御<br>
   * ハンドル制御<br>
-* [Python] [距離センサーの値を取る](#4)<br>
+* [Python] [距離センサーの値を取る](#l4)<br>
   * 距離センサーの値を取る<br>
-* [Python] [自走コードを作成する](#5)<br>
+* [Python] [自走コードを作成する](#l5)<br>
   * 距離センサーの値を取る<br>
   * 進行方向を判断する<br>
   * 速度調整を入れる<br>
@@ -59,7 +58,7 @@
   * 後進を追加する<br>
   * 停止ボタンを追加する<br>
   * 開始ボタンを追加する<br>
-* [ディレクトリとファイルについて](#6)<br>
+* [ディレクトリとファイルについて](#l6)<br>
 <hr>
 
 <a name='a'>
@@ -163,7 +162,7 @@ level1_demoでは、ニューラルネットワークで判断処理を行い、
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## [Hardware] 距離センサーLidarLite v3について
 CLASS1 LASERで距離を計測する機器。
@@ -178,7 +177,7 @@ CLASS1 LASERで距離を計測する機器。
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## [Python] 簡単なIF文での判定を作る
 #### 簡単なIF文での判定
@@ -246,7 +245,7 @@ print("--- batch data ---\n{}".format(csvdata))
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## [Python] 車両を制御する
 #### モーターの速度制御
@@ -305,7 +304,7 @@ class CarConfig():
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='4'>
+<a name='l4'>
 
 ## [Python] 距離センサーの値を取る
 距離センサーにはFabo #224 Distanceを使います。<br>
@@ -332,7 +331,7 @@ from fabolib.kerberos import Kerberos
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='5'>
+<a name='l5'>
 
 ## [Python] 自走コードを作成する
 #### 距離センサーの値を取る
@@ -563,7 +562,7 @@ try:
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='6'>
+<a name='l6'>
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>

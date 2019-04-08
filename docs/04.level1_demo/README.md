@@ -1,17 +1,16 @@
 <a name='top'>
 
-【タイトル】
 # レベル1：ロボットカー走行デモ
 <hr>
 
-【目標】
-#### 3つの距離センサーから値を取得し、Neaural Networksで進行方向を判断してロボットカーを自走させる
+## 目標
+3つの距離センサーから値を取得し、Neaural Networksで進行方向を判断してロボットカーを自走させる
 
-【画像】<br>
+## 画像
 ![](./document/img1.jpg)
 ![](./document/robotcar.jpg)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
   * Fabo #902 Kerberos ver 1.0.0<br>
@@ -29,24 +28,24 @@
       * VL53L0X_rasp_python<br>
       * Tensorflow r1.1.0<br>
 
-【動画】<br>
+## 動画
 走行デモ動画：[![走行デモ動画](https://img.youtube.com/vi/0IXHXuacMEI/3.jpg)](https://www.youtube.com/watch?v=0IXHXuacMEI)<br>
 
 <hr>
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [実行方法](#b)<br>
 
-【目次】<br>
-* [必要なコードとファイル](#1)<br>
-* [Python] [level1_carの自走コードを元に修正する](#2)<br>
+## 目次
+* [必要なコードとファイル](#l1)<br>
+* [Python] [level1_carの自走コードを元に修正する](#l2)<br>
   * Neural Networksの判断処理を追加する<br>
   * 開始ボタン<br>
-* [ディレクトリとファイルについて](#3)<br>
+* [ディレクトリとファイルについて](#l3)<br>
 <hr>
 
 <a name='a'>
@@ -112,7 +111,7 @@ Ctrl + c でstart_button.pyを終了します
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## 必要なコードとファイル
 走行に必要なコードは以下になります。<br>
@@ -128,7 +127,7 @@ Ctrl + c でstart_button.pyを終了します
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## [Python] level1_carの自走コードを元に修正する
 #### Neural Networksの判断処理を追加する
@@ -177,7 +176,7 @@ from lib.ai import AI
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>

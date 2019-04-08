@@ -1,24 +1,23 @@
 <a name='top'>
 
-【タイトル】
 # レベル2：OpenCVでラインを検出する
 <hr>
 
-【目標】
+## 目標
 #### 映像から、ラインを検出する
 
-【画像】<br>
+## 画像
 ![](./document/result_frame_1.jpg)<br>
 
-【動画】<br>
+## 動画
 入力動画：[./demo_lane/input4.mp4](./demo_lane/input4.mp4)<br>
 出力動画：[![出力動画](https://img.youtube.com/vi/KUhikZq7zXc/3.jpg)](https://www.youtube.com/watch?v=KUhikZq7zXc)<br>
 
-【参考】<br>
-Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)
-level4:OpenCVでレーン検出する: [level4_lane_detection](../level4_lane_detection)
+## 参考
+Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)<br>
+level4:OpenCVでレーン検出する: [11.level4_lane_detection](../11.level4_lane_detection)<br>
 
-【実行環境】<br>
+## 実行環境
 * Fabo TYPE1 ロボットカー<br>
   * USB Webcam<br>
   * Raspberry Pi3<br>
@@ -38,16 +37,16 @@ level4:OpenCVでレーン検出する: [level4_lane_detection](../level4_lane_de
 
 <a name='0'>
 
-【実行】<br>
+## 実行
 * [インストール方法](#a)<br>
 * [コースの準備](#course)<br>
 * [Raspberry Pi3での実行方法](#b)<br>
 * [Jetson TX2での実行方法](#c)<br>
 
-【目次】<br>
-* [座標とカラーフィルタの確認](#1)<br>
-* [処理について](#2)<br>
-* [ディレクトリとファイルについて](#3)<br>
+## 目次
+* [座標とカラーフィルタの確認](#l1)<br>
+* [処理について](#l2)<br>
+* [ディレクトリとファイルについて](#l3)<br>
 
 <a name='a'>
 
@@ -134,6 +133,8 @@ http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level2_lane_detection/demo_la
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
+<a name='c'>
+
 ## Jetson TX2での実行方法
 #### 1. Jetson TX2にログインします
 USER:ubuntu<br>
@@ -190,7 +191,7 @@ http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level2_lane_detection/demo_la
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## 座標とカラーフィルタの確認
 
@@ -206,16 +207,16 @@ http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level2_lane_detection/demo_la
 
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## 処理について
-処理方法はlevel4:OpenCVでレーン検出する: [level4_lane_detection](../level4_lane_detection)と同じ流れになります。<br>
+処理方法はlevel4:OpenCVでレーン検出する: [11.level4_lane_detection](../11.level4_lane_detection)と同じ流れになります。<br>
 level4を1本線の処理に修正したものになるため、処理についてはlevel4を参考にしてください。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 ## [ディレクトリとファイルについて]
 * ディレクトリについて<br>
   * documment/ ドキュメント関連<br>

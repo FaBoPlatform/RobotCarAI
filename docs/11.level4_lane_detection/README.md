@@ -1,54 +1,53 @@
 <a name='top'>
 
-【タイトル】
 # レベル4：OpenCVでレーンを検出する
 <hr>
 
-【目標】
+## 目標
 #### カメラ映像を取得し、レーンを検出する
 
-【画像】<br>
+## 画像
 ![](./document/result_frame_276.jpg)<br>
 
-【動画】<br>
+## 動画
 入力動画：[./demo_lane/input1.mp4](./demo_lane/input1.mp4)<br>
 出力動画：[./document/result_output1.mp4](./document/result_output1.mp4)<br>
 [![出力動画](https://img.youtube.com/vi/xAi_31IcyZ0/1.jpg)](https://www.youtube.com/watch?v=xAi_31IcyZ0)<br>
 
-【参考】<br>
+## 参考
 Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)
 <hr>
 
 <a name='0'>
 
-【目次】<br>
-* [Python/OpenCV] [Region Of Interst](#1)<br>
+## 目次
+* [Python/OpenCV] [Region Of Interst](#l1)<br>
   * [Python/OpenCV] [座標を探す]<br>
   * [Python/OpenCV] [処理]<br>
   * 考察<br>
-* [Python/OpenCV] [Inverse Perspective Mapping](#2)<br>
+* [Python/OpenCV] [Inverse Perspective Mapping](#l2)<br>
   * [Python/OpenCV] [座標を探す]<br>
   * [Python/OpenCV] [処理]<br>
   * [Python/OpenCV] [逆変換]<br>
   * 考察<br>
-* [Python/OpenCV] [白色フィルタ](#3)<br>
+* [Python/OpenCV] [白色フィルタ](#l3)<br>
   * [Python/OpenCV] [処理]<br>
   * 考察<br>
-* [Python/OpenCV] [2値化](#4)<br>
+* [Python/OpenCV] [2値化](#l4)<br>
   * [Python/OpenCV] [処理]<br>
-* [Python/OpenCV] [histogram](#5)<br>
+* [Python/OpenCV] [histogram](#l5)<br>
   * [Python/OpenCV] [処理]<br>
-* [Python/OpenCV] [Sliding Windows](#6)<br>
-* [Python/OpenCV] [ライン検出](#7)<br>
-* [Python/OpenCV] [弧の角度と傾き角](#8)<br>
+* [Python/OpenCV] [Sliding Windows](#l6)<br>
+* [Python/OpenCV] [ライン検出](#l7)<br>
+* [Python/OpenCV] [弧の角度と傾き角](#l8)<br>
   * [Python/OpenCV] 円の中心座標の求め方<br>
-* [Python/OpenCV] [ピクセル座標と実座標](#9)<br>
-* [Python/OpenCV] [中央線までの距離](#10)<br>
-* [Python/OpenCV] [描画](#11)<br>
-* [ディレクトリとファイルについて](#12)<br>
+* [Python/OpenCV] [ピクセル座標と実座標](#l9)<br>
+* [Python/OpenCV] [中央線までの距離](#l10)<br>
+* [Python/OpenCV] [描画](#l11)<br>
+* [ディレクトリとファイルについて](#l12)<br>
 <hr>
 
-<a name='1'>
+<a name='l1'>
 
 ## [Python/OpenCV] Region Of Interest
 Region Of Interst(ROI)は、画像内で必要になる領域が含まれている部分を抽出します。<br>
@@ -115,7 +114,7 @@ def to_roi(cv_bgr, vertices):
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='2'>
+<a name='l2'>
 
 ## [Python/OpenCV] Inverse Perspective Mapping
 Inverse Perspective Mapping(IPM)はBird's eye、TopView、鳥瞰図などと呼ばれる真上から見た画像に変換することが出来ます。<br>
@@ -207,7 +206,7 @@ ROIは使わないこともありますが、IPMは必須となる処理です�
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='3'>
+<a name='l3'>
 
 ## [Python/OpenCV] 白色フィルタ
 画像から白線となる白色ピクセルを抜き出します。<br>
@@ -265,7 +264,7 @@ def to_white(cv_bgr):
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='4'>
+<a name='l4'>
 
 ## 2値化
 白色フィルタで白色っぽいピクセルだけを取り出したので、それを2値化します。<br>
@@ -313,7 +312,7 @@ def to_bin(cv_bgr):
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
 
-<a name='5'>
+<a name='l5'>
 
 ## [Python/OpenCV] histogram
 sliding windowを始めるにあたって、最初のwindowの開始x座標を決める必要があります。<br>
@@ -331,7 +330,7 @@ sliding windowはhistogramの左右それぞれの最大値となるx座標か�
 
 <hr>
 
-<a name='6'>
+<a name='l6'>
 
 ## [Python/OpenCV] Sliding Windows
 sliding windowsは左右のライン候補となるピクセル座標を求めるために、適当なサイズの枠をY軸方向にスライドしながら探していきます。<br>
@@ -359,7 +358,7 @@ def sliding_windows(cv_bin):
 
 <hr>
 
-<a name='7'>
+<a name='l7'>
 
 ## [Python/OpenCV] ライン検出
 sliding windowsによって左右白線のピクセル座標を得たら、それぞれにpolynormal fitを適用して二次多項式の定数を求めます。<br>
@@ -428,7 +427,7 @@ def calc_lr_curve_lane(left_x,left_y,right_x,right_y,plot_y):
 
 <hr>
 
-<a name='8'>
+<a name='l8'>
 
 ## [Python/OpenCV] 弧の角度と傾き角
 画像内の道路は手前が直線、奥がカーブのようなケースがあるため、画面を上下2分割して角度を考えます。<br>
@@ -546,7 +545,7 @@ x,yの解は2つあるので、最初の2つの,までが一つ目の(x,y)の解
 
 <hr>
 
-<a name='9'>
+<a name='l9'>
 
 ## [Python/OpenCV] ピクセル座標と実座標
 描画時はピクセル座標になりますが、数値として出す際は実際の空間での座標系で計算する必要があります。<br>
@@ -575,7 +574,7 @@ IPM変換後の画像(黒い部分も含めて)の縦と横のメートルを設
 
 <hr>
 
-<a name='10'>
+<a name='l10'>
 
 ## [Python/OpenCV] 中央線までの距離
 中央線の画像下と、画像中央位置から、中央線までの距離を求めます。<br>
@@ -594,7 +593,7 @@ IPM変換後の画像(黒い部分も含めて)の縦と横のメートルを設
 
 <hr>
 
-<a name='11'>
+<a name='l11'>
 
 ## [Python/OpenCV] 描画
 処理が多いので、確認のための描画も多くなります。<br>
@@ -653,7 +652,7 @@ plt.show()
 
 <hr>
 
-<a name='12'>
+<a name='l12'>
 
 ## [ディレクトリとファイルについて]
 * ディレクトリについて<br>
@@ -669,3 +668,4 @@ plt.show()
   * to_white.py 白色フィルタ確認コード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
+<hr>
