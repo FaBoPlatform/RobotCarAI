@@ -40,7 +40,7 @@ RobotCar AI Playground.
 
 
 ## Component
-* [FaBo](http://fabo.io)
+* [FaBo](http://www.fabo.io/)
 * [Fabo #1202 HotDog](http://www.fabo.io/1202.html)
 * [Fabo #605 Motor Driver for Rasberry Pi](http://www.fabo.io/605.html)
 * Fabo #902 Kerberos (準備中)
