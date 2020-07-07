@@ -17,18 +17,18 @@ level2解析動画：[![level2解析動画](https://img.youtube.com/vi/L7d6JyxL-
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * USB Webcam<br>
-  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
-  * Fabo Robot Car #1202 Rev. 1.0.1<br>
-  * Tower Pro SG90<br>
-  * Raspberry Pi3<br>
-    * Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * OpenCV 2.4<br>
-      * FaBoPWM-PCA9685-Python<br>
-      * FaBoGPIO-PCAL6408-Python<br>
+    * USB Webcam<br>
+    * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
+    * Fabo Robot Car #1202 Rev. 1.0.1<br>
+    * Tower Pro SG90<br>
+    * Raspberry Pi3<br>
+        * Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * OpenCV 2.4<br>
+            * FaBoPWM-PCA9685-Python<br>
+            * FaBoGPIO-PCAL6408-Python<br>
 
 <hr>
 
@@ -42,9 +42,9 @@ level2解析動画：[![level2解析動画](https://img.youtube.com/vi/L7d6JyxL-
 
 ## 目次
 * [トラブルシューティング](#l2)<br>
-  * Webcamが起動しない<br>
-  * 走行中にハンドルが固まった<br>
-  * Raspberry Pi3が起動しない<br>
+    * Webcamが起動しない<br>
+    * 走行中にハンドルが固まった<br>
+    * Raspberry Pi3が起動しない<br>
 * [ディレクトリとファイルについて](#l3)<br>
 <hr>
 
@@ -150,13 +150,13 @@ Faboシールドの電源をRaspberry Pi3から取得している時に、サー
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>
-  * document/ ドキュメント関連<br>
-  * fabolib/ Fabo製基板関連<br>
-  * lib/ SPI,ライン検出ライブラリ<br>
+    * document/ ドキュメント関連<br>
+    * fabolib/ Fabo製基板関連<br>
+    * lib/ SPI,ライン検出ライブラリ<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * run_car.py 自動走行コード<br>
-  * start_button.py 開始ボタンコード<br>
+    * README.md このファイル<br>
+    * run_car.py 自動走行コード<br>
+    * start_button.py 開始ボタンコード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

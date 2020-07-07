@@ -15,20 +15,20 @@
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
-  * Fabo #902 Kerberos ver 1.0.0<br>
-  * Fabo #1202 Robot Car Rev. 1.0.1<br>
-  * Fabo #103 Button<br>
-  * VL53L0X or Lidar Lite v3<br>
-  * Tower Pro SG90<br>
-  * Raspberry Pi3<br>
-    * Stretch Lite or Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * FaBoPWM-PCA9685-Python<br>
-      * FaBoGPIO-PCAL6408-Python<br>
-      * VL53L0X_rasp_python<br>
+    * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
+    * Fabo #902 Kerberos ver 1.0.0<br>
+    * Fabo #1202 Robot Car Rev. 1.0.1<br>
+    * Fabo #103 Button<br>
+    * VL53L0X or Lidar Lite v3<br>
+    * Tower Pro SG90<br>
+    * Raspberry Pi3<br>
+        * Stretch Lite or Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * FaBoPWM-PCA9685-Python<br>
+            * FaBoGPIO-PCAL6408-Python<br>
+            * VL53L0X_rasp_python<br>
 
 <hr>
 
@@ -41,23 +41,23 @@
 
 ## 目次
 * [Hardware] [距離センサーLidarLite v3について](#l1)<br>
-  * 取得できる距離、値、誤差、測定周期<br>
+    * 取得できる距離、値、誤差、測定周期<br>
 * [Python] [簡単なIF文での判定を作る](#l2)<br>
-  * 簡単なIF文での判定<br>
+    * 簡単なIF文での判定<br>
 * [Python] [車両を制御する](#l3)<br>
-  * モーターの速度制御<br>
-  * ハンドル制御<br>
+    * モーターの速度制御<br>
+    * ハンドル制御<br>
 * [Python] [距離センサーの値を取る](#l4)<br>
-  * 距離センサーの値を取る<br>
+    * 距離センサーの値を取る<br>
 * [Python] [自走コードを作成する](#l5)<br>
-  * 距離センサーの値を取る<br>
-  * 進行方向を判断する<br>
-  * 速度調整を入れる<br>
-  * ハンドル角調整を入れる<br>
-  * 車両を制御する<br>
-  * 後進を追加する<br>
-  * 停止ボタンを追加する<br>
-  * 開始ボタンを追加する<br>
+    * 距離センサーの値を取る<br>
+    * 進行方向を判断する<br>
+    * 速度調整を入れる<br>
+    * ハンドル角調整を入れる<br>
+    * 車両を制御する<br>
+    * 後進を追加する<br>
+    * 停止ボタンを追加する<br>
+    * 開始ボタンを追加する<br>
 * [ディレクトリとファイルについて](#l6)<br>
 <hr>
 
@@ -566,17 +566,16 @@ try:
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>
-  * document/ ドキュメント関連<br>
-  * fabolib/ Fabo製基板関連<br>
-  * generator/ 学習データのラベル生成関連<br>
-  * lib/ SPIライブラリ<br>
-  * test/ Fabo基板動作確認関連<br>
+    * document/ ドキュメント関連<br>
+    * fabolib/ Fabo製基板関連<br>
+    * generator/ 学習データのラベル生成関連<br>
+    * lib/ SPIライブラリ<br>
+    * test/ Fabo基板動作確認関連<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * run_car_if.py 自動走行コード<br>
-  * start_button.py 開始ボタンコード<br>
+    * README.md このファイル<br>
+    * run_car_if.py 自動走行コード<br>
+    * start_button.py 開始ボタンコード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
-
 

@@ -13,23 +13,23 @@
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * USB Webcam<br>
-  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
-  * Fabo Robot Car #1202 Rev. 1.0.1<br>
-  * Tower Pro SG90<br>
-  * Raspberry Pi3<br>
-    * Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * OpenCV 2.4<br>
-      * FaBoPWM-PCA9685-Python<br>
-      * FaBoGPIO-PCAL6408-Python<br>
+    * USB Webcam<br>
+    * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
+    * Fabo Robot Car #1202 Rev. 1.0.1<br>
+    * Tower Pro SG90<br>
+    * Raspberry Pi3<br>
+        * Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * OpenCV 2.4<br>
+            * FaBoPWM-PCA9685-Python<br>
+            * FaBoGPIO-PCAL6408-Python<br>
 * Jetson TX2<br>
-  * JetPack 3.1<br>
-    * Ubuntu<br>
-    * Python 3.6<br>
-    * OpenCV 3.3<br>
+    * JetPack 3.1<br>
+        * Ubuntu<br>
+        * Python 3.6<br>
+        * OpenCV 3.3<br>
 
 <a name='0'>
 
@@ -41,10 +41,10 @@
 
 ## 目次
 * [トラブルシューティング](#l2)<br>
-  * Webcamが起動しない<br>
-  * 走行中にハンドルが固まった<br>
-  * Raspberry Pi3が起動しない<br>
-  * サーバが起動しない<br>
+    * Webcamが起動しない<br>
+    * 走行中にハンドルが固まった<br>
+    * Raspberry Pi3が起動しない<br>
+    * サーバが起動しない<br>
 * [ディレクトリとファイルについて](#l3)<br>
 
 <hr>
@@ -188,16 +188,16 @@ run_car.pyのHOST,PORTを確認してください。(サーバのIPアドレス�
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>
-  * car_client/ ロボットカー制御関連<br>
-  * car_client/fabolib/ Fabo製基板関連<br>
-  * car_client/lib/ SPI,カメラライブラリ<br>
-  * pc_server/ サーバ解析関連<br>
-  * pc_server/lib/ ライン検出関連<br>
+    * car_client/ ロボットカー制御関連<br>
+    * car_client/fabolib/ Fabo製基板関連<br>
+    * car_client/lib/ SPI,カメラライブラリ<br>
+    * pc_server/ サーバ解析関連<br>
+    * pc_server/lib/ ライン検出関連<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * car_client/run_car_client.py 自動走行コード<br>
-  * car_client/start_button.py 開始ボタンコード<br>
-  * pc_server/server.py サーバ起動コード<br>
+    * README.md このファイル<br>
+    * car_client/run_car_client.py 自動走行コード<br>
+    * car_client/start_button.py 開始ボタンコード<br>
+    * pc_server/server.py サーバ起動コード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

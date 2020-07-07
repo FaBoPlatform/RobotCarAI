@@ -11,17 +11,17 @@ Webブラウザから制御する/プログラムから制御する
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
-  * Fabo #902 Kerberos ver 1.0.0<br>
-  * Fabo #1202 Robot Car Rev. 1.0.1<br>
-  * Tower Pro SG90<br>
-  * Raspberry Pi3<br>
-    * Stretch Lite or Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * FaBoPWM-PCA9685-Python<br>
-      * FaBoGPIO-PCAL6408-Python<br>
+    * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
+    * Fabo #902 Kerberos ver 1.0.0<br>
+    * Fabo #1202 Robot Car Rev. 1.0.1<br>
+    * Tower Pro SG90<br>
+    * Raspberry Pi3<br>
+        * Stretch Lite or Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * FaBoPWM-PCA9685-Python<br>
+            * FaBoGPIO-PCAL6408-Python<br>
 
 <hr>
 
@@ -198,14 +198,14 @@ i2cdetect -y 1
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>
-  * document/ ドキュメント関連<br>
-  * fabolib/ Fabo製基板関連<br>
-  * lib/ SPIライブラリ<br>
-  * templates/ HTMLテンプレートファイル<br>
-  * static/ JavaScript<br>
+    * document/ ドキュメント関連<br>
+    * fabolib/ Fabo製基板関連<br>
+    * lib/ SPIライブラリ<br>
+    * templates/ HTMLテンプレートファイル<br>
+    * static/ JavaScript<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * controller.py ブラウザからの制御とAPI<br>
+    * README.md このファイル<br>
+    * controller.py ブラウザからの制御とAPI<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

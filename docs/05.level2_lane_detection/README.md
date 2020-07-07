@@ -15,23 +15,23 @@
 
 ## 参考
 Programmatic lane finding: [https://github.com/BillZito/lane-detection](https://github.com/BillZito/lane-detection)<br>
-level4:OpenCVでレーン検出する: [11.level4_lane_detection](../11.level4_lane_detection)<br>
+level4:OpenCVでレーン検出する: [11.level4_lane_detection](../11.level4_lane_detection/)<br>
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * USB Webcam<br>
-  * Raspberry Pi3<br>
-    * Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * OpenCV 2.4<br>
+    * USB Webcam<br>
+    * Raspberry Pi3<br>
+        * Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * OpenCV 2.4<br>
 * Jetson TX2<br>
-  * USB Webcam<br>
-  * JetPack 3.1<br>
-    * Ubuntu<br>
-    * Python 3.6<br>
-    * OpenCV 3.3<br>
+    * USB Webcam<br>
+    * JetPack 3.1<br>
+        * Ubuntu<br>
+        * Python 3.6<br>
+        * OpenCV 3.3<br>
 
 <hr>
 
@@ -210,7 +210,7 @@ http://192.168.xxx.xxx:8888/tree/github/RobotCarAI/level2_lane_detection/demo_la
 <a name='l2'>
 
 ## 処理について
-処理方法はlevel4:OpenCVでレーン検出する: [11.level4_lane_detection](../11.level4_lane_detection)と同じ流れになります。<br>
+処理方法はlevel4:OpenCVでレーン検出する: [11.level4_lane_detection](../11.level4_lane_detection/)と同じ流れになります。<br>
 level4を1本線の処理に修正したものになるため、処理についてはlevel4を参考にしてください。<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
@@ -219,17 +219,17 @@ level4を1本線の処理に修正したものになるため、処理につい�
 <a name='l3'>
 ## [ディレクトリとファイルについて]
 * ディレクトリについて<br>
-  * documment/ ドキュメント関連<br>
-  * demo_lane/ デモ用ディレクトリ<br>
-  * lib/ 関数ライブラリ<br>
-  * test_images/ ROI,IPM,白色フィルタの確認用ディレクトリ<br>
-  * output/ 出力用ディレクトリ(実行時に作成)<br>
+    * documment/ ドキュメント関連<br>
+    * demo_lane/ デモ用ディレクトリ<br>
+    * lib/ 関数ライブラリ<br>
+    * test_images/ ROI,IPM,白色フィルタの確認用ディレクトリ<br>
+    * output/ 出力用ディレクトリ(実行時に作成)<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * opencv_lane_detection.py ライン検出コード<br>
-  * to_region_of_interest.py ROI座標確認コード<br>
-  * to_inverse_perspective_mapping.py IPM座標確認コード<br>
-  * to_white.py 白色フィルタ確認コード<br>
+    * README.md このファイル<br>
+    * opencv_lane_detection.py ライン検出コード<br>
+    * to_region_of_interest.py ROI座標確認コード<br>
+    * to_inverse_perspective_mapping.py IPM座標確認コード<br>
+    * to_white.py 白色フィルタ確認コード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

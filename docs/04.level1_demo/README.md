@@ -12,21 +12,21 @@
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
-  * Fabo #902 Kerberos ver 1.0.0<br>
-  * Fabo #1202 Robot Car Rev. 1.0.1<br>
-  * Fabo #103 Button<br>
-  * VL53L0X or Lidar Lite v3<br>
-  * Tower Pro SG90<br>
-  * Raspberry Pi3<br>
-    * Stretch Lite or Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * FaBoPWM-PCA9685-Python<br>
-      * FaBoGPIO-PCAL6408-Python<br>
-      * VL53L0X_rasp_python<br>
-      * Tensorflow r1.1.0<br>
+    * Fabo #605 Motor Shield Raspberry Pi Rev 1.0.1<br>
+    * Fabo #902 Kerberos ver 1.0.0<br>
+    * Fabo #1202 Robot Car Rev. 1.0.1<br>
+    * Fabo #103 Button<br>
+    * VL53L0X or Lidar Lite v3<br>
+    * Tower Pro SG90<br>
+    * Raspberry Pi3<br>
+        * Stretch Lite or Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * FaBoPWM-PCA9685-Python<br>
+            * FaBoGPIO-PCAL6408-Python<br>
+            * VL53L0X_rasp_python<br>
+            * Tensorflow r1.1.0<br>
 
 ## 動画
 走行デモ動画：[![走行デモ動画](https://img.youtube.com/vi/0IXHXuacMEI/3.jpg)](https://www.youtube.com/watch?v=0IXHXuacMEI)<br>
@@ -43,8 +43,8 @@
 ## 目次
 * [必要なコードとファイル](#l1)<br>
 * [Python] [level1_carの自走コードを元に修正する](#l2)<br>
-  * Neural Networksの判断処理を追加する<br>
-  * 開始ボタン<br>
+    * Neural Networksの判断処理を追加する<br>
+    * 開始ボタン<br>
 * [ディレクトリとファイルについて](#l3)<br>
 <hr>
 
@@ -116,13 +116,13 @@ Ctrl + c でstart_button.pyを終了します
 ## 必要なコードとファイル
 走行に必要なコードは以下になります。<br>
 * ライブラリ<br>
-  * ./fabolib/以下<br>
-  * ./lib/以下<br>
+    * ./fabolib/以下<br>
+    * ./lib/以下<br>
 * 学習済みモデル<br>
-  * ./model/以下<br>
+    * ./model/以下<br>
 * 実行コード<br>
-  * start_button.py 開始ボタンコード<br>
-  * run_car_ai.py level0のrun_car_if.pyを元に修正<br>
+    * start_button.py 開始ボタンコード<br>
+    * run_car_ai.py level0のrun_car_if.pyを元に修正<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>
@@ -180,13 +180,13 @@ from lib.ai import AI
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>
-  * document/ ドキュメント関連<br>
-  * fabolib/ Fabo製基板関連<br>
-  * lib/ SPI,AIライブラリ<br>
+    * document/ ドキュメント関連<br>
+    * fabolib/ Fabo製基板関連<br>
+    * lib/ SPI,AIライブラリ<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * run_car_ai.py 自動走行コード<br>
-  * start_button.py 開始ボタンコード<br>
+    * README.md このファイル<br>
+    * run_car_ai.py 自動走行コード<br>
+    * start_button.py 開始ボタンコード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

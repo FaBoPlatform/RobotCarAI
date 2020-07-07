@@ -11,14 +11,14 @@
 
 ## 実行環境
 * Fabo TYPE1 ロボットカー<br>
-  * Fabo #902 Kerberos ver 1.0.0<br>
-  * VL53L0X or Lidar Lite v3<br>
-  * Raspberry Pi3<br>
-    * Stretch Lite or Jessie Lite<br>
-    * docker<br>
-      * Ubuntu<br>
-      * Python 2.7<br>
-      * Tensorflow r1.1.0<br>
+    * Fabo #902 Kerberos ver 1.0.0<br>
+    * VL53L0X or Lidar Lite v3<br>
+    * Raspberry Pi3<br>
+        * Stretch Lite or Jessie Lite<br>
+        * docker<br>
+            * Ubuntu<br>
+            * Python 2.7<br>
+            * Tensorflow r1.1.0<br>
 
 <hr>
 
@@ -31,22 +31,22 @@
 
 ## 目次
 * [Hardware] [距離センサーLidarLite v3について](#l1)<br>
-  * 取得できる距離、値、誤差、測定周期<br>
+    * 取得できる距離、値、誤差、測定周期<br>
 * [Neural Networks] [学習データのフォーマットについて](#l2)<br>
-  * クラス分類<br>
-  * one hot value<br>
-  * データフォーマット<br>
+    * クラス分類<br>
+    * one hot value<br>
+    * データフォーマット<br>
 * [Python] [学習データ ジェネレータを作る](#l3)<br>
-  * 簡単なIF文での判定<br>
-  * 車両旋回性能<br>
-  * 曲がる、止まる判定<br>
+    * 簡単なIF文での判定<br>
+    * 車両旋回性能<br>
+    * 曲がる、止まる判定<br>
 * [Neural Networks] [学習モデルについて](#l4)<br>
-  * Multi-Layer Perceptron<br>
+    * Multi-Layer Perceptron<br>
 * [Python/TensorFlow] [学習用コードのコーディング](#l5)<br>
-  * 学習コード設計<br>
+    * 学習コード設計<br>
 * [Python/TensorFlow] [学習と保存](#l6)<br>
-  * 学習実行<br>
-  * 保存と読み込み<br>
+    * 学習実行<br>
+    * 保存と読み込み<br>
 * [Python/TensorFlow] [予測を実行](#l7)<br>
 * [Python/TensorFlow] [予測精度を評価](#l8)<br>
 * [ディレクトリとファイルについて](#l9)<br>
@@ -118,10 +118,10 @@ CONTAINER_IDにはベースイメージがnaisy/fabo-jupyter-armhfの2133fa3ca36
 ## [Hardware] 距離センサーLidarLite v3について
 CLASS1 LASERで距離を計測する機器。
 #### 取得できる距離、値、誤差、測定周期
-  * 測定可能距離は40m<br>
-  * cm単位の整数値で取得<br>
-  * 測定誤差は5m以内で2.5cm、5m以上で10cm<Br>
-  * 測定周期は50Hz=0.02秒間隔<br>
+* 測定可能距離は40m<br>
+* cm単位の整数値で取得<br>
+* 測定誤差は5m以内で2.5cm、5m以上で10cm<Br>
+* 測定周期は50Hz=0.02秒間隔<br>
 
 仕様書：[https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf](https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf)
 
@@ -283,22 +283,24 @@ print("--- batch data ---\n{}".format(csvdata))
 旋回方向は左右のより空いている方向に曲がればよいのですが、左右どちらにも壁があり曲がれないことも考慮します。
 ![](./document/habadori.png)
 分岐パターンを適当に決めます。3つの距離センサー値はそれぞれ以下の3パターンで考えることが出来ます。
+
 * パターン0： 障害物までの距離が遠いため、制御不要
 * パターン1： 障害物までの距離が近いため、制御必要
 * パターン2： 障害物までの距離が近すぎるため、その方向には進めない
 
 左前右センサー値をそれぞれこのパターンのどれにあたるのかをIF文で判断し、次に進行方向を決定するための分岐を作成します。
+
 * コントロール1：前2 - 直進も旋回も出来ないため停止する
 * コントロール分岐：左01,前1,右01 - 前方障害物あり。左右旋回可能。左右の距離が遠い方に曲がる
-  * コントロール2：右の方が距離が遠い場合。右に曲がる
-  * コントロール3：左の方が距離が遠い場合。左に曲がる
+    * コントロール2：右の方が距離が遠い場合。右に曲がる
+    * コントロール3：左の方が距離が遠い場合。左に曲がる
 * コントロール4：右0前0左0 - 制御不要のため、直進する
 * コントロール5：左12右0 - 左は障害物までの距離が近いか近すぎるため、右に曲がる
 * コントロール6：左0右12 - 右は障害物までの距離が近いか近すぎるため、左に曲がる
 * コントロール7：左2右2 - 左も右も旋回不可能。前方はコントロール1を通過しているので進行可能。直進するが、もしかしたら壁にぶつかる可能性もある
 * コントロール分岐：左1右1 - 左右どちらも障害物に近いので、真ん中になるように幅調整をする
-  * コントロール8：右の方が距離が遠い場合。右に曲がる
-  * コントロール9：左の方が距離が遠い場合。左に曲がる
+    * コントロール8：右の方が距離が遠い場合。右に曲がる
+    * コントロール9：左の方が距離が遠い場合。左に曲がる
 * コントロール10：左2右1 - 左は障害物までの距離が近すぎるため、右に曲がる
 * コントロール11：左1右2 - 右は障害物までの距離が近すぎるため、左に曲がる
 
@@ -491,13 +493,14 @@ TARGET_STEPを増やすことで、さらに学習させることが出来ます
 <hr>
 
 #### 保存と読み込み
-保存と読み込みには2種類の方法があります。<br>
-* 再学習可能な方法<br>
-  * checkpointに保存<br>
-  * checkpointを読み込む<br>
-* 凍結する方法<br>
-  * pbファイルに保存<br>
-  * pbファイルを読み込む<br>
+保存と読み込みには2種類の方法があります。
+
+* 再学習可能な方法
+    * checkpointに保存
+    * checkpointを読み込む
+* 凍結する方法
+    * pbファイルに保存
+    * pbファイルを読み込む
 
 checkpointに保存すると、学習・実行に必要な全てのモデル構成と変数値が保存されます。そのため、checkpointを読み込むことで学習を再開することが出来ます。<br>
 checkpointでは、モデル構成と学習した変数値はそれぞれ別のファイルに保存されるため、読み込みはモデルの読み込み方と、学習値の復元の2種類あります。<br>
@@ -787,12 +790,13 @@ with tf.Session(graph=graph) as sess:
 
 ## [Python/TensorFlow] 予測を実行
 ![](./document/prediction-design1.png)
-[pbファイルを読み込む](#l6-4)で予測実行までを見ました。<br>
-* モデルの読み込み<br>
-* 入出力オペレーションの変数取得<br>
-* 読み込んだモデルでセッションを開始<br>
-* 入力値作成<br>
-* 予測実行<br>
+[pbファイルを読み込む](#l6-4)で予測実行までを見ました。
+
+* モデルの読み込み
+* 入出力オペレーションの変数取得
+* 読み込んだモデルでセッションを開始
+* 入力値作成
+* 予測実行
 
 最後に、予測結果から最も確率の高いものは何なのか？を知る必要があります。<br>
 予測実行コード：[./MLP/run_ai_test.py](./MLP/run_ai_test.py)
@@ -1096,23 +1100,23 @@ Neural Netwoksを使った学習では、学習の止め時も考えるポイン
 
 ## ディレクトリとファイルについて
 * ディレクトリについて<br>
-  * document/ ドキュメント関連<br>
-  * fabolib/ Fabo製基板関連<br>
-  * generator/ 学習データのラベル生成関連<br>
-  * lib/ 予測関連<br>
-  * MLP/ 学習とpbファイル作成関連<br>
-  * model/ 学習済みモデル置き場<br>
+    * document/ ドキュメント関連<br>
+    * fabolib/ Fabo製基板関連<br>
+    * generator/ 学習データのラベル生成関連<br>
+    * lib/ 予測関連<br>
+    * MLP/ 学習とpbファイル作成関連<br>
+    * model/ 学習済みモデル置き場<br>
 * ファイルについて<br>
-  * README.md このファイル<br>
-  * run_ai_eval.py 学習範囲内の予測精度評価用コード<br>
-  * run_ai_eval_400.py 学習範囲外の予測精度評価用コード<br>
-  * run_ai.py センサー値を取得して予測を実行するコード。Fabo #902、LidarLite v3が必要。<br>
-  * MLP/train_model.py 学習実行コード<br>
-    * MLP/log/にTensorboard用のログファイルが出力される<br>
-    * MLP/model/にcheckpointファイルが出力される<br>
-  * MLP/freeze_graph.py pbファイル作成コード<br>
-    * MLP/model/car_model.pbファイルを作成する<br>
-  * MLP/run_ai_test.py ランダム値を入力値として予測を実行するコード<br>
+    * README.md このファイル<br>
+    * run_ai_eval.py 学習範囲内の予測精度評価用コード<br>
+    * run_ai_eval_400.py 学習範囲外の予測精度評価用コード<br>
+    * run_ai.py センサー値を取得して予測を実行するコード。Fabo #902、LidarLite v3が必要。<br>
+    * MLP/train_model.py 学習実行コード<br>
+        * MLP/log/にTensorboard用のログファイルが出力される<br>
+        * MLP/model/にcheckpointファイルが出力される<br>
+    * MLP/freeze_graph.py pbファイル作成コード<br>
+        * MLP/model/car_model.pbファイルを作成する<br>
+    * MLP/run_ai_test.py ランダム値を入力値として予測を実行するコード<br>
 
 [<ページTOP>](#top)　[<目次>](#0)
 <hr>

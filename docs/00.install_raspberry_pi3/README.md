@@ -22,21 +22,21 @@ Dockerで用意しているRobotCarの環境には影響ないので、別のOS�
 ## 目次
 * [Stretch Liteインストール](#l1)<br>
 * [raspi-config](#l2)<br>
-  * SSH有効化<br>
-  * SPI有効化<br>
-  * I2C有効化<br>
-  * WiFi設定<br>
-  * ホスト名変更<br>
-  * キーボードレイアウト変更<br>
-  * TimeZone変更<br>
+    * SSH有効化<br>
+    * SPI有効化<br>
+    * I2C有効化<br>
+    * WiFi設定<br>
+    * ホスト名変更<br>
+    * キーボードレイアウト変更<br>
+    * TimeZone変更<br>
 * [RobotCar ソースコードダウンロード](#l3)<br>
 * [OS環境設定](#l4)<br>
 * [RobotCar Docker環境ダウンロード](#l5)<br>
 * [Dockerコンテナ作成](#l6)<br>
 * [自動起動設定](#l7)<br>
 * [トラブルシューティング](#tips)<br>
-  * [I2C Kernel/smbus修正]<br>
-  * [ホスト名変更]<br>
+    * [I2C Kernel/smbus修正]<br>
+    * [ホスト名変更]<br>
 
 <hr>
 
